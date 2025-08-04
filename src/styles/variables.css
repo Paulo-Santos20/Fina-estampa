@@ -1,5 +1,13 @@
+/* ===========================================
+   VARIÁVEIS CSS GLOBAIS - BOUTIQUE ELEGANZA
+   =========================================== */
+
 :root {
-  /* Paleta de Cores "BOUTIQUE ELEGANZA" */
+  /* ===========================================
+     PALETA DE CORES PRINCIPAL - BOUTIQUE ELEGANZA
+     =========================================== */
+  
+  /* Cores principais da identidade visual */
   --white-principal: #FFFFFF;
   --wine-destaque: #722F37;
   --preto-secundario: #000000;
@@ -7,14 +15,391 @@
   --cinza-medio: #6C757D;
   --rosa-suave: #F8E8E9;
   --dourado-sutil: #D4AF37;
+  
+  /* ===========================================
+     CORES COMPLEMENTARES E VARIAÇÕES
+     =========================================== */
+  
+  /* Variações do vinho para gradientes e hover */
+  --wine-light: #8B3A42;
+  --wine-dark: #5A252A;
+  --wine-extra-light: #A04851;
+  
+  /* Variações do cinza */
+  --cinza-escuro: #495057;
+  --cinza-extra-claro: #F1F3F4;
+  --cinza-border: #DEE2E6;
+  
+  /* Variações do rosa */
+  --rosa-claro: #FDF2F3;
+  --rosa-medio: #F5D5D8;
+  
+  /* Variações do dourado */
+  --dourado-claro: #E6C547;
+  --dourado-escuro: #B8941F;
+  --dourado-light: #F0E68C;
+  
+  /* ===========================================
+     CORES DE ESTADO E FEEDBACK
+     =========================================== */
+  
+  --success: #28a745;
+  --success-light: #d4edda;
+  --success-dark: #1e7e34;
+  
+  --warning: #ffc107;
+  --warning-light: #fff3cd;
+  --warning-dark: #d39e00;
+  
+  --danger: #dc3545;
+  --danger-light: #f8d7da;
+  --danger-dark: #bd2130;
+  
+  --info: #17a2b8;
+  --info-light: #d1ecf1;
+  --info-dark: #117a8b;
+  
+  /* ===========================================
+     SOMBRAS E ELEVAÇÕES
+     =========================================== */
+  
+  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 6px rgba(0, 0, 0, 0.07);
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.12);
+  --shadow-heavy: 0 8px 30px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 16px 50px rgba(0, 0, 0, 0.25);
+  
+  /* Sombras coloridas específicas da marca */
+  --shadow-wine: 0 4px 15px rgba(114, 47, 55, 0.2);
+  --shadow-wine-heavy: 0 8px 25px rgba(114, 47, 55, 0.3);
+  --shadow-gold: 0 4px 15px rgba(212, 175, 55, 0.2);
+  --shadow-gold-heavy: 0 8px 25px rgba(212, 175, 55, 0.3);
+  
+  /* ===========================================
+     TRANSIÇÕES E ANIMAÇÕES
+     =========================================== */
+  
+  --transition-xs: 0.1s ease;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-xl: 0.8s ease;
+  
+  /* Curvas de animação elegantes */
+  --ease-in-out-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-cubic: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-cubic: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elegant: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* ===========================================
+     BORDER RADIUS
+     =========================================== */
+  
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-small: 6px;
+  --radius-medium: 10px;
+  --radius-large: 15px;
+  --radius-xl: 20px;
+  --radius-2xl: 25px;
+  --radius-round: 50%;
+  --radius-pill: 9999px;
+  
+  /* ===========================================
+     ESPAÇAMENTOS
+     =========================================== */
+  
+  --space-xs: 0.25rem;    /* 4px */
+  --space-sm: 0.5rem;     /* 8px */
+  --space-md: 1rem;       /* 16px */
+  --space-lg: 1.5rem;     /* 24px */
+  --space-xl: 2rem;       /* 32px */
+  --space-2xl: 3rem;      /* 48px */
+  --space-3xl: 4rem;      /* 64px */
+  --space-4xl: 6rem;      /* 96px */
+  --space-5xl: 8rem;      /* 128px */
+  
+  /* ===========================================
+     TIPOGRAFIA
+     =========================================== */
+  
+  /* Famílias de fonte */
+  --font-primary: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-heading: 'Playfair Display', serif;
+  --font-mono: 'Fira Code', 'Monaco', 'Consolas', monospace;
+  
+  /* Tamanhos de fonte responsivos */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+  --text-5xl: 3rem;       /* 48px */
+  --text-6xl: 3.75rem;    /* 60px */
+  
+  /* Pesos de fonte */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  
+  /* Altura de linha */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  /* ===========================================
+     CONTAINERS E BREAKPOINTS
+     =========================================== */
+  
+  /* Larguras máximas de container */
+  --container-xs: 480px;
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1400px;
+  --container-3xl: 1600px;
+  --container-4xl: 1800px;
+  --container-max-width: 1400px;
+  
+  /* Breakpoints */
+  --bp-xs: 480px;
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1400px;
+  --bp-3xl: 1600px;
+  --bp-4xl: 1920px;
+  
+  /* ===========================================
+     Z-INDEX SCALE
+     =========================================== */
+  
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  --z-drawer: 1999;
+  --z-overlay: 1998;
+  
+  /* ===========================================
+     COMPONENTES ESPECÍFICOS
+     =========================================== */
+  
+  /* Header */
+  --header-height: 80px;
+  --header-height-mobile: 70px;
+  
+  /* Footer */
+  --footer-height: auto;
+  
+  /* Sidebar */
+  --sidebar-width: 280px;
+  --sidebar-width-collapsed: 80px;
+  
+  /* Cards */
+  --card-padding: 1.5rem;
+  --card-padding-sm: 1rem;
+  
+  /* Buttons */
+  --btn-height: 44px;
+  --btn-height-sm: 36px;
+  --btn-height-lg: 52px;
+  
+  /* Inputs */
+  --input-height: 44px;
+  --input-height-sm: 36px;
+  --input-height-lg: 52px;
+  
+  /* ===========================================
+     GRADIENTES DA MARCA
+     =========================================== */
+  
+  --gradient-wine: linear-gradient(135deg, var(--wine-destaque), var(--wine-light));
+  --gradient-wine-dark: linear-gradient(135deg, var(--wine-dark), var(--wine-destaque));
+  --gradient-gold: linear-gradient(135deg, var(--dourado-sutil), var(--dourado-claro));
+  --gradient-elegant: linear-gradient(135deg, var(--wine-destaque), var(--dourado-sutil));
+  --gradient-soft: linear-gradient(135deg, var(--rosa-suave), var(--cinza-extra-claro));
+  
+  /* ===========================================
+     VARIÁVEIS ESPECÍFICAS PARA COMPONENTES
+     =========================================== */
+  
+  /* Header específico */
+  --header-bg: var(--white-principal);
+  --header-text: var(--preto-secundario);
+  --header-border: var(--cinza-claro);
+  --header-shadow: var(--shadow-medium);
+  
+  /* Logo */
+  --logo-primary: var(--wine-destaque);
+  --logo-accent: var(--dourado-sutil);
+  
+  /* Search */
+  --search-bg: var(--cinza-claro);
+  --search-border: var(--cinza-claro);
+  --search-focus: var(--wine-destaque);
+  --search-button: var(--wine-destaque);
+  
+  /* Cart */
+  --cart-count-bg: var(--wine-destaque);
+  --cart-count-text: var(--white-principal);
+  --cart-hover-bg: var(--rosa-suave);
+  
+  /* Categories */
+  --category-nav-bg: var(--cinza-claro);
+  --category-link-hover: var(--white-principal);
+  --category-shadow: var(--shadow-wine);
+  
+  /* ===========================================
+     RESPONSIVIDADE AVANÇADA
+     =========================================== */
+  
+  /* Fluid typography */
+  --fluid-min-width: 320;
+  --fluid-max-width: 1200;
+  --fluid-screen: 100vw;
+  --fluid-bp: calc(
+    (var(--fluid-screen) - var(--fluid-min-width) / 16 * 1rem) /
+    (var(--fluid-max-width) - var(--fluid-min-width))
+  );
 }
 
-/* Importar fontes, se necessário (exemplo com Google Fonts) */
-/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500;600&display=swap'); */
+/* ===========================================
+   VARIÁVEIS RESPONSIVAS
+   =========================================== */
 
-body {
-  font-family: 'Montserrat', sans-serif; /* Exemplo de fonte para o corpo */
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Tablet */
+@media (min-width: 768px) {
+  :root {
+    --container-max-width: 1200px;
+    --space-scale: 1.2;
+    --header-height: 85px;
+  }
 }
+
+/* Desktop */
+@media (min-width: 1024px) {
+  :root {
+    --container-max-width: 1400px;
+    --space-scale: 1.4;
+    --header-height: 90px;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1400px) {
+  :root {
+    --container-max-width: 1600px;
+    --space-scale: 1.6;
+  }
+}
+
+/* Extra Large Desktop */
+@media (min-width: 1600px) {
+  :root {
+    --container-max-width: 1800px;
+    --space-scale: 1.8;
+  }
+}
+
+/* Ultra Wide */
+@media (min-width: 1920px) {
+  :root {
+    --container-max-width: 90%;
+    --space-scale: 2;
+  }
+}
+
+/* ===========================================
+   MOVIMENTO REDUZIDO (ACESSIBILIDADE)
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0.01ms;
+    --transition-normal: 0.01ms;
+    --transition-slow: 0.01ms;
+    --transition-xl: 0.01ms;
+  }
+}
+
+/* ===========================================
+   PRINT STYLES
+   =========================================== */
+
+@media print {
+  :root {
+    /* Cores otimizadas para impressão */
+    --white-principal: #ffffff;
+    --preto-secundario: #000000;
+    --wine-destaque: #000000;
+    --cinza-claro: #f5f5f5;
+    --cinza-medio: #666666;
+    --dourado-sutil: #333333;
+    
+    /* Remover sombras para impressão */
+    --shadow-light: none;
+    --shadow-medium: none;
+    --shadow-heavy: none;
+    --shadow-wine: none;
+    --shadow-gold: none;
+    
+    /* Simplificar gradientes */
+    --gradient-wine: var(--wine-destaque);
+    --gradient-gold: var(--dourado-sutil);
+    --gradient-elegant: var(--wine-destaque);
+  }
+}
+
+/* ===========================================
+   UTILITÁRIOS DE COR
+   =========================================== */
+
+/* Classes utilitárias para cores da marca */
+.text-wine { color: var(--wine-destaque) !important; }
+.text-gold { color: var(--dourado-sutil) !important; }
+.text-rose { color: var(--rosa-suave) !important; }
+
+.bg-wine { background-color: var(--wine-destaque) !important; }
+.bg-gold { background-color: var(--dourado-sutil) !important; }
+.bg-rose { background-color: var(--rosa-suave) !important; }
+
+.border-wine { border-color: var(--wine-destaque) !important; }
+.border-gold { border-color: var(--dourado-sutil) !important; }
+.border-rose { border-color: var(--rosa-suave) !important; }
+
+/* ===========================================
+   DEBUGGING E DESENVOLVIMENTO
+   =========================================== */
+
+/* Variáveis para debug (remover em produção) */
+:root {
+  --debug-red: #ff0000;
+  --debug-green: #00ff00;
+  --debug-blue: #0000ff;
+  --debug-yellow: #ffff00;
+  --debug-purple: #ff00ff;
+  --debug-cyan: #00ffff;
+}
+
+/* Classes de debug */
+.debug-wine { background: var(--wine-destaque) !important; opacity: 0.3; }
+.debug-gold { background: var(--dourado-sutil) !important; opacity: 0.3; }
+.debug-rose { background: var(--rosa-suave) !important; opacity: 0.3; }

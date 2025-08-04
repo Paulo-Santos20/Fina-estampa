@@ -1,0 +1,469 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   OVERLAY
+   =========================================== */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: var(--z-modal-backdrop);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===========================================
+   CARRINHO LATERAL - SÓ APARECE AO CLICAR
+   =========================================== */
+
+.cartSidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 18%;
+  min-width: 320px;
+  height: 100vh;
+  background: var(--white-principal);
+  border-left: 2px solid var(--cinza-claro);
+  box-shadow: -6px 0 20px rgba(0, 0, 0, 0.12);
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%); /* ESCONDIDO por padrão */
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.cartSidebar.open {
+  transform: translateX(0); /* APARECE quando aberto */
+}
+
+/* ===========================================
+   HEADER DO CARRINHO
+   =========================================== */
+
+.cartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 1.5rem;
+  border-bottom: 2px solid var(--cinza-claro);
+  background: var(--white-principal);
+  flex-shrink: 0;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.cartIcon {
+  color: var(--wine-destaque);
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cartTitle {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--preto-secundario);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemCount {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  white-space: nowrap;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--cinza-medio);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  color: var(--wine-destaque);
+  background: var(--rosa-suave);
+  transform: scale(1.1);
+}
+
+/* ===========================================
+   CONTEÚDO DO CARRINHO
+   =========================================== */
+
+.cartContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===========================================
+   CARRINHO VAZIO
+   =========================================== */
+
+.emptyCart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 3.5rem;
+  color: var(--cinza-claro);
+  margin-bottom: 1.5rem;
+}
+
+.emptyTitle {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--preto-secundario);
+  margin: 0 0 0.8rem 0;
+  line-height: 1.3;
+}
+
+.emptyText {
+  font-size: 1rem;
+  color: var(--cinza-medio);
+  margin: 0 0 2rem 0;
+  line-height: 1.4;
+}
+
+.continueButton {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: 1.2rem 2rem;
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.continueButton:hover {
+  background: var(--wine-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-wine);
+}
+
+/* ===========================================
+   LISTA DE ITENS
+   =========================================== */
+
+.cartItems {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.cartItem {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.cartItem:last-child {
+  border-bottom: none;
+}
+
+.itemImage {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.itemName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.itemVariants {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.variant {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  background: var(--cinza-claro);
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-small);
+  white-space: nowrap;
+}
+
+.itemPrice {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  padding: 0.3rem;
+}
+
+.quantityBtn {
+  background: none;
+  border: none;
+  color: var(--wine-destaque);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: all var(--transition-normal);
+}
+
+.quantityBtn:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.quantity {
+  font-weight: 600;
+  font-size: 0.9rem;
+  min-width: 24px;
+  text-align: center;
+  color: var(--preto-secundario);
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: var(--cinza-medio);
+  padding: 0.5rem;
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all var(--transition-normal);
+}
+
+.removeBtn:hover {
+  color: var(--danger);
+  background: var(--danger-light);
+}
+
+/* ===========================================
+   FOOTER DO CARRINHO
+   =========================================== */
+
+.cartFooter {
+  border-top: 2px solid var(--cinza-claro);
+  padding: 1.5rem;
+  background: var(--white-principal);
+  flex-shrink: 0;
+}
+
+.totalSection {
+  margin-bottom: 1.5rem;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--preto-secundario);
+}
+
+.totalPrice {
+  color: var(--wine-destaque);
+  font-size: 1.3rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.clearBtn {
+  flex: 1;
+  background: transparent;
+  color: var(--cinza-medio);
+  border: 1px solid var(--cinza-claro);
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.clearBtn:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-light);
+}
+
+.checkoutBtn {
+  flex: 2;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.checkoutBtn:hover {
+  background: var(--wine-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-wine);
+}
+
+/* ===========================================
+   SCROLLBAR CUSTOMIZADA
+   =========================================== */
+
+.cartItems::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cartItems::-webkit-scrollbar-track {
+  background: var(--cinza-claro);
+  border-radius: 3px;
+}
+
+.cartItems::-webkit-scrollbar-thumb {
+  background: var(--wine-destaque);
+  border-radius: 3px;
+}
+
+.cartItems::-webkit-scrollbar-thumb:hover {
+  background: var(--wine-dark);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1200px) {
+  .cartSidebar {
+    width: 22%;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .cartSidebar {
+    width: 28%;
+    min-width: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cartSidebar {
+    width: 35%;
+    min-width: 240px;
+  }
+  
+  .cartHeader {
+    padding: 1.5rem 1rem;
+  }
+  
+  .cartItems {
+    padding: 1rem;
+  }
+  
+  .cartFooter {
+    padding: 1rem;
+  }
+  
+  .itemImage {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cartSidebar {
+    width: 50%;
+    min-width: 200px;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+  
+  .clearBtn,
+  .checkoutBtn {
+    flex: none;
+  }
+}

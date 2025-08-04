@@ -10,21 +10,34 @@ import {
   FaTags,
   FaTimes as FaClose
 } from 'react-icons/fa';
+import { useCart } from '../../../contexts/CartContext';
+import CartSidebar from '../../cart/CartSideBar/CartSideBar';
 import styles from './Header.module.css';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showPromoBar, setShowPromoBar] = useState(true);
+  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+
+  const { getTotalItems, getTotalPrice } = useCart();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const toggleCartSidebar = (e) => {
+    e.preventDefault();
+    setIsCartSidebarOpen(!isCartSidebarOpen);
+  };
+
+  const closeCartSidebar = () => {
+    setIsCartSidebarOpen(false);
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Implementar lógica de busca
       console.log('Buscando por:', searchQuery);
     }
   };
@@ -33,7 +46,6 @@ const Header = () => {
     setShowPromoBar(false);
   };
 
-  // Categorias principais
   const categories = [
     { name: 'Vestidos', path: '/categoria/vestidos' },
     { name: 'Blusas & Camisas', path: '/categoria/blusas' },
@@ -42,6 +54,16 @@ const Header = () => {
     { name: 'Acessórios', path: '/categoria/acessorios' },
     { name: 'Coleções Especiais', path: '/categoria/colecoes' }
   ];
+
+  const formatPrice = (price) => {
+    return price.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  };
+
+  const totalItems = getTotalItems();
+  const totalPrice = getTotalPrice();
 
   return (
     <>
@@ -104,13 +126,25 @@ const Header = () => {
                 <span className={styles.actionText}>Favoritos</span>
               </button>
               
-              <Link to="/carrinho" className={styles.actionButton} aria-label="Meu Carrinho">
-                <div className={styles.cartWrapper}>
-                  <FaShoppingCart />
-                  <span className={styles.cartCount}>2</span>
+              {/* Carrinho com sidebar */}
+              <button 
+                className={styles.cartButton} 
+                onClick={toggleCartSidebar}
+                aria-label="Meu Carrinho"
+              >
+                <div className={styles.cartIconWrapper}>
+                  <FaShoppingCart className={styles.cartIcon} />
+                  {totalItems > 0 && (
+                    <span className={styles.cartCount}>{totalItems}</span>
+                  )}
                 </div>
-                <span className={styles.actionText}>Carrinho</span>
-              </Link>
+                <div className={styles.cartTextWrapper}>
+                  <span className={styles.cartLabel}>Carrinho</span>
+                  {totalItems > 0 && (
+                    <span className={styles.cartTotal}>{formatPrice(totalPrice)}</span>
+                  )}
+                </div>
+              </button>
 
               {/* Menu Hambúrguer para Mobile */}
               <button 
@@ -182,9 +216,26 @@ const Header = () => {
               <Link to="/favoritos" className={styles.mobileActionLink} onClick={toggleMobileMenu}>
                 <FaHeart /> Meus Favoritos
               </Link>
-              <Link to="/carrinho" className={styles.mobileActionLink} onClick={toggleMobileMenu}>
-                <FaShoppingCart /> Carrinho (2)
-              </Link>
+              <button 
+                className={styles.mobileActionLink} 
+                onClick={() => {
+                  toggleMobileMenu();
+                  setIsCartSidebarOpen(true);
+                }}
+              >
+                <div className={styles.mobileCartInfo}>
+                  <FaShoppingCart /> 
+                  <span>Carrinho</span>
+                  {totalItems > 0 && (
+                    <div className={styles.mobileCartDetails}>
+                      <span className={styles.mobileCartCount}>
+                        ({totalItems} {totalItems === 1 ? 'item' : 'itens'})
+                      </span>
+                      <span className={styles.mobileCartTotal}>{formatPrice(totalPrice)}</span>
+                    </div>
+                  )}
+                </div>
+              </button>
             </div>
 
             {/* Categorias Mobile */}
@@ -217,6 +268,12 @@ const Header = () => {
           </div>
         </div>
       )}
+
+      {/* Cart Sidebar */}
+      <CartSidebar 
+        isOpen={isCartSidebarOpen} 
+        onClose={closeCartSidebar} 
+      />
     </>
   );
 };

@@ -1,0 +1,605 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   SEÇÃO DO CARROSSEL
+   =========================================== */
+
+.carouselSection {
+  padding: 5rem 0;
+  background: var(--white-principal);
+  overflow: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ===========================================
+   HEADER DA SEÇÃO
+   =========================================== */
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.sectionSubtitle {
+  font-size: 1.2rem;
+  color: var(--cinza-medio);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ===========================================
+   WRAPPER DO CARROSSEL
+   =========================================== */
+
+.carouselWrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-large);
+}
+
+/* ===========================================
+   BOTÕES DE NAVEGAÇÃO - DOBRADOS
+   =========================================== */
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 120px; /* DOBRADO de 60px */
+  height: 120px; /* DOBRADO de 60px */
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #722F37;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px; /* DOBRADO de 24px */
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2); /* Sombra maior */
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background: #722F37;
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 12px 50px rgba(114, 47, 55, 0.4);
+}
+
+.prevButton {
+  left: 2rem; /* Mais afastado da borda */
+}
+
+.nextButton {
+  right: 2rem; /* Mais afastado da borda */
+}
+
+/* ===========================================
+   CONTAINER DO CARROSSEL
+   =========================================== */
+
+.carouselContainer {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 0;
+  cursor: grab;
+  user-select: none;
+}
+
+.carouselContainer:active {
+  cursor: grabbing;
+}
+
+/* ===========================================
+   CARDS DOS PRODUTOS
+   =========================================== */
+
+.productCard {
+  flex: 0 0 320px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.productCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(114, 47, 55, 0.2);
+}
+
+.productCardInner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===========================================
+   IMAGENS DOS PRODUTOS
+   =========================================== */
+
+.productImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: #F8F9FA;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.productCard:hover .productImage {
+  transform: scale(1.05);
+}
+
+/* ===========================================
+   BADGES DOS PRODUTOS
+   =========================================== */
+
+.discountBadge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #722F37;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 5;
+}
+
+.newBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #D4AF37;
+  color: black;
+  padding: 0.8rem 1.2rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 5;
+}
+
+/* ===========================================
+   AÇÕES DO PRODUTO - ÍCONES DOBRADOS
+   =========================================== */
+
+.productActions {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Gap maior entre botões */
+  z-index: 6;
+  opacity: 1;
+  visibility: visible;
+}
+
+.actionButton {
+  width: 120px !important; /* DOBRADO de 60px */
+  height: 120px !important; /* DOBRADO de 60px */
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #722F37 !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25) !important; /* Sombra maior */
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(15px);
+  border: 4px solid rgba(114, 47, 55, 0.1); /* Borda maior */
+}
+
+.actionButton:hover {
+  background: #722F37 !important;
+  color: white !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 12px 50px rgba(114, 47, 55, 0.5) !important;
+  border-color: #722F37;
+}
+
+/* Forçar visibilidade dos ícones - DOBRADOS */
+.actionButton svg {
+  width: 48px !important; /* DOBRADO de 24px */
+  height: 48px !important; /* DOBRADO de 24px */
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.actionButton:hover svg {
+  color: white !important;
+}
+
+/* ===========================================
+   INFORMAÇÕES DO PRODUTO
+   =========================================== */
+
+.productInfo {
+  padding: 2rem 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.productLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.productName {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: black;
+  line-height: 1.3;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+
+.productLink:hover .productName {
+  color: #722F37;
+}
+
+/* ===========================================
+   AVALIAÇÕES
+   =========================================== */
+
+.productRating {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.starFilled {
+  color: #D4AF37;
+  font-size: 18px;
+}
+
+.starHalf {
+  color: #D4AF37;
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+.starEmpty {
+  color: #F8F9FA;
+  font-size: 18px;
+}
+
+.reviewCount {
+  font-size: 0.95rem;
+  color: #6C757D;
+  font-weight: 500;
+}
+
+/* ===========================================
+   PREÇOS
+   =========================================== */
+
+.productPricing {
+  margin-top: auto;
+}
+
+.promoPrice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.originalPrice {
+  font-size: 1rem;
+  color: #6C757D;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.currentPriceWrapper,
+.regularPriceWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.currentPrice,
+.regularPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #722F37;
+}
+
+/* ===========================================
+   ÍCONE DO CARRINHO - DOBRADO
+   =========================================== */
+
+.addToCartIcon {
+  width: 130px !important; /* DOBRADO de 65px */
+  height: 130px !important; /* DOBRADO de 65px */
+  border-radius: 50%;
+  border: none;
+  background: #722F37 !important;
+  color: white !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 8px 40px rgba(114, 47, 55, 0.4) !important; /* Sombra maior */
+  transition: all 0.3s ease !important;
+  flex-shrink: 0;
+  border: 6px solid rgba(255, 255, 255, 0.2); /* Borda maior */
+}
+
+.addToCartIcon:hover {
+  background: #5a252a !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 12px 50px rgba(114, 47, 55, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Forçar visibilidade do ícone do carrinho - DOBRADO */
+.addToCartIcon svg {
+  width: 56px !important; /* DOBRADO de 28px */
+  height: 56px !important; /* DOBRADO de 28px */
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: white !important;
+}
+
+.addToCartIcon.adding {
+  animation: addingToCart 0.3s ease;
+}
+
+@keyframes addingToCart {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ===========================================
+   INDICADORES - MAIORES
+   =========================================== */
+
+.indicators {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.indicator {
+  width: 20px; /* Maior */
+  height: 20px; /* Maior */
+  border-radius: 50%;
+  border: 3px solid #F8F9FA; /* Borda maior */
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator:hover,
+.indicator.active {
+  background: #722F37;
+  border-color: #722F37;
+  transform: scale(1.3);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1200px) {
+  .productCard {
+    flex: 0 0 300px;
+  }
+  
+  .productImageWrapper {
+    height: 260px;
+  }
+  
+  .navButton {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+  }
+  
+  .actionButton {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  .actionButton svg {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .addToCartIcon {
+    width: 110px !important;
+    height: 110px !important;
+  }
+  
+  .addToCartIcon svg {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .productCard {
+    flex: 0 0 280px;
+  }
+  
+  .productImageWrapper {
+    height: 240px;
+  }
+  
+  .navButton {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+  }
+  
+  .actionButton {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .actionButton svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .addToCartIcon {
+    width: 90px !important;
+    height: 90px !important;
+  }
+  
+  .addToCartIcon svg {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .carouselSection {
+    padding: 3rem 0;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .sectionTitle {
+    font-size: 2.2rem;
+  }
+  
+  .productCard {
+    flex: 0 0 260px;
+  }
+  
+  .productImageWrapper {
+    height: 220px;
+  }
+  
+  .productInfo {
+    padding: 1.5rem 1rem;
+  }
+  
+  .productName {
+    font-size: 1.1rem;
+  }
+  
+  .navButton {
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
+  }
+  
+  .actionButton {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  
+  .actionButton svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .addToCartIcon {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .addToCartIcon svg {
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .productCard {
+    flex: 0 0 240px;
+  }
+  
+  .productImageWrapper {
+    height: 200px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
+  
+  .navButton {
+    display: none; /* Ocultar em telas muito pequenas */
+  }
+  
+  .actionButton {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .actionButton svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .addToCartIcon {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  
+  .addToCartIcon svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .productActions {
+    gap: 1rem; /* Gap menor em mobile */
+  }
+}

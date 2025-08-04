@@ -1,0 +1,41 @@
+{
+  "name": "Fina Estampa - Moda Feminina",
+  "short_name": "Fina Estampa",
+  "description": "Boutique de moda feminina com roupas elegantes e acessórios exclusivos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#722F37",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/assets/images/screenshot-desktop.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/assets/images/screenshot-mobile.jpg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    }
+  ]
+}

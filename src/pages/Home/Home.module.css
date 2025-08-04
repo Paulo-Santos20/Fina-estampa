@@ -1,28 +1,72 @@
 /* Importar variáveis CSS globais */
 @import '../../styles/variables.css';
 
+/* ===========================================
+   PÁGINA HOME PRINCIPAL
+   =========================================== */
+
 .homePage {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
+
+/* ===========================================
+   CONTAINER RESPONSIVO
+   =========================================== */
 
 .container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-/* Seção Hero */
+/* Para telas muito grandes */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 90%;
+    padding: 0 5rem;
+  }
+}
+
+/* ===========================================
+   SEÇÃO HERO
+   =========================================== */
+
 .heroSection {
   position: relative;
-  height: 70vh;
-  min-height: 500px;
+  height: 80vh;
+  min-height: 600px;
   overflow: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 .heroCarousel {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .heroSlide {
@@ -49,8 +93,10 @@
   text-align: center;
   color: var(--white-principal);
   max-width: 600px;
+  width: 100%;
   padding: 2rem;
   animation: slideUp 1s ease-out;
+  box-sizing: border-box;
 }
 
 @keyframes slideUp {
@@ -65,19 +111,23 @@
 }
 
 .heroTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 3.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 700;
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .heroSubtitle {
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   margin-bottom: 2rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   font-weight: 300;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .heroButton {
@@ -86,22 +136,28 @@
   color: var(--white-principal);
   padding: 1.2rem 2.5rem;
   text-decoration: none;
-  border-radius: 30px;
+  border-radius: var(--radius-pill);
   font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-wine);
   text-transform: uppercase;
   letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .heroButton:hover {
   background: var(--preto-secundario);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-heavy);
 }
 
-/* Controles do Carrossel */
+/* ===========================================
+   CONTROLES DO CARROSSEL
+   =========================================== */
+
 .carouselControl {
   position: absolute;
   top: 50%;
@@ -111,19 +167,21 @@
   color: var(--wine-destaque);
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   z-index: 10;
+  backdrop-filter: blur(10px);
 }
 
 .carouselControl:hover {
   background: var(--white-principal);
   transform: translateY(-50%) scale(1.1);
+  box-shadow: var(--shadow-medium);
 }
 
 .prevControl {
@@ -148,11 +206,11 @@
 .indicator {
   width: 12px;
   height: 12px;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   border: 2px solid var(--white-principal);
   background: transparent;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .indicator.active {
@@ -160,11 +218,16 @@
   transform: scale(1.2);
 }
 
-/* Seções Gerais */
+/* ===========================================
+   SEÇÕES GERAIS
+   =========================================== */
+
 .promoSection,
 .categoriesSection,
 .newProductsSection {
   padding: 4rem 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .promoSection {
@@ -178,396 +241,48 @@
 .sectionHeader {
   text-align: center;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .sectionTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 2.5rem);
   color: var(--wine-destaque);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  flex-wrap: wrap;
+  word-wrap: break-word;
 }
 
 .sectionIcon {
   font-size: 2rem;
+  flex-shrink: 0;
 }
 
 .sectionSubtitle {
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
   color: var(--cinza-medio);
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Grid de Produtos */
+/* ===========================================
+   GRID DE PRODUTOS
+   =========================================== */
+
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
-}
-
-.productCard {
-  background: var(--white-principal);
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.productCard:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-}
-
-.productImageWrapper {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 1;
-}
-
-.productImage {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.productCard:hover .productImage {
-  transform: scale(1.05);
-}
-
-.discountBadge,
-.newBadge {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--white-principal);
-  z-index: 5;
-}
-
-.discountBadge {
-  background: var(--wine-destaque);
-}
-
-.newBadge {
-  background: var(--dourado-sutil);
-}
-
-.productActions {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  opacity: 0;
-  transform: translateX(20px);
-  transition: all 0.3s ease;
-}
-
-.productCard:hover .productActions {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.actionButton {
-  background: var(--white-principal);
-  border: none;
-  color: var(--wine-destaque);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.actionButton:hover {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  transform: scale(1.1);
-}
-
-.productInfo {
-  padding: 1.5rem;
-}
-
-.productName {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--preto-secundario);
-  margin-bottom: 0.8rem;
-  line-height: 1.4;
-}
-
-.productRating {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.stars {
-  display: flex;
-  gap: 0.2rem;
-}
-
-.starFilled {
-  color: var(--dourado-sutil);
-  font-size: 0.9rem;
-}
-
-.starHalf {
-  color: var(--dourado-sutil);
-  font-size: 0.9rem;
-}
-
-.starEmpty {
-  color: var(--cinza-claro);
-  font-size: 0.9rem;
-}
-
-.reviewCount {
-  font-size: 0.8rem;
-  color: var(--cinza-medio);
-}
-
-.productPricing {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.originalPrice {
-  color: var(--cinza-medio);
-  text-decoration: line-through;
-  font-size: 0.9rem;
-}
-
-.salePrice,
-.price {
-  color: var(--wine-destaque);
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
-/* Grid de Categorias */
-.categoriesGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-.categoryCard {
-  text-decoration: none;
-  border-radius: 15px;
   overflow: hidden;
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.categoryCard:hover {
-  transform: scale(1.02);
-}
-
-.categoryImageWrapper {
-  position: relative;
-  aspect-ratio: 4/3;
-  overflow: hidden;
-}
-
-.categoryImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.categoryCard:hover .categoryImage {
-  transform: scale(1.1);
-}
-
-.categoryOverlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  color: var(--white-principal);
-  padding: 2rem 1.5rem 1.5rem;
-  text-align: center;
-}
-
-.categoryName {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.categoryDescription {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-/* Footer das Seções */
-.sectionFooter {
-  text-align: center;
-}
-
-.viewAllButton {
-  display: inline-block;
-  background: transparent;
-  color: var(--wine-destaque);
-  border: 2px solid var(--wine-destaque);
-  padding: 1rem 2rem;
-  text-decoration: none;
-  border-radius: 25px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.viewAllButton:hover {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .heroTitle {
-    font-size: 2.5rem;
-  }
-  
-  .heroSubtitle {
-    font-size: 1.1rem;
-  }
-  
-  .heroButton {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-  
-  .carouselControl {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
-  
-  .prevControl {
-    left: 1rem;
-  }
-  
-  .nextControl {
-    right: 1rem;
-  }
-  
-  .sectionTitle {
-    font-size: 2rem;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .productsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .categoriesGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .heroSection {
-    height: 60vh;
-    min-height: 400px;
-  }
-  
-  .heroTitle {
-    font-size: 2rem;
-  }
-  
-  .heroSubtitle {
-    font-size: 1rem;
-  }
-  
-  .heroContent {
-    padding: 1rem;
-  }
-  
-  .promoSection,
-  .categoriesSection,
-  .newProductsSection {
-    padding: 3rem 0;
-  }
-  
-  .sectionHeader {
-    margin-bottom: 2rem;
-  }
-  
-  .productsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-  
-  .productInfo {
-    padding: 1rem;
-  }
-}
-/* Atualizar apenas as seções do container e grids */
-.container {
-  width: 100%;
-  max-width: 1400px; /* Aumentado */
-  margin: 0 auto;
-  padding: 0 2rem; /* Aumentado */
-}
-
-/* Para telas muito grandes */
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1600px;
-    padding: 0 3rem;
-  }
-}
-
-@media (min-width: 1600px) {
-  .container {
-    max-width: 1800px;
-    padding: 0 4rem;
-  }
-}
-
-@media (min-width: 1920px) {
-  .container {
-    max-width: 90%;
-    padding: 0 5rem;
-  }
-}
-
-/* Grid de Produtos - Melhorado para telas grandes */
-.productsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
 }
 
 /* Para telas grandes, limitar o número máximo de colunas */
@@ -592,11 +307,183 @@
   }
 }
 
-/* Grid de Categorias - Melhorado para telas grandes */
+.productCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  box-shadow: var(--shadow-light);
+  transition: all var(--transition-normal);
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.productCard:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-heavy);
+}
+
+.productImageWrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  width: 100%;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.productCard:hover .productImage {
+  transform: scale(1.05);
+}
+
+.discountBadge,
+.newBadge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--white-principal);
+  z-index: 5;
+  white-space: nowrap;
+}
+
+.discountBadge {
+  background: var(--wine-destaque);
+}
+
+.newBadge {
+  background: var(--dourado-sutil);
+}
+
+.productActions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all var(--transition-normal);
+}
+
+.productCard:hover .productActions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.actionButton {
+  background: var(--white-principal);
+  border: none;
+  color: var(--wine-destaque);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-round);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-light);
+  flex-shrink: 0;
+}
+
+.actionButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: scale(1.1);
+}
+
+.productInfo {
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.productName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.productRating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.stars {
+  display: flex;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.starFilled {
+  color: var(--dourado-sutil);
+  font-size: 0.9rem;
+}
+
+.starHalf {
+  color: var(--dourado-sutil);
+  font-size: 0.9rem;
+}
+
+.starEmpty {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+}
+
+.reviewCount {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  white-space: nowrap;
+}
+
+.productPricing {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.originalPrice {
+  color: var(--cinza-medio);
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}
+
+.salePrice,
+.price {
+  color: var(--wine-destaque);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* ===========================================
+   GRID DE CATEGORIAS
+   =========================================== */
+
 .categoriesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
+  width: 100%;
+  overflow: hidden;
 }
 
 @media (min-width: 1200px) {
@@ -613,14 +500,103 @@
   }
 }
 
-/* Hero Section - Ocupar toda a largura */
-.heroSection {
+.categoryCard {
+  text-decoration: none;
+  border-radius: var(--radius-large);
+  overflow: hidden;
   position: relative;
-  height: 80vh; /* Aumentado para telas grandes */
-  min-height: 600px; /* Aumentado */
+  transition: transform var(--transition-normal);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.categoryCard:hover {
+  transform: scale(1.02);
+}
+
+.categoryImageWrapper {
+  position: relative;
+  aspect-ratio: 4/3;
   overflow: hidden;
   width: 100%;
 }
+
+.categoryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.categoryCard:hover .categoryImage {
+  transform: scale(1.1);
+}
+
+.categoryOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: var(--white-principal);
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.categoryName {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.categoryDescription {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ===========================================
+   FOOTER DAS SEÇÕES
+   =========================================== */
+
+.sectionFooter {
+  text-align: center;
+  width: 100%;
+}
+
+.viewAllButton {
+  display: inline-block;
+  background: transparent;
+  color: var(--wine-destaque);
+  border: 2px solid var(--wine-destaque);
+  padding: 1rem 2rem;
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.viewAllButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-wine);
+}
+
+/* ===========================================
+   RESPONSIVIDADE PARA HERO
+   =========================================== */
 
 @media (min-width: 1400px) {
   .heroSection {
@@ -629,3 +605,550 @@
   }
 }
 
+/* ===========================================
+   RESPONSIVIDADE PARA TABLETS
+   =========================================== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .heroSection {
+    height: 70vh;
+    min-height: 500px;
+  }
+  
+  .heroContent {
+    padding: 1.5rem;
+  }
+  
+  .heroButton {
+    padding: 1rem 2rem;
+  }
+  
+  .carouselControl {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .prevControl {
+    left: 1rem;
+  }
+  
+  .nextControl {
+    right: 1rem;
+  }
+  
+  .sectionTitle {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .promoSection,
+  .categoriesSection,
+  .newProductsSection {
+    padding: 3rem 0;
+  }
+}
+
+/* ===========================================
+   RESPONSIVIDADE PARA MOBILE
+   =========================================== */
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.8rem;
+  }
+  
+  .heroSection {
+    height: 60vh;
+    min-height: 400px;
+  }
+  
+  .heroContent {
+    padding: 1rem;
+  }
+  
+  .carouselControl {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .prevControl {
+    left: 0.5rem;
+  }
+  
+  .nextControl {
+    right: 0.5rem;
+  }
+  
+  .carouselIndicators {
+    bottom: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .indicator {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .promoSection,
+  .categoriesSection,
+  .newProductsSection {
+    padding: 2rem 0;
+  }
+  
+  .sectionHeader {
+    margin-bottom: 2rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .categoriesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .productInfo {
+    padding: 1rem;
+  }
+  
+  .categoryOverlay {
+    padding: 1.5rem 1rem 1rem;
+  }
+  
+  .viewAllButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===========================================
+   ACESSIBILIDADE E PERFORMANCE
+   =========================================== */
+
+/* Melhorar performance */
+.productCard,
+.categoryCard,
+.heroButton,
+.viewAllButton {
+  will-change: transform;
+}
+
+/* Modo escuro (preparação futura) */
+@media (prefers-color-scheme: dark) {
+  .homePage {
+    background: var(--preto-secundario);
+  }
+  
+  .promoSection,
+  .newProductsSection {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Reduzir animações para usuários que preferem */
+@media (prefers-reduced-motion: reduce) {
+  .heroSlide,
+  .heroContent,
+  .productCard,
+  .categoryCard,
+  .heroButton,
+  .viewAllButton,
+  .carouselControl,
+  .actionButton,
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .productCard,
+  .categoryCard {
+    border: 2px solid var(--preto-secundario);
+  }
+  
+  .heroButton,
+  .viewAllButton {
+    border-width: 3px;
+  }
+}
+
+/* ===========================================
+   CORREÇÕES ESPECÍFICAS PARA OVERFLOW
+   =========================================== */
+
+/* Garantir que nenhum elemento exceda a largura */
+.homePage,
+.heroSection,
+.promoSection,
+.categoriesSection,
+.newProductsSection {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Containers flexíveis */
+.container,
+.productsGrid,
+.categoriesGrid,
+.heroContent {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Elementos que podem vazar */
+.heroTitle,
+.heroSubtitle,
+.sectionTitle,
+.sectionSubtitle,
+.productName,
+.categoryName,
+.categoryDescription {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Grid items que precisam de controle */
+.productCard,
+.categoryCard {
+  min-width: 0;
+  max-width: 100%;
+}
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+.home {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ===========================================
+   SEÇÃO DE CATEGORIAS
+   =========================================== */
+
+.categoriesSection {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, var(--cinza-claro) 0%, var(--white-principal) 100%);
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: var(--cinza-medio);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.categoryCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  box-shadow: var(--shadow-light);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.categoryCard:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-heavy);
+}
+
+.categoryImage {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.categoryImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.categoryCard:hover .categoryImage img {
+  transform: scale(1.05);
+}
+
+.categoryContent {
+  padding: 2rem;
+  text-align: center;
+}
+
+.categoryTitle {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: var(--preto-secundario);
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.categoryDescription {
+  color: var(--cinza-medio);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.categoryButton {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.categoryButton:hover {
+  background: var(--wine-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-wine);
+}
+
+/* ===========================================
+   SEÇÃO DE NEWSLETTER
+   =========================================== */
+
+.newsletterSection {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, var(--wine-destaque) 0%, var(--preto-secundario) 100%);
+  color: var(--white-principal);
+}
+
+.newsletterContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.newsletterText {
+  text-align: left;
+}
+
+.newsletterTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.newsletterSubtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.newsletterForm {
+  text-align: left;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.emailInput {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  outline: none;
+  transition: all var(--transition-normal);
+}
+
+.emailInput:focus {
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+}
+
+.emailInput::placeholder {
+  color: var(--cinza-medio);
+}
+
+.subscribeButton {
+  background: var(--dourado-sutil);
+  color: var(--preto-secundario);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+}
+
+.subscribeButton:hover {
+  background: var(--dourado-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
+.privacyText {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1200px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+  
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .categoriesSection {
+    padding: 3rem 0;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+  }
+  
+  .sectionSubtitle {
+    font-size: 1rem;
+  }
+  
+  .categoriesGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .categoryContent {
+    padding: 1.5rem;
+  }
+  
+  .newsletterSection {
+    padding: 3rem 0;
+  }
+  
+  .newsletterContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .newsletterText {
+    text-align: center;
+  }
+  
+  .newsletterTitle {
+    font-size: 1.8rem;
+  }
+  
+  .inputGroup {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .subscribeButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .categoriesSection {
+    padding: 2rem 0;
+  }
+  
+  .sectionHeader {
+    margin-bottom: 2rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
+  
+  .categoryImage {
+    height: 160px;
+  }
+  
+  .categoryContent {
+    padding: 1rem;
+  }
+  
+  .categoryTitle {
+    font-size: 1.2rem;
+  }
+  
+  .newsletterTitle {
+    font-size: 1.6rem;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 1rem;
+  }
+}

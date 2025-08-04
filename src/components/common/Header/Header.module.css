@@ -1,14 +1,19 @@
 /* Importar variáveis CSS globais */
 @import '../../../styles/variables.css';
 
-/* Barra de Comunicados/Promoções */
+/* ===========================================
+   BARRA DE COMUNICADOS/PROMOÇÕES
+   =========================================== */
+
 .promoBar {
-  background: linear-gradient(135deg, var(--wine-destaque), #8B3A42);
+  background: linear-gradient(135deg, var(--wine-destaque), var(--wine-light));
   color: var(--white-principal);
   padding: 0.8rem 0;
   text-align: center;
   position: relative;
   animation: slideDown 0.5s ease-out;
+  width: 100%;
+  overflow: hidden;
 }
 
 @keyframes slideDown {
@@ -27,14 +32,18 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .promoIcon {
   font-size: 1rem;
   animation: pulse 2s infinite;
+  flex-shrink: 0;
 }
 
 @keyframes pulse {
@@ -46,6 +55,9 @@
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.5px;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .closePromo {
@@ -59,32 +71,43 @@
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
+  border-radius: var(--radius-round);
+  transition: background-color var(--transition-normal);
+  flex-shrink: 0;
 }
 
 .closePromo:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Header Principal */
+/* ===========================================
+   HEADER PRINCIPAL
+   =========================================== */
+
 .header {
   background-color: var(--white-principal);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-medium);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: var(--z-sticky);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .mainHeader {
   padding: 1.5rem 0;
   border-bottom: 1px solid var(--cinza-claro);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .mainHeader .container {
@@ -92,48 +115,64 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 2rem;
+  width: 100%;
+  min-width: 0;
 }
 
-/* Logo */
+/* ===========================================
+   LOGO
+   =========================================== */
+
+.logo {
+  flex-shrink: 0;
+}
+
 .logo .logoLink {
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  transition: transform var(--transition-normal);
 }
 
 .logoText {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
   font-size: 2.2rem;
   font-weight: 700;
   color: var(--wine-destaque);
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .logoAccent {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
   font-size: 2.2rem;
   font-weight: 400;
   color: var(--dourado-sutil);
   font-style: italic;
+  white-space: nowrap;
 }
 
-.logo:hover .logoText,
-.logo:hover .logoAccent {
+.logo:hover .logoLink {
   transform: scale(1.05);
-  transition: transform 0.3s ease;
 }
 
-/* Barra de Pesquisa */
+/* ===========================================
+   BARRA DE PESQUISA
+   =========================================== */
+
 .searchSection {
   max-width: 500px;
   width: 100%;
+  min-width: 0;
+  flex: 1;
 }
 
 .searchForm {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .searchInput {
@@ -141,11 +180,14 @@
   padding: 1rem 1.2rem;
   padding-right: 3.5rem;
   border: 2px solid var(--cinza-claro);
-  border-radius: 25px;
+  border-radius: var(--radius-pill);
   font-size: 0.95rem;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   background-color: var(--cinza-claro);
+  color: var(--preto-secundario);
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .searchInput:focus {
@@ -165,12 +207,13 @@
   border: none;
   color: var(--white-principal);
   padding: 0.8rem;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
 }
 
 .searchButton:hover {
@@ -178,11 +221,16 @@
   transform: scale(1.05);
 }
 
-/* Ações do Usuário */
+/* ===========================================
+   AÇÕES DO USUÁRIO
+   =========================================== */
+
 .userActions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+  flex-shrink: 0;
+  overflow: visible;
 }
 
 .actionButton {
@@ -192,13 +240,15 @@
   gap: 0.3rem;
   text-decoration: none;
   color: var(--preto-secundario);
-  background: none;
+  background: var(--white-principal);
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
   position: relative;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .actionButton:hover {
@@ -209,16 +259,55 @@
 
 .actionButton svg {
   font-size: 1.4rem;
+  flex-shrink: 0;
 }
 
 .actionText {
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
+  color: inherit;
 }
 
-.cartWrapper {
+/* ===========================================
+   CARRINHO - LAYOUT CORRIGIDO
+   =========================================== */
+
+.cartButton {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-decoration: none;
+  color: var(--preto-secundario);
+  background: var(--white-principal);
+  border: none;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
   position: relative;
+  min-width: auto;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.cartButton:hover {
+  color: var(--wine-destaque);
+  background-color: var(--rosa-suave);
+  transform: translateY(-2px);
+}
+
+.cartIconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cartIcon {
+  font-size: 1.4rem;
+  color: inherit;
 }
 
 .cartCount {
@@ -229,21 +318,77 @@
   color: var(--white-principal);
   font-size: 0.7rem;
   font-weight: bold;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   padding: 0.2rem 0.5rem;
   min-width: 18px;
   text-align: center;
   line-height: 1;
+  animation: bounceIn var(--transition-normal) ease-out;
+  z-index: 10;
+  white-space: nowrap;
 }
+
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.cartTextWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.cartLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.cartTotal {
+  font-size: 0.75rem;
+  color: var(--wine-destaque);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ===========================================
+   MENU MOBILE
+   =========================================== */
 
 .mobileMenuButton {
   display: none;
+  flex-direction: column;
+  align-items: center;
+  background: var(--white-principal);
+  border: none;
+  color: var(--preto-secundario);
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1.4rem;
+  transition: color var(--transition-normal);
+  border-radius: var(--radius-medium);
 }
 
-/* Navegação de Categorias */
+.mobileMenuButton:hover {
+  color: var(--wine-destaque);
+  background-color: var(--rosa-suave);
+}
+
+/* ===========================================
+   NAVEGAÇÃO DE CATEGORIAS
+   =========================================== */
+
 .categoryNav {
   background-color: var(--cinza-claro);
   padding: 1rem 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .categoryList {
@@ -255,10 +400,12 @@
   margin: 0;
   padding: 0;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .categoryItem {
   position: relative;
+  flex-shrink: 0;
 }
 
 .categoryLink {
@@ -267,30 +414,39 @@
   font-size: 0.95rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
-  border-radius: 20px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-normal);
   white-space: nowrap;
+  display: block;
 }
 
 .categoryLink:hover {
   color: var(--wine-destaque);
   background-color: var(--white-principal);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(114, 47, 55, 0.15);
+  box-shadow: var(--shadow-wine);
 }
 
-/* Menu Mobile */
+/* ===========================================
+   MENU MOBILE OVERLAY
+   =========================================== */
+
 .mobileMenuOverlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   background-color: var(--white-principal);
-  z-index: 1001;
-  transform: translateX(0);
+  z-index: var(--z-modal);
+  transform: translateX(-100%);
   transition: transform 0.4s ease-in-out;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mobileMenuOverlay.open {
+  transform: translateX(0);
 }
 
 .mobileMenuHeader {
@@ -299,32 +455,50 @@
   align-items: center;
   padding: 1.5rem;
   border-bottom: 1px solid var(--cinza-claro);
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--white-principal);
 }
 
 .mobileMenuLogo {
   display: flex;
   gap: 0.3rem;
+  flex-shrink: 0;
 }
 
 .closeMobileMenu {
-  background: none;
-  border: none;
+  background: var(--white-principal);
+  border: 1px solid var(--cinza-claro);
   font-size: 1.8rem;
   color: var(--wine-destaque);
   cursor: pointer;
   padding: 0.5rem;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+  border-radius: var(--radius-medium);
+}
+
+.closeMobileMenu:hover {
+  color: var(--white-principal);
+  background-color: var(--wine-destaque);
+  border-color: var(--wine-destaque);
 }
 
 .mobileMenuContent {
   padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--white-principal);
 }
 
 .mobileSearch {
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .mobileUserActions {
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .mobileActionLink {
@@ -334,18 +508,64 @@
   padding: 1rem;
   color: var(--preto-secundario);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: var(--radius-medium);
   margin-bottom: 0.5rem;
-  transition: background-color 0.3s ease;
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--white-principal);
+  border: 1px solid var(--cinza-claro);
+  cursor: pointer;
+  font-size: 1rem;
+  text-align: left;
 }
 
 .mobileActionLink:hover {
-  background-color: var(--rosa-suave);
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.mobileCartInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.mobileCartDetails {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.mobileCartCount {
+  font-size: 0.8rem;
+  color: inherit;
+  white-space: nowrap;
+}
+
+.mobileCartTotal {
+  font-size: 0.9rem;
   color: var(--wine-destaque);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mobileActionLink:hover .mobileCartCount {
+  color: var(--white-principal);
+}
+
+.mobileActionLink:hover .mobileCartTotal {
+  color: var(--dourado-sutil);
 }
 
 .mobileCategoryNav {
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .mobileNavTitle {
@@ -354,17 +574,19 @@
   font-weight: 600;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--cinza-claro);
+  border-bottom: 2px solid var(--wine-destaque);
 }
 
 .mobileCategoryList {
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 
 .mobileCategoryItem {
   margin-bottom: 0.5rem;
+  width: 100%;
 }
 
 .mobileCategoryLink {
@@ -372,18 +594,25 @@
   padding: 1rem;
   color: var(--preto-secundario);
   text-decoration: none;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  background: var(--white-principal);
+  border: 1px solid var(--cinza-claro);
 }
 
 .mobileCategoryLink:hover {
-  background-color: var(--cinza-claro);
-  color: var(--wine-destaque);
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
 }
 
 .mobileExtraLinks {
   border-top: 1px solid var(--cinza-claro);
   padding-top: 1.5rem;
+  width: 100%;
 }
 
 .mobileExtraLink {
@@ -391,17 +620,79 @@
   padding: 1rem;
   color: var(--cinza-medio);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: var(--radius-medium);
   margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  background: var(--white-principal);
+  border: 1px solid var(--cinza-claro);
 }
 
 .mobileExtraLink:hover {
   background-color: var(--cinza-claro);
   color: var(--preto-secundario);
+  border-color: var(--cinza-medio);
 }
 
-/* Responsividade */
+/* ===========================================
+   RESPONSIVIDADE PARA TELAS GRANDES
+   =========================================== */
+
+/* Para telas muito grandes */
+@media (min-width: 1400px) {
+  .container,
+  .promoContent {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+  
+  .userActions {
+    gap: 1.5rem;
+  }
+  
+  .categoryList {
+    gap: 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container,
+  .promoContent {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+  
+  .userActions {
+    gap: 2rem;
+  }
+  
+  .categoryList {
+    gap: 3.5rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container,
+  .promoContent {
+    max-width: 90%;
+    padding: 0 5rem;
+  }
+  
+  .userActions {
+    gap: 2.5rem;
+  }
+  
+  .categoryList {
+    gap: 4rem;
+  }
+}
+
+/* ===========================================
+   RESPONSIVIDADE PARA TABLETS
+   =========================================== */
+
 @media (max-width: 1024px) {
   .mainHeader .container {
     gap: 1.5rem;
@@ -414,54 +705,35 @@
   .categoryList {
     gap: 1.5rem;
   }
+  
+  .userActions {
+    gap: 0.8rem;
+  }
+  
+  .logoText,
+  .logoAccent {
+    font-size: 2rem;
+  }
 }
 
+/* ===========================================
+   RESPONSIVIDADE PARA MOBILE
+   =========================================== */
+
 @media (max-width: 768px) {
+  .container,
+  .promoContent {
+    padding: 0 1rem;
+  }
+  
   .promoText {
     font-size: 0.8rem;
   }
   
-  .mainHeader .container {
-    grid-template-columns: auto 1fr auto;
-    gap: 1rem;
-  }
-  
-  .logoText, .logoAccent {
-    font-size: 1.8rem;
-  }
-  
-  .searchSection {
-    max-width: 300px;
-  }
-  
-  .actionText {
-    display: none;
-  }
-  
-  .userActions {
-    gap: 1rem;
-  }
-  
-  .mobileMenuButton {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: none;
-    border: none;
-    color: var(--preto-secundario);
-    cursor: pointer;
-    padding: 0.5rem;
-    font-size: 1.4rem;
-  }
-  
-  .categoryNav {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 0.8rem;
+  .closePromo {
+    right: 0.5rem;
+    font-size: 1rem;
+    padding: 0.3rem;
   }
   
   .mainHeader {
@@ -470,16 +742,35 @@
   
   .mainHeader .container {
     grid-template-columns: auto 1fr auto;
-    gap: 0.8rem;
+    gap: 1rem;
   }
   
-  .logoText, .logoAccent {
-    font-size: 1.5rem;
+  .logoText,
+  .logoAccent {
+    font-size: 1.8rem;
+  }
+  
+  .searchSection {
+    max-width: 300px;
   }
   
   .searchInput {
     padding: 0.8rem 1rem;
+    padding-right: 3rem;
     font-size: 0.9rem;
+  }
+  
+  .searchButton {
+    padding: 0.6rem;
+    right: 6px;
+  }
+  
+  .actionText {
+    display: none;
+  }
+  
+  .cartTextWrapper {
+    display: none;
   }
   
   .userActions {
@@ -493,34 +784,186 @@
   .actionButton svg {
     font-size: 1.2rem;
   }
-}
-/* Atualizar apenas a seção do container */
-.container {
-  width: 100%;
-  max-width: 1400px; /* Aumentado */
-  margin: 0 auto;
-  padding: 0 2rem; /* Aumentado */
-}
-
-/* Para telas muito grandes */
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1600px;
-    padding: 0 3rem;
+  
+  .cartButton {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .cartIcon {
+    font-size: 1.3rem;
+  }
+  
+  .mobileMenuButton {
+    display: flex;
+  }
+  
+  .categoryNav {
+    display: none;
   }
 }
 
-@media (min-width: 1600px) {
-  .container {
-    max-width: 1800px;
-    padding: 0 4rem;
+/* ===========================================
+   RESPONSIVIDADE PARA MOBILE PEQUENO
+   =========================================== */
+
+@media (max-width: 480px) {
+  .container,
+  .promoContent {
+    padding: 0 0.8rem;
+  }
+  
+  .promoText {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+  
+  .closePromo {
+    right: 0.3rem;
+    font-size: 0.9rem;
+  }
+  
+  .mainHeader .container {
+    gap: 0.8rem;
+  }
+  
+  .logoText,
+  .logoAccent {
+    font-size: 1.5rem;
+  }
+  
+  .searchInput {
+    padding: 0.7rem 0.8rem;
+    padding-right: 2.8rem;
+    font-size: 0.85rem;
+  }
+  
+  .searchButton {
+    padding: 0.5rem;
+    right: 4px;
+  }
+  
+  .userActions {
+    gap: 0.3rem;
+  }
+  
+  .actionButton {
+    padding: 0.2rem;
+  }
+  
+  .actionButton svg {
+    font-size: 1.1rem;
+  }
+  
+  .cartButton {
+    padding: 0.3rem;
+  }
+  
+  .cartIcon {
+    font-size: 1.2rem;
+  }
+  
+  .cartCount {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+    min-width: 16px;
+  }
+  
+  .mobileMenuContent {
+    padding: 1rem;
+  }
+  
+  .mobileMenuHeader {
+    padding: 1rem;
   }
 }
 
-@media (min-width: 1920px) {
-  .container {
-    max-width: 90%;
-    padding: 0 5rem;
+/* ===========================================
+   ACESSIBILIDADE E PERFORMANCE
+   =========================================== */
+
+/* Melhorar performance */
+.cartButton,
+.actionButton,
+.categoryLink,
+.searchButton {
+  will-change: transform;
+}
+
+/* Reduzir animações para usuários que preferem */
+@media (prefers-reduced-motion: reduce) {
+  .promoBar,
+  .cartCount,
+  .actionButton,
+  .cartButton,
+  .categoryLink,
+  .searchButton,
+  .mobileMenuOverlay,
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
   }
 }
 
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom: 2px solid var(--preto-secundario);
+  }
+  
+  .searchInput {
+    border-width: 3px;
+  }
+  
+  .categoryLink:hover {
+    border: 2px solid var(--wine-destaque);
+  }
+  
+  .mobileActionLink,
+  .mobileCategoryLink,
+  .mobileExtraLink {
+    border-width: 2px;
+  }
+}
+
+/* ===========================================
+   CORREÇÕES ESPECÍFICAS PARA OVERFLOW
+   =========================================== */
+
+/* Garantir que nenhum elemento exceda a largura */
+.header,
+.promoBar,
+.categoryNav,
+.mobileMenuOverlay {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Containers flexíveis */
+.container,
+.promoContent,
+.userActions,
+.categoryList {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Elementos que podem vazar */
+.searchInput,
+.actionText,
+.cartLabel,
+.cartTotal,
+.promoText {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Flex items que precisam de controle */
+.searchSection,
+.cartTextWrapper,
+.mobileCartDetails {
+  min-width: 0;
+  flex-shrink: 1;
+}

@@ -1,14 +1,35 @@
-/* Reset e configurações globais */
-* {
+/* ===========================================
+   IMPORTAÇÕES E FONTES
+   =========================================== */
+
+/* Importar fontes do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* Importar variáveis CSS */
+@import './variables.css';
+
+/* ===========================================
+   RESET E CONFIGURAÇÕES GLOBAIS
+   =========================================== */
+
+/* Reset básico */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Configurações do HTML */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden; /* Prevenir scroll horizontal */
+  width: 100%;
+  max-width: 100vw;
 }
 
+/* Configurações do Body */
 body {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
@@ -17,52 +38,37 @@ body {
   line-height: 1.6;
   color: var(--preto-secundario);
   background-color: var(--white-principal);
+  overflow-x: hidden; /* Prevenir scroll horizontal */
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
 }
 
-/* Importar fontes do Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
-
-/* Variáveis CSS */
-:root {
-  /* Paleta de Cores "BOUTIQUE ELEGANZA" */
-  --white-principal: #FFFFFF;
-  --wine-destaque: #722F37;
-  --preto-secundario: #000000;
-  --cinza-claro: #F8F9FA;
-  --cinza-medio: #6C757D;
-  --rosa-suave: #F8E8E9;
-  --dourado-sutil: #D4AF37;
-  
-  /* Sombras */
-  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.1);
-  --shadow-heavy: 0 8px 30px rgba(0, 0, 0, 0.15);
-  
-  /* Transições */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-  
-  /* Border Radius */
-  --radius-small: 5px;
-  --radius-medium: 10px;
-  --radius-large: 15px;
-  --radius-round: 50%;
-  
-  /* Container widths responsivos */
-  --container-sm: 100%;
-  --container-md: 100%;
-  --container-lg: 100%;
-  --container-xl: 100%;
-  --container-max-width: 1400px; /* Aumentado para telas grandes */
+/* Prevenir elementos que excedem a largura */
+img, 
+video, 
+iframe, 
+object, 
+embed,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+  box-sizing: border-box;
 }
 
-/* Utilitários - Container responsivo */
+/* ===========================================
+   CONTAINERS RESPONSIVOS
+   =========================================== */
+
+/* Container principal */
 .container {
   width: 100%;
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 2rem; /* Aumentado o padding lateral */
+  padding: 0 2rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Container específico para telas grandes */
@@ -87,6 +93,10 @@ body {
   }
 }
 
+/* ===========================================
+   UTILITÁRIOS DE TEXTO
+   =========================================== */
+
 .text-center {
   text-align: center;
 }
@@ -99,7 +109,17 @@ body {
   text-align: right;
 }
 
-/* Botões globais */
+/* Quebra de palavras para textos longos */
+.text-break {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ===========================================
+   SISTEMA DE BOTÕES GLOBAIS
+   =========================================== */
+
 .btn {
   display: inline-block;
   padding: 0.8rem 1.5rem;
@@ -112,15 +132,21 @@ body {
   transition: all var(--transition-normal);
   font-family: inherit;
   font-size: 0.95rem;
+  line-height: 1.4;
+  min-width: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .btn-primary {
   background: var(--wine-destaque);
   color: var(--white-principal);
+  border: 2px solid var(--wine-destaque);
 }
 
 .btn-primary:hover {
   background: var(--preto-secundario);
+  border-color: var(--preto-secundario);
   transform: translateY(-2px);
   box-shadow: var(--shadow-medium);
 }
@@ -134,6 +160,7 @@ body {
 .btn-secondary:hover {
   background: var(--wine-destaque);
   color: var(--white-principal);
+  transform: translateY(-2px);
 }
 
 .btn-outline {
@@ -146,9 +173,30 @@ body {
   background: var(--cinza-claro);
   border-color: var(--wine-destaque);
   color: var(--wine-destaque);
+  transform: translateY(-2px);
 }
 
-/* Animações globais */
+/* Botões responsivos */
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* ===========================================
+   ANIMAÇÕES GLOBAIS
+   =========================================== */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -191,6 +239,22 @@ body {
   }
 }
 
+@keyframes bounceIn {
+  0% { 
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Classes de animação */
 .fade-in {
   animation: fadeIn 0.6s ease-out;
 }
@@ -203,26 +267,56 @@ body {
   animation: slideInRight 0.6s ease-out;
 }
 
-/* Scrollbar personalizada */
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ===========================================
+   SCROLLBAR PERSONALIZADA
+   =========================================== */
+
+/* Webkit browsers */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--cinza-claro);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--wine-destaque);
   border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--preto-secundario);
 }
 
-/* Seleção de texto */
+::-webkit-scrollbar-corner {
+  background: var(--cinza-claro);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--wine-destaque) var(--cinza-claro);
+}
+
+/* ===========================================
+   SELEÇÃO DE TEXTO E FOCUS
+   =========================================== */
+
+/* Seleção de texto personalizada */
 ::selection {
+  background: var(--rosa-suave);
+  color: var(--wine-destaque);
+}
+
+::-moz-selection {
   background: var(--rosa-suave);
   color: var(--wine-destaque);
 }
@@ -231,75 +325,106 @@ body {
 *:focus {
   outline: 2px solid var(--wine-destaque);
   outline-offset: 2px;
+  border-radius: 2px;
 }
 
-/* Links globais */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   LINKS GLOBAIS
+   =========================================== */
+
 a {
   color: var(--wine-destaque);
   transition: color var(--transition-normal);
+  text-decoration: none;
 }
 
 a:hover {
   color: var(--preto-secundario);
 }
 
-/* Tipografia */
+a:focus {
+  color: var(--preto-secundario);
+  text-decoration: underline;
+}
+
+/* ===========================================
+   TIPOGRAFIA RESPONSIVA
+   =========================================== */
+
+/* Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', serif;
   font-weight: 600;
   line-height: 1.3;
   margin-bottom: 1rem;
+  color: var(--preto-secundario);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
 }
 
 h2 {
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
 }
 
 h3 {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
 h4 {
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
 }
 
 h5 {
-  font-size: 1.25rem;
+  font-size: clamp(1.1rem, 2vw, 1.25rem);
 }
 
 h6 {
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.5vw, 1rem);
 }
 
+/* Parágrafos */
 p {
   margin-bottom: 1rem;
   line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Responsividade para tipografia */
+/* Listas */
+ul, ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+}
+
+/* ===========================================
+   RESPONSIVIDADE PARA CONTAINERS
+   =========================================== */
+
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
   }
   
-  h1 {
-    font-size: 2.5rem;
-  }
-  
-  h2 {
-    font-size: 2rem;
-  }
-  
-  h3 {
-    font-size: 1.75rem;
-  }
-  
-  h4 {
-    font-size: 1.25rem;
+  body {
+    font-size: 0.9rem;
   }
 }
 
@@ -308,20 +433,67 @@ p {
     padding: 0 0.8rem;
   }
   
-  h1 {
-    font-size: 2rem;
-  }
-  
-  h2 {
-    font-size: 1.75rem;
-  }
-  
-  h3 {
-    font-size: 1.5rem;
+  body {
+    font-size: 0.85rem;
   }
 }
 
-/* Acessibilidade */
+/* ===========================================
+   UTILITÁRIOS DE LAYOUT
+   =========================================== */
+
+/* Flex utilities */
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+/* Grid utilities */
+.d-grid {
+  display: grid;
+}
+
+.grid-auto {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Spacing utilities */
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mt-3 { margin-top: 3rem; }
+
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.mb-3 { margin-bottom: 3rem; }
+
+.p-1 { padding: 1rem; }
+.p-2 { padding: 2rem; }
+.p-3 { padding: 3rem; }
+
+/* ===========================================
+   ACESSIBILIDADE
+   =========================================== */
+
+/* Reduzir animações para usuários que preferem */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -333,7 +505,23 @@ p {
   }
 }
 
-/* Print styles */
+/* Screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===========================================
+   PRINT STYLES
+   =========================================== */
+
 @media print {
   * {
     background: transparent !important;
@@ -349,9 +537,181 @@ p {
   
   img {
     max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  p {
+    orphans: 3;
+    widows: 3;
   }
   
   @page {
     margin: 0.5cm;
   }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ===========================================
+   PERFORMANCE E OTIMIZAÇÕES
+   =========================================== */
+
+/* Otimizações de performance */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Lazy loading */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+/* ===========================================
+   CORREÇÕES ESPECÍFICAS PARA OVERFLOW
+   =========================================== */
+
+/* Prevenir overflow em todos os elementos */
+* {
+  max-width: 100%;
+}
+
+/* Containers que podem causar overflow */
+.container,
+[class*="container"],
+[class*="wrapper"],
+[class*="section"] {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Elementos inline que podem vazar */
+span,
+strong,
+em,
+small {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Tabelas responsivas */
+table {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.8rem;
+  }
+}
+
+/* Formulários responsivos */
+input,
+textarea,
+select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ===========================================
+   FORMULÁRIOS E INPUTS
+   =========================================== */
+
+input,
+textarea,
+select {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.8rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color var(--transition-normal);
+  box-sizing: border-box;
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--cinza-medio);
+}
+
+/* ===========================================
+   BOTÕES E ELEMENTOS INTERATIVOS
+   =========================================== */
+
+button {
+  border-radius: var(--radius-medium);
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: var(--font-medium);
+  font-family: inherit;
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+button:hover {
+  background-color: var(--wine-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* ===========================================
+   DEBUGGING (REMOVER EM PRODUÇÃO)
+   =========================================== */
+
+/* Classe para debug de overflow - usar temporariamente */
+.debug-overflow * {
+  outline: 1px solid rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Classe para mostrar grid */
+.debug-grid {
+  background-image: 
+    linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
 }

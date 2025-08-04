@@ -1,10 +1,68 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
 .layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .main {
   flex: 1;
   width: 100%;
+}
+
+/* ===========================================
+   CONTAINERS RESPONSIVOS
+   =========================================== */
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 90%;
+    padding: 0 5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+}
+
+/* ===========================================
+   OVERFLOW PREVENTION
+   =========================================== */
+
+.layout * {
+  max-width: 100%;
+  box-sizing: border-box;
 }

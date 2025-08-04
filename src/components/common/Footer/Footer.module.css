@@ -1,38 +1,98 @@
 /* Importar variáveis CSS globais */
 @import '../../../styles/variables.css';
 
+/* ===========================================
+   FOOTER PRINCIPAL
+   =========================================== */
+
 .footer {
   background: var(--preto-secundario);
   color: var(--white-principal);
   margin-top: auto;
+  width: 100%;
+  overflow-x: hidden; /* Prevenir overflow horizontal */
 }
+
+/* ===========================================
+   CONTAINER RESPONSIVO
+   =========================================== */
 
 .container {
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
+  box-sizing: border-box;
 }
 
-/* Seção Principal do Footer */
+/* Para telas muito grandes */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 90%;
+    padding: 0 5rem;
+  }
+}
+
+/* ===========================================
+   SEÇÃO PRINCIPAL DO FOOTER
+   =========================================== */
+
 .footerMain {
   padding: 3rem 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .footerGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2.5rem;
+  width: 100%;
+}
+
+@media (min-width: 1200px) {
+  .footerGrid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .footerGrid {
+    gap: 4rem;
+  }
 }
 
 .footerSection {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* Permitir shrink */
+  overflow: hidden; /* Prevenir overflow */
 }
 
-/* Logo do Footer */
+/* ===========================================
+   LOGO DO FOOTER
+   =========================================== */
+
 .footerLogo {
   display: flex;
   gap: 0.3rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap; /* Permitir quebra se necessário */
 }
 
 .logoText {
@@ -55,12 +115,18 @@
   line-height: 1.6;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Links Sociais */
+/* ===========================================
+   LINKS SOCIAIS
+   =========================================== */
+
 .socialLinks {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap; /* Permitir quebra */
 }
 
 .socialLink {
@@ -75,6 +141,7 @@
   text-decoration: none;
   transition: all 0.3s ease;
   font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
 .socialLink:hover {
@@ -83,7 +150,10 @@
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
-/* Títulos das Seções */
+/* ===========================================
+   TÍTULOS DAS SEÇÕES
+   =========================================== */
+
 .footerTitle {
   color: var(--wine-destaque);
   font-size: 1.2rem;
@@ -91,6 +161,7 @@
   margin-bottom: 1.5rem;
   position: relative;
   padding-bottom: 0.5rem;
+  word-wrap: break-word;
 }
 
 .footerTitle::after {
@@ -103,11 +174,15 @@
   background: var(--dourado-sutil);
 }
 
-/* Links do Footer */
+/* ===========================================
+   LINKS DO FOOTER
+   =========================================== */
+
 .footerLinks {
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 
 .footerLinks li {
@@ -117,8 +192,10 @@
 .footerLinks a {
   color: var(--cinza-claro);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
   font-size: 0.95rem;
+  word-wrap: break-word;
+  display: block;
 }
 
 .footerLinks a:hover {
@@ -126,9 +203,13 @@
   padding-left: 5px;
 }
 
-/* Informações de Contato */
+/* ===========================================
+   INFORMAÇÕES DE CONTATO
+   =========================================== */
+
 .contactInfo {
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .contactItem {
@@ -138,6 +219,7 @@
   margin-bottom: 1rem;
   color: var(--cinza-claro);
   font-size: 0.95rem;
+  word-wrap: break-word;
 }
 
 .contactIcon {
@@ -147,12 +229,17 @@
   flex-shrink: 0;
 }
 
-/* Newsletter */
+/* ===========================================
+   NEWSLETTER
+   =========================================== */
+
 .newsletter {
   background: rgba(114, 47, 55, 0.1);
   padding: 1.5rem;
   border-radius: 10px;
   border: 1px solid var(--wine-destaque);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .newsletterTitle {
@@ -160,17 +247,20 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  word-wrap: break-word;
 }
 
 .newsletterText {
   color: var(--cinza-claro);
   font-size: 0.9rem;
   margin-bottom: 1rem;
+  word-wrap: break-word;
 }
 
 .newsletterForm {
   display: flex;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .newsletterInput {
@@ -181,6 +271,8 @@
   background: var(--white-principal);
   color: var(--preto-secundario);
   font-size: 0.9rem;
+  min-width: 0; /* Permitir shrink */
+  box-sizing: border-box;
 }
 
 .newsletterInput:focus {
@@ -198,24 +290,31 @@
   font-weight: 600;
   transition: background 0.3s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .newsletterButton:hover {
   background: var(--dourado-sutil);
 }
 
-/* Seção de Benefícios */
+/* ===========================================
+   SEÇÃO DE BENEFÍCIOS
+   =========================================== */
+
 .benefitsSection {
   background: rgba(114, 47, 55, 0.1);
   padding: 2rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .benefitsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
+  width: 100%;
 }
 
 .benefitItem {
@@ -223,6 +322,7 @@
   align-items: center;
   gap: 1rem;
   text-align: left;
+  min-width: 0; /* Permitir shrink */
 }
 
 .benefitIcon {
@@ -231,22 +331,34 @@
   flex-shrink: 0;
 }
 
+.benefitContent {
+  flex: 1;
+  min-width: 0;
+}
+
 .benefitTitle {
   color: var(--wine-destaque);
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.3rem;
+  word-wrap: break-word;
 }
 
 .benefitText {
   color: var(--cinza-claro);
   font-size: 0.9rem;
+  word-wrap: break-word;
 }
 
-/* Rodapé Final */
+/* ===========================================
+   RODAPÉ FINAL
+   =========================================== */
+
 .footerBottom {
   background: rgba(0, 0, 0, 0.3);
   padding: 1.5rem 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .footerBottomContent {
@@ -255,40 +367,54 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  width: 100%;
 }
 
 .copyright {
   color: var(--cinza-claro);
   font-size: 0.9rem;
   margin: 0;
+  word-wrap: break-word;
 }
 
 .paymentMethods {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .paymentText {
   color: var(--cinza-claro);
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .paymentIcons {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .paymentIcon {
   height: 30px;
   width: auto;
+  max-width: 50px; /* Limitar largura máxima */
   border-radius: 4px;
   background: var(--white-principal);
   padding: 0.2rem;
+  object-fit: contain;
 }
 
-/* Responsividade */
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
 @media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
   .footerGrid {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -322,6 +448,11 @@
   .newsletterButton {
     padding: 1rem;
   }
+  
+  .logoText,
+  .logoAccent {
+    font-size: 1.6rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -342,6 +473,8 @@
     padding: 1rem;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .socialLinks {
@@ -349,58 +482,57 @@
   }
   
   .paymentIcons {
-    flex-wrap: wrap;
     justify-content: center;
   }
-}
-
-/* Atualizar apenas a seção do container */
-.container {
-  width: 100%;
-  max-width: 1400px; /* Aumentado */
-  margin: 0 auto;
-  padding: 0 2rem; /* Aumentado */
-}
-
-/* Para telas muito grandes */
-@media (min-width: 1400px) {
+  
   .container {
-    max-width: 1600px;
-    padding: 0 3rem;
+    padding: 0 0.8rem;
+  }
+  
+  .newsletter {
+    padding: 1rem;
+  }
+  
+  .logoText,
+  .logoAccent {
+    font-size: 1.4rem;
   }
 }
 
-@media (min-width: 1600px) {
-  .container {
-    max-width: 1800px;
-    padding: 0 4rem;
+/* ===========================================
+   PERFORMANCE E ACESSIBILIDADE
+   =========================================== */
+
+/* Melhorar performance */
+.socialLink,
+.newsletterButton,
+.footerLinks a {
+  will-change: transform;
+}
+
+/* Modo escuro (se implementado futuramente) */
+@media (prefers-color-scheme: dark) {
+  .footer {
+    background: var(--preto-secundario, #0a0a0a);
   }
 }
 
-@media (min-width: 1920px) {
-  .container {
-    max-width: 90%;
-    padding: 0 5rem;
+/* Reduzir animações para usuários que preferem */
+@media (prefers-reduced-motion: reduce) {
+  .socialLink,
+  .newsletterButton,
+  .footerLinks a,
+  * {
+    transition-duration: 0.01ms !important;
+    transform: none !important;
   }
 }
 
-/* Footer Grid - Melhorado para telas grandes */
-.footerGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2.5rem;
-}
-
-@media (min-width: 1200px) {
-  .footerGrid {
-    grid-template-columns: 2fr 1fr 1fr 1.5fr; /* Proporções melhores */
-    gap: 3rem;
+/* Melhorar contraste para acessibilidade */
+@media (prefers-contrast: high) {
+  .footerDescription,
+  .contactItem,
+  .newsletterText {
+    color: var(--white-principal);
   }
 }
-
-@media (min-width: 1600px) {
-  .footerGrid {
-    gap: 4rem;
-  }
-}
-

@@ -6,7 +6,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: true
+    host: 'localhost', // Apenas localhost, não compartilha na rede
+    strictPort: true,  // Falha se a porta estiver ocupada
+    open: true        // Abre automaticamente o navegador
   },
   build: {
     outDir: 'dist',

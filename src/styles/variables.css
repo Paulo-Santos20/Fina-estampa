@@ -403,3 +403,192 @@
 .debug-wine { background: var(--wine-destaque) !important; opacity: 0.3; }
 .debug-gold { background: var(--dourado-sutil) !important; opacity: 0.3; }
 .debug-rose { background: var(--rosa-suave) !important; opacity: 0.3; }
+
+/* ===========================================
+   VARIÁVEIS CSS GLOBAIS - FINA ESTAMPA
+   =========================================== */
+
+:root {
+  /* Cores Principais */
+  --white-principal: #FFFFFF;
+  --wine-destaque: #722F37;
+  --preto-secundario: #000000;
+  --cinza-claro: #F8F9FA;
+  --cinza-medio: #6C757D;
+  --rosa-suave: #F8E8E9;
+  --dourado-sutil: #D4AF37;
+  
+  /* Cores Adicionais */
+  --wine-dark: #5a252a;
+  --dourado-dark: #b8941f;
+  --cinza-escuro: #495057;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  
+  /* Tipografia */
+  --font-primary: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-secondary: 'Playfair Display', serif;
+  
+  /* Tamanhos de Fonte */
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  --font-4xl: 2.25rem;
+  --font-5xl: 3rem;
+  
+  /* Espaçamentos */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* Border Radius */
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 16px;
+  --radius-xl: 24px;
+  --radius-full: 50%;
+  
+  /* Sombras */
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --shadow-wine: 0 4px 15px rgba(114, 47, 55, 0.3);
+  --shadow-gold: 0 4px 15px rgba(212, 175, 55, 0.3);
+  
+  /* Transições */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  
+  /* Breakpoints (para uso em JS) */
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-xxl: 1400px;
+  
+  /* Container Max Widths */
+  --container-sm: 540px;
+  --container-md: 720px;
+  --container-lg: 960px;
+  --container-xl: 1140px;
+  --container-xxl: 1320px;
+}
+
+/* ===========================================
+   DARK MODE SUPPORT (FUTURO)
+   =========================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Cores para modo escuro - desabilitado por enquanto */
+    /* --white-principal: #1a1a1a; */
+    /* --preto-secundario: #ffffff; */
+    /* --cinza-claro: #2d2d2d; */
+    /* --cinza-medio: #a0a0a0; */
+  }
+}
+
+/* ===========================================
+   VARIÁVEIS PARA ANIMAÇÕES
+   =========================================== */
+
+:root {
+  /* Durações de Animação */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 750ms;
+  
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Transformações Comuns */
+  --scale-up: scale(1.05);
+  --scale-down: scale(0.95);
+  --rotate-45: rotate(45deg);
+  --rotate-90: rotate(90deg);
+  --rotate-180: rotate(180deg);
+}
+
+/* ===========================================
+   VARIÁVEIS PARA LAYOUT
+   =========================================== */
+
+:root {
+  /* Header */
+  --header-height: 80px;
+  --header-height-mobile: 70px;
+  
+  /* Footer */
+  --footer-height: auto;
+  
+  /* Sidebar */
+  --sidebar-width: 280px;
+  --sidebar-width-collapsed: 80px;
+  
+  /* Content */
+  --content-max-width: 1400px;
+  --content-padding: 2rem;
+  --content-padding-mobile: 1rem;
+}
+
+/* ===========================================
+   VARIÁVEIS PARA COMPONENTES ESPECÍFICOS
+   =========================================== */
+
+:root {
+  /* Botões */
+  --button-height: 44px;
+  --button-height-sm: 36px;
+  --button-height-lg: 52px;
+  --button-padding: 1rem 2rem;
+  --button-padding-sm: 0.75rem 1.5rem;
+  --button-padding-lg: 1.25rem 2.5rem;
+  
+  /* Inputs */
+  --input-height: 44px;
+  --input-padding: 0.75rem 1rem;
+  --input-border: 1px solid var(--cinza-claro);
+  --input-border-focus: 2px solid var(--wine-destaque);
+  
+  /* Cards */
+  --card-padding: 1.5rem;
+  --card-border-radius: var(--radius-large);
+  --card-shadow: var(--shadow-light);
+  --card-shadow-hover: var(--shadow-medium);
+  
+  /* Modal */
+  --modal-backdrop: rgba(0, 0, 0, 0.5);
+  --modal-max-width: 90vw;
+  --modal-max-height: 90vh;
+  --modal-padding: 2rem;
+  
+  /* Carousel */
+  --carousel-gap: 2rem;
+  --carousel-item-width: 320px;
+  --carousel-item-width-mobile: 280px;
+}

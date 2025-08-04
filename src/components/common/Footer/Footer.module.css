@@ -1,0 +1,406 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+.footer {
+  background: var(--preto-secundario);
+  color: var(--white-principal);
+  margin-top: auto;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Seção Principal do Footer */
+.footerMain {
+  padding: 3rem 0;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.5rem;
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Logo do Footer */
+.footerLogo {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.logoText {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+}
+
+.logoAccent {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--dourado-sutil);
+  font-style: italic;
+}
+
+.footerDescription {
+  color: var(--cinza-claro);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Links Sociais */
+.socialLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.socialLink:hover {
+  background: var(--dourado-sutil);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Títulos das Seções */
+.footerTitle {
+  color: var(--wine-destaque);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footerTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--dourado-sutil);
+}
+
+/* Links do Footer */
+.footerLinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerLinks li {
+  margin-bottom: 0.8rem;
+}
+
+.footerLinks a {
+  color: var(--cinza-claro);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.footerLinks a:hover {
+  color: var(--dourado-sutil);
+  padding-left: 5px;
+}
+
+/* Informações de Contato */
+.contactInfo {
+  margin-bottom: 2rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  color: var(--cinza-claro);
+  font-size: 0.95rem;
+}
+
+.contactIcon {
+  color: var(--wine-destaque);
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+/* Newsletter */
+.newsletter {
+  background: rgba(114, 47, 55, 0.1);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--wine-destaque);
+}
+
+.newsletterTitle {
+  color: var(--wine-destaque);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.newsletterText {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletterInput {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid var(--cinza-medio);
+  border-radius: 5px;
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  font-size: 0.9rem;
+}
+
+.newsletterInput:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+}
+
+.newsletterButton {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.newsletterButton:hover {
+  background: var(--dourado-sutil);
+}
+
+/* Seção de Benefícios */
+.benefitsSection {
+  background: rgba(114, 47, 55, 0.1);
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.benefitIcon {
+  color: var(--dourado-sutil);
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.benefitTitle {
+  color: var(--wine-destaque);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.benefitText {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+}
+
+/* Rodapé Final */
+.footerBottom {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem 0;
+}
+
+.footerBottomContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.copyright {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.paymentMethods {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.paymentText {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+}
+
+.paymentIcons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.paymentIcon {
+  height: 30px;
+  width: auto;
+  border-radius: 4px;
+  background: var(--white-principal);
+  padding: 0.2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .benefitsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .benefitItem {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .footerBottomContent {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .paymentMethods {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .newsletterForm {
+    flex-direction: column;
+  }
+  
+  .newsletterButton {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerMain {
+    padding: 2rem 0;
+  }
+  
+  .benefitsSection {
+    padding: 1.5rem 0;
+  }
+  
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .benefitItem {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
+  
+  .socialLinks {
+    justify-content: center;
+  }
+  
+  .paymentIcons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Atualizar apenas a seção do container */
+.container {
+  width: 100%;
+  max-width: 1400px; /* Aumentado */
+  margin: 0 auto;
+  padding: 0 2rem; /* Aumentado */
+}
+
+/* Para telas muito grandes */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 90%;
+    padding: 0 5rem;
+  }
+}
+
+/* Footer Grid - Melhorado para telas grandes */
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.5rem;
+}
+
+@media (min-width: 1200px) {
+  .footerGrid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr; /* Proporções melhores */
+    gap: 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .footerGrid {
+    gap: 4rem;
+  }
+}
+

@@ -1,0 +1,20 @@
+:root {
+  /* Paleta de Cores "BOUTIQUE ELEGANZA" */
+  --white-principal: #FFFFFF;
+  --wine-destaque: #722F37;
+  --preto-secundario: #000000;
+  --cinza-claro: #F8F9FA;
+  --cinza-medio: #6C757D;
+  --rosa-suave: #F8E8E9;
+  --dourado-sutil: #D4AF37;
+}
+
+/* Importar fontes, se necessário (exemplo com Google Fonts) */
+/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500;600&display=swap'); */
+
+body {
+  font-family: 'Montserrat', sans-serif; /* Exemplo de fonte para o corpo */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

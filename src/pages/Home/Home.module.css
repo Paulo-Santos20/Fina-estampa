@@ -1,0 +1,631 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+.homePage {
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Seção Hero */
+.heroSection {
+  position: relative;
+  height: 70vh;
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.heroCarousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.heroSlide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.heroSlide.active {
+  opacity: 1;
+}
+
+.heroContent {
+  text-align: center;
+  color: var(--white-principal);
+  max-width: 600px;
+  padding: 2rem;
+  animation: slideUp 1s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.heroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+}
+
+.heroSubtitle {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: 300;
+}
+
+.heroButton {
+  display: inline-block;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  padding: 1.2rem 2.5rem;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.heroButton:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Controles do Carrossel */
+.carouselControl {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  color: var(--wine-destaque);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.carouselControl:hover {
+  background: var(--white-principal);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prevControl {
+  left: 2rem;
+}
+
+.nextControl {
+  right: 2rem;
+}
+
+/* Indicadores */
+.carouselIndicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--white-principal);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: var(--white-principal);
+  transform: scale(1.2);
+}
+
+/* Seções Gerais */
+.promoSection,
+.categoriesSection,
+.newProductsSection {
+  padding: 4rem 0;
+}
+
+.promoSection {
+  background: var(--cinza-claro);
+}
+
+.newProductsSection {
+  background: var(--cinza-claro);
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.sectionIcon {
+  font-size: 2rem;
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: var(--cinza-medio);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Grid de Produtos */
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.productCard {
+  background: var(--white-principal);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.productCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.productImageWrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.productCard:hover .productImage {
+  transform: scale(1.05);
+}
+
+.discountBadge,
+.newBadge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--white-principal);
+  z-index: 5;
+}
+
+.discountBadge {
+  background: var(--wine-destaque);
+}
+
+.newBadge {
+  background: var(--dourado-sutil);
+}
+
+.productActions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease;
+}
+
+.productCard:hover .productActions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.actionButton {
+  background: var(--white-principal);
+  border: none;
+  color: var(--wine-destaque);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.actionButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: scale(1.1);
+}
+
+.productInfo {
+  padding: 1.5rem;
+}
+
+.productName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.productRating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.starFilled {
+  color: var(--dourado-sutil);
+  font-size: 0.9rem;
+}
+
+.starHalf {
+  color: var(--dourado-sutil);
+  font-size: 0.9rem;
+}
+
+.starEmpty {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+}
+
+.reviewCount {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+}
+
+.productPricing {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.originalPrice {
+  color: var(--cinza-medio);
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}
+
+.salePrice,
+.price {
+  color: var(--wine-destaque);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Grid de Categorias */
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.categoryCard {
+  text-decoration: none;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.categoryCard:hover {
+  transform: scale(1.02);
+}
+
+.categoryImageWrapper {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+
+.categoryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.categoryCard:hover .categoryImage {
+  transform: scale(1.1);
+}
+
+.categoryOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: var(--white-principal);
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+}
+
+.categoryName {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.categoryDescription {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Footer das Seções */
+.sectionFooter {
+  text-align: center;
+}
+
+.viewAllButton {
+  display: inline-block;
+  background: transparent;
+  color: var(--wine-destaque);
+  border: 2px solid var(--wine-destaque);
+  padding: 1rem 2rem;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.viewAllButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .heroButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .carouselControl {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .prevControl {
+    left: 1rem;
+  }
+  
+  .nextControl {
+    right: 1rem;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    height: 60vh;
+    min-height: 400px;
+  }
+  
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  
+  .heroContent {
+    padding: 1rem;
+  }
+  
+  .promoSection,
+  .categoriesSection,
+  .newProductsSection {
+    padding: 3rem 0;
+  }
+  
+  .sectionHeader {
+    margin-bottom: 2rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .productInfo {
+    padding: 1rem;
+  }
+}
+/* Atualizar apenas as seções do container e grids */
+.container {
+  width: 100%;
+  max-width: 1400px; /* Aumentado */
+  margin: 0 auto;
+  padding: 0 2rem; /* Aumentado */
+}
+
+/* Para telas muito grandes */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 90%;
+    padding: 0 5rem;
+  }
+}
+
+/* Grid de Produtos - Melhorado para telas grandes */
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Para telas grandes, limitar o número máximo de colunas */
+@media (min-width: 1200px) {
+  .productsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .productsGrid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .productsGrid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3rem;
+  }
+}
+
+/* Grid de Categorias - Melhorado para telas grandes */
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+@media (min-width: 1200px) {
+  .categoriesGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .categoriesGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+  }
+}
+
+/* Hero Section - Ocupar toda a largura */
+.heroSection {
+  position: relative;
+  height: 80vh; /* Aumentado para telas grandes */
+  min-height: 600px; /* Aumentado */
+  overflow: hidden;
+  width: 100%;
+}
+
+@media (min-width: 1400px) {
+  .heroSection {
+    height: 85vh;
+    min-height: 700px;
+  }
+}
+

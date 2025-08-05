@@ -2,39 +2,61 @@
 @import '../../../styles/variables.css';
 
 /* ===========================================
-   CARD DO PRODUTO - BASE
+   CARD DO PRODUTO
    =========================================== */
 
 .productCard {
   background: var(--white-principal);
   border-radius: var(--radius-large);
+  overflow: hidden;
   box-shadow: var(--shadow-light);
   transition: all var(--transition-normal);
-  overflow: hidden;
+  cursor: pointer;
+  will-change: transform;
   position: relative;
-  border: 1px solid var(--cinza-claro);
 }
 
 .productCard:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-medium);
 }
 
 .productLink {
-  display: block;
   text-decoration: none;
   color: inherit;
+  display: block;
   height: 100%;
 }
 
 /* ===========================================
-   CONTAINER DA IMAGEM
+   ESTADO DE ERRO
    =========================================== */
 
-.productImageContainer {
+.errorState {
+  padding: 2rem;
+  text-align: center;
+  color: var(--cinza-medio);
+  background: var(--cinza-claro);
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorState p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* ===========================================
+   IMAGEM DO PRODUTO
+   =========================================== */
+
+.imageWrapper {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 250px;
   overflow: hidden;
   background: var(--cinza-claro);
 }
@@ -43,7 +65,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-normal);
+  will-change: transform;
+}
+
+.productImage.loaded {
+  opacity: 1;
 }
 
 .productCard:hover .productImage {
@@ -51,171 +78,175 @@
 }
 
 /* ===========================================
-   PLACEHOLDER DA IMAGEM
+   LOADING STATE
    =========================================== */
 
-.imagePlaceholder {
+.imageLoading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cinza-claro);
+  z-index: 1;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--cinza-claro);
+  border-top: 3px solid var(--wine-destaque);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===========================================
+   FALLBACK DE IMAGEM
+   =========================================== */
+
+.imageFallback {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--cinza-claro);
-  color: var(--cinza-medio);
+  background: linear-gradient(135deg, var(--cinza-claro), #f0f0f0);
+  color: var(--wine-destaque);
+  text-align: center;
+  padding: 2rem;
 }
 
-.placeholderIcon {
+.fallbackIcon {
   font-size: 4rem;
   margin-bottom: 1rem;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
-.placeholderText {
-  font-size: 0.9rem;
-  text-align: center;
-  padding: 0 1rem;
-  font-weight: 500;
-}
-
-/* ===========================================
-   OVERLAY E AÇÕES RÁPIDAS
-   =========================================== */
-
-.productOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+.fallbackText {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 1rem;
-  opacity: 0;
-  transition: all var(--transition-normal);
-}
-
-.productCard:hover .productOverlay {
-  opacity: 1;
-}
-
-.quickActions {
-  display: flex;
-  justify-content: flex-end;
   gap: 0.5rem;
 }
 
-.quickViewButton,
-.favoriteButton {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--white-principal);
-  color: var(--preto-secundario);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  font-size: 1rem;
-}
-
-.quickViewButton:hover {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  transform: scale(1.1);
-}
-
-.favoriteButton:hover {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  transform: scale(1.1);
-}
-
-.favoriteButton svg {
+.brandName {
+  font-size: 1.2rem;
+  font-weight: 700;
   color: var(--wine-destaque);
 }
 
-.favoriteButton:hover svg,
-.favoriteButton.active svg {
-  color: var(--white-principal);
-}
-
-.addToCartButton {
-  width: 100%;
-  padding: 1rem;
-  background: linear-gradient(135deg, var(--wine-destaque), var(--wine-dark));
-  color: var(--white-principal);
-  border: none;
-  border-radius: var(--radius-medium);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+.fallbackMessage {
   font-size: 0.9rem;
-}
-
-.addToCartButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--wine-dark), var(--wine-destaque));
-  transform: translateY(-2px);
-}
-
-.addToCartButton:disabled {
-  background: var(--cinza-medio);
-  cursor: not-allowed;
-  transform: none;
+  color: var(--cinza-medio);
+  font-weight: 500;
 }
 
 /* ===========================================
    BADGES
    =========================================== */
 
-.productBadges {
+.discountBadge {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  z-index: 2;
-}
-
-.badge {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-medium);
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 5;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .newBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   background: var(--dourado-sutil);
   color: var(--preto-secundario);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-medium);
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.promoBadge {
+/* ===========================================
+   AÇÕES DO PRODUTO - SEMPRE VISÍVEIS
+   =========================================== */
+
+.actions {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 1; /* SEMPRE VISÍVEL */
+  z-index: 6;
+  transition: opacity var(--transition-normal);
+}
+
+/* Hover effect apenas em desktop */
+@media (hover: hover) and (pointer: fine) {
+  .actions {
+    opacity: 0;
+  }
+  
+  .productCard:hover .actions {
+    opacity: 1;
+  }
+}
+
+.favoriteBtn,
+.cartBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--wine-destaque);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(10px);
+  will-change: transform;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.favoriteBtn:hover,
+.cartBtn:hover {
   background: var(--wine-destaque);
   color: var(--white-principal);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-wine);
 }
 
-.shippingBadge {
-  background: #28a745;
-  color: var(--white-principal);
+.favoriteBtn:focus,
+.cartBtn:focus {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
 }
 
-.outOfStockBadge {
-  background: var(--cinza-medio);
-  color: var(--white-principal);
+.favoriteBtn:active,
+.cartBtn:active {
+  transform: scale(0.95);
 }
 
 /* ===========================================
@@ -227,7 +258,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  flex: 1;
+  height: calc(100% - 250px);
 }
 
 .productName {
@@ -240,24 +271,41 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color var(--transition-normal);
 }
 
-.productDescription {
-  font-size: 0.9rem;
-  color: var(--cinza-medio);
-  line-height: 1.4;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.productLink:hover .productName {
+  color: var(--wine-destaque);
 }
 
 /* ===========================================
-   AVALIAÇÃO
+   META INFORMAÇÕES
    =========================================== */
 
-.productRating {
+.productMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.productMeta .brandName {
+  color: var(--wine-destaque);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.material {
+  color: var(--cinza-medio);
+  font-weight: 500;
+}
+
+/* ===========================================
+   AVALIAÇÕES
+   =========================================== */
+
+.rating {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -265,401 +313,247 @@
 
 .stars {
   display: flex;
-  gap: 0.1rem;
+  gap: 0.2rem;
 }
 
 .starFilled {
   color: var(--dourado-sutil);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .starHalf {
   color: var(--dourado-sutil);
-  font-size: 0.8rem;
-  opacity: 0.5;
+  font-size: 0.9rem;
+  opacity: 0.6;
 }
 
 .starEmpty {
   color: var(--cinza-claro);
-  font-size: 0.8rem;
-}
-
-.ratingText {
-  font-size: 0.8rem;
-  color: var(--cinza-medio);
-}
-
-/* ===========================================
-   PREÇOS
-   =========================================== */
-
-.priceContainer {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.originalPrice {
   font-size: 0.9rem;
-  color: var(--cinza-medio);
-  text-decoration: line-through;
 }
 
-.salePrice {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--wine-destaque);
-}
-
-.regularPrice {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--preto-secundario);
-}
-
-/* ===========================================
-   OPÇÕES DE COR
-   =========================================== */
-
-.colorOptions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.colorOption {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--cinza-claro);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  position: relative;
-}
-
-.colorOption:hover {
-  transform: scale(1.1);
-  border-color: var(--wine-destaque);
-}
-
-.colorOption.selected {
-  border-color: var(--wine-destaque);
-  box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.3);
-}
-
-.moreColors {
+.reviewCount {
   font-size: 0.8rem;
   color: var(--cinza-medio);
   font-weight: 500;
 }
 
 /* ===========================================
-   SELETOR RÁPIDO DE TAMANHO
+   PREÇOS
    =========================================== */
 
-.quickSizeSelector {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--white-principal);
-  padding: 1rem;
-  border-top: 1px solid var(--cinza-claro);
-  z-index: 10;
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.sizeOptions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.sizeLabel {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--preto-secundario);
-}
-
-.sizeOption {
-  width: 35px;
-  height: 35px;
-  border: 2px solid var(--cinza-claro);
-  background: var(--white-principal);
-  color: var(--preto-secundario);
-  border-radius: var(--radius-small);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-}
-
-.sizeOption:hover {
-  border-color: var(--wine-destaque);
-  color: var(--wine-destaque);
-}
-
-.sizeOption.selected {
-  background: var(--wine-destaque);
-  border-color: var(--wine-destaque);
-  color: var(--white-principal);
-}
-
-.confirmAddToCart {
-  width: 100%;
-  padding: 0.8rem;
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  border: none;
-  border-radius: var(--radius-medium);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.confirmAddToCart:hover:not(:disabled) {
-  background: var(--wine-dark);
-}
-
-.confirmAddToCart:disabled {
-  background: var(--cinza-medio);
-  cursor: not-allowed;
-}
-
-/* ===========================================
-   LOADING
-   =========================================== */
-
-.loading {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid var(--white-principal);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* ===========================================
-   MODO LISTA
-   =========================================== */
-
-.listView {
-  display: flex;
-  flex-direction: row;
-  height: auto;
-}
-
-.listView .productImageContainer {
-  width: 200px;
-  height: 150px;
-  flex-shrink: 0;
-}
-
-.listView .productInfo {
-  flex: 1;
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: center;
-}
-
-.listView .productDetails {
+.pricing {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
+  margin-top: auto;
 }
 
-.listView .productActions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: flex-end;
-}
-
-.listView .actionButtons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.listView .addToCartButton {
-  width: auto;
-  padding: 0.8rem 1.5rem;
+.originalPrice {
   font-size: 0.9rem;
-}
-
-.listView .favoriteButton {
-  position: static;
-  width: 40px;
-  height: 40px;
-}
-
-.listView .productOverlay {
-  display: none;
-}
-
-.availableSizes {
-  font-size: 0.8rem;
   color: var(--cinza-medio);
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.salePrice,
+.regularPrice {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
 }
 
 /* ===========================================
    RESPONSIVIDADE
    =========================================== */
 
-@media (max-width: 768px) {
-  .productImageContainer {
+@media (max-width: 1024px) {
+  .imageWrapper {
     height: 220px;
   }
   
   .productInfo {
-    padding: 1rem;
+    padding: 1.2rem;
+    height: calc(100% - 220px);
   }
   
   .productName {
     font-size: 1rem;
   }
   
-  .addToCartButton {
-    font-size: 0.8rem;
-    padding: 0.8rem;
+  .salePrice,
+  .regularPrice {
+    font-size: 1.2rem;
   }
   
-  .listView {
-    flex-direction: column;
+  .fallbackIcon {
+    font-size: 3rem;
   }
   
-  .listView .productImageContainer {
-    width: 100%;
+  .brandName {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .imageWrapper {
     height: 200px;
   }
   
-  .listView .productInfo {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .productInfo {
+    padding: 1rem;
+    height: calc(100% - 200px);
   }
   
-  .listView .productActions {
-    align-items: stretch;
+  .productName {
+    font-size: 0.95rem;
   }
   
-  .listView .actionButtons {
-    justify-content: center;
+  .actions {
+    opacity: 1; /* SEMPRE visível em mobile */
+  }
+  
+  .favoriteBtn,
+  .cartBtn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .salePrice,
+  .regularPrice {
+    font-size: 1.1rem;
+  }
+  
+  .fallbackIcon {
+    font-size: 2.5rem;
+  }
+  
+  .brandName {
+    font-size: 0.9rem;
+  }
+  
+  .fallbackMessage {
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
-  .productImageContainer {
+  .imageWrapper {
     height: 180px;
   }
   
   .productInfo {
     padding: 0.8rem;
+    gap: 0.6rem;
+    height: calc(100% - 180px);
   }
   
   .productName {
     font-size: 0.9rem;
   }
   
-  .quickActions {
+  .favoriteBtn,
+  .cartBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  .rating {
     gap: 0.3rem;
   }
   
-  .quickViewButton,
-  .favoriteButton {
-    width: 35px;
-    height: 35px;
-    font-size: 0.9rem;
+  .stars {
+    gap: 0.1rem;
   }
   
-  .colorOption {
-    width: 16px;
-    height: 16px;
+  .starFilled,
+  .starHalf,
+  .starEmpty {
+    font-size: 0.8rem;
   }
   
-  .sizeOption {
-    width: 30px;
-    height: 30px;
+  .reviewCount {
     font-size: 0.7rem;
   }
+  
+  .salePrice,
+  .regularPrice {
+    font-size: 1rem;
+  }
+  
+  .originalPrice {
+    font-size: 0.8rem;
+  }
+  
+  .productMeta {
+    font-size: 0.8rem;
+  }
+  
+  .fallbackIcon {
+    font-size: 2rem;
+  }
+  
+  .brandName {
+    font-size: 0.8rem;
+  }
+  
+  .fallbackMessage {
+    font-size: 0.7rem;
+  }
+  
+  .imageFallback {
+    padding: 1rem;
+  }
 }
 
 /* ===========================================
-   ANIMAÇÕES ESPECIAIS
+   PERFORMANCE E ACESSIBILIDADE
    =========================================== */
 
-.productCard {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@media (prefers-reduced-motion: reduce) {
+  .productCard,
+  .productImage,
+  .favoriteBtn,
+  .cartBtn,
+  .actions,
+  .loadingSpinner {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .productCard:hover {
+    transform: none !important;
+  }
+  
+  .productCard:hover .productImage {
+    transform: none !important;
+  }
+  
+  .favoriteBtn:hover,
+  .cartBtn:hover {
+    transform: none !important;
   }
 }
 
-/* Delay escalonado para múltiplos cards */
-.productCard:nth-child(1) { animation-delay: 0.1s; }
-.productCard:nth-child(2) { animation-delay: 0.2s; }
-.productCard:nth-child(3) { animation-delay: 0.3s; }
-.productCard:nth-child(4) { animation-delay: 0.4s; }
-.productCard:nth-child(5) { animation-delay: 0.5s; }
-.productCard:nth-child(6) { animation-delay: 0.6s; }
-
-/* ===========================================
-   ESTADOS ESPECIAIS
-   =========================================== */
-
-.productCard.outOfStock {
-  opacity: 0.7;
-}
-
-.productCard.outOfStock .productImage {
-  filter: grayscale(50%);
-}
-
-.productCard.featured {
-  border: 2px solid var(--dourado-sutil);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-}
-
-.productCard.onSale .priceContainer {
-  background: var(--rosa-suave);
-  padding: 0.5rem;
-  border-radius: var(--radius-small);
-  margin: -0.5rem;
+@media (prefers-contrast: high) {
+  .productCard {
+    border: 2px solid var(--preto-secundario);
+  }
+  
+  .favoriteBtn,
+  .cartBtn {
+    border: 2px solid var(--wine-destaque);
+  }
+  
+  .discountBadge,
+  .newBadge {
+    border: 2px solid var(--preto-secundario);
+  }
+  
+  .imageFallback {
+    border: 2px solid var(--wine-destaque);
+  }
 }

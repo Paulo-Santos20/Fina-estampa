@@ -1,42 +1,56 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import Home from './pages/Home/Home';
-import Category from './pages/Category/Category';
 import Product from './pages/Product/Product';
-import Cart from './pages/Cart/Cart';
-import Checkout from './pages/Checkout/Checkout';
-import OrderSuccess from './pages/OrderSuccess/OrderSuccess';
-import Contact from './pages/Contact/Contact';
-import NotFound from './pages/NotFound/NotFound';
+import Search from './pages/Search/Search';
+import './styles/globals.css';
 
 function App() {
-  console.log('🚀 App.jsx carregado');
-  
   return (
-    <Router>
+    <BrowserRouter>
       <CartProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          
-          {/* Rota dinâmica para categorias - CORRIGIDA */}
-          <Route 
-            path="/categoria/:categorySlug" 
-            element={<Category />} 
-          />
-          
-          {/* Outras rotas */}
-          <Route path="/produto/:productId" element={<Product />} />
-          <Route path="/carrinho" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/pedido-enviado" element={<OrderSuccess />} />
-          <Route path="/contato" element={<Contact />} />
-          
-          {/* Página 404 - deve ser a última rota */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/produto/:id" element={<Product />} />
+            <Route path="/busca" element={<Search />} />
+            <Route path="/categoria/:categoria" element={<div>Categoria em desenvolvimento</div>} />
+            <Route path="/login" element={<div>Login em desenvolvimento</div>} />
+            <Route path="/favoritos" element={<div>Favoritos em desenvolvimento</div>} />
+            <Route path="/sobre" element={<div>Sobre em desenvolvimento</div>} />
+            <Route path="/contato" element={<div>Contato em desenvolvimento</div>} />
+            {/* Rota 404 */}
+            <Route path="*" element={
+              <div style={{ 
+                padding: '4rem 2rem', 
+                textAlign: 'center',
+                minHeight: '60vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <h1 style={{ fontSize: '3rem', color: '#722F37', marginBottom: '1rem' }}>404</h1>
+                <h2 style={{ fontSize: '1.5rem', color: '#000', marginBottom: '1rem' }}>Página não encontrada</h2>
+                <p style={{ color: '#6C757D', marginBottom: '2rem' }}>A página que você está procurando não existe.</p>
+                <a href="/" style={{ 
+                  background: '#722F37', 
+                  color: 'white', 
+                  padding: '1rem 2rem', 
+                  textDecoration: 'none', 
+                  borderRadius: '8px',
+                  fontWeight: '600'
+                }}>
+                  Voltar ao Início
+                </a>
+              </div>
+            } />
+          </Routes>
+        </div>
       </CartProvider>
-    </Router>
+    </BrowserRouter>
   );
 }
 

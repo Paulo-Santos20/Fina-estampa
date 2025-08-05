@@ -1,43 +1,46 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  FaHeart, 
-  FaRegHeart, 
-  FaShoppingCart, 
-  FaStar, 
-  FaEye,
-  FaTag,
-  FaFire,
-  FaGift
-} from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaStar } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
 import styles from './ProductCard.module.css';
 
-const ProductCard = ({ product, viewMode = 'grid', showQuickView = true }) => {
+const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
-  const [showSizeSelector, setShowSizeSelector] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Calcular desconto
-  const discountPercentage = product.salePrice 
-    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
-    : 0;
+  // Debug: verificar produto recebido
+  console.log('🎯 ProductCard recebeu:', {
+    id: product?.id,
+    name: product?.name,
+    image: product?.image,
+    price: product?.price,
+    hasAddToCart: typeof addToCart === 'function'
+  });
 
-  // Preço atual
-  const currentPrice = product.salePrice || product.price;
+  // Função segura para formatar preço
+  const formatPrice = useCallback((price) => {
+    if (price === undefined || price === null || isNaN(price)) {
+      return 'R\$ 0,00';
+    }
+    
+    const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+    
+    if (isNaN(numericPrice)) {
+      return 'R\$ 0,00';
+    }
+    
+    return numericPrice.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  }, []);
 
-  // Verificar se produto é novo (últimos 30 dias)
-  const isNew = product.isNew || false;
-
-  // Gerar estrelas de avaliação
-  const renderStars = (rating) => {
+  const renderStars = useCallback((rating) => {
     const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+    const safeRating = rating || 0;
+    const fullStars = Math.floor(safeRating);
+    const hasHalfStar = safeRating % 1 !== 0;
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(<FaStar key={i} className={styles.starFilled} />);
@@ -47,404 +50,185 @@ const ProductCard = ({ product, viewMode = 'grid', showQuickView = true }) => {
       stars.push(<FaStar key="half" className={styles.starHalf} />);
     }
 
-    const emptyStars = 5 - Math.ceil(rating);
+    const emptyStars = 5 - Math.ceil(safeRating);
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<FaStar key={`empty-${i}`} className={styles.starEmpty} />);
     }
 
     return stars;
-  };
+  }, []);
 
-  // Adicionar aos favoritos
-  const toggleFavorite = (e) => {
+  const handleAddToCart = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsFavorite(!isFavorite);
     
-    // Aqui você pode adicionar lógica para salvar no localStorage ou API
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    if (isFavorite) {
-      const newFavorites = favorites.filter(id => id !== product.id);
-      localStorage.setItem('favorites', JSON.stringify(newFavorites));
-    } else {
-      favorites.push(product.id);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-    }
-  };
-
-  // Adicionar ao carrinho
-  const handleAddToCart = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Verificar se tamanho foi selecionado (obrigatório para roupas)
-    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
-      setShowSizeSelector(true);
+    console.log('🛒 Adicionando ao carrinho:', product.name);
+    
+    if (!addToCart) {
+      console.error('❌ Função addToCart não disponível');
       return;
     }
-
-    setIsAddingToCart(true);
-
+    
+    const defaultSize = product.sizes?.[0] || 'M';
+    const defaultColor = product.colors?.[0] || 'Padrão';
+    
     try {
-      const cartItem = {
-        ...product,
-        selectedSize: selectedSize || product.sizes?.[0] || 'Único',
-        selectedColor: selectedColor || product.colors?.[0] || 'Padrão',
-        quantity: 1
-      };
-
-      await addToCart(cartItem);
-      
-      // Feedback visual de sucesso
-      setTimeout(() => {
-        setIsAddingToCart(false);
-        setShowSizeSelector(false);
-      }, 1000);
-
+      addToCart(product, defaultSize, defaultColor, 1);
+      console.log('✅ Produto adicionado com sucesso');
     } catch (error) {
-      console.error('Erro ao adicionar ao carrinho:', error);
-      setIsAddingToCart(false);
+      console.error('❌ Erro ao adicionar produto:', error);
     }
-  };
+  }, [product, addToCart]);
 
-  // Seletor rápido de tamanho
-  const renderQuickSizeSelector = () => {
-    if (!showSizeSelector || !product.sizes) return null;
+  const handleFavorite = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('❤️ Produto favoritado:', product.name);
+  }, [product.name]);
 
+  const handleImageError = useCallback(() => {
+    console.log('❌ Erro ao carregar imagem:', product.image);
+    setImageError(true);
+  }, [product.image]);
+
+  const handleImageLoad = useCallback(() => {
+    console.log('✅ Imagem carregada:', product.image);
+    setImageLoaded(true);
+    setImageError(false);
+  }, [product.image]);
+
+  // Verificar se o produto existe
+  if (!product) {
+    console.error('❌ Produto não fornecido para ProductCard');
     return (
-      <div className={styles.quickSizeSelector}>
-        <div className={styles.sizeOptions}>
-          <span className={styles.sizeLabel}>Tamanho:</span>
-          {product.sizes.map(size => (
-            <button
-              key={size}
-              className={`${styles.sizeOption} ${selectedSize === size ? styles.selected : ''}`}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setSelectedSize(size);
-              }}
-            >
-              {size}
-            </button>
-          ))}
+      <div className={styles.productCard}>
+        <div className={styles.errorState}>
+          <p>Produto não encontrado</p>
         </div>
-        <button
-          className={styles.confirmAddToCart}
-          onClick={handleAddToCart}
-          disabled={!selectedSize}
-        >
-          Adicionar ao Carrinho
-        </button>
-      </div>
-    );
-  };
-
-  // Placeholder para imagem com erro
-  const renderImagePlaceholder = () => (
-    <div className={styles.imagePlaceholder}>
-      <div className={styles.placeholderIcon}>👗</div>
-      <span className={styles.placeholderText}>{product.name}</span>
-    </div>
-  );
-
-  // Renderização em modo lista
-  if (viewMode === 'list') {
-    return (
-      <div className={`${styles.productCard} ${styles.listView}`}>
-        <Link to={`/produto/${product.id}`} className={styles.productLink}>
-          {/* Imagem do produto */}
-          <div className={styles.productImageContainer}>
-            {imageError ? (
-              renderImagePlaceholder()
-            ) : (
-              <img
-                src={product.image}
-                alt={product.name}
-                className={styles.productImage}
-                onError={() => setImageError(true)}
-                loading="lazy"
-              />
-            )}
-
-            {/* Badges */}
-            <div className={styles.productBadges}>
-              {isNew && (
-                <span className={`${styles.badge} ${styles.newBadge}`}>
-                  <FaFire />
-                  Novo
-                </span>
-              )}
-              {product.isPromo && (
-                <span className={`${styles.badge} ${styles.promoBadge}`}>
-                  <FaTag />
-                  -{discountPercentage}%
-                </span>
-              )}
-              {!product.inStock && (
-                <span className={`${styles.badge} ${styles.outOfStockBadge}`}>
-                  Esgotado
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Informações do produto */}
-          <div className={styles.productInfo}>
-            <div className={styles.productDetails}>
-              <h3 className={styles.productName}>{product.name}</h3>
-              <p className={styles.productDescription}>{product.description}</p>
-              
-              {/* Avaliação */}
-              {product.rating && (
-                <div className={styles.productRating}>
-                  <div className={styles.stars}>
-                    {renderStars(product.rating)}
-                  </div>
-                  <span className={styles.ratingText}>
-                    ({product.reviewCount || 0} avaliações)
-                  </span>
-                </div>
-              )}
-
-              {/* Tamanhos disponíveis */}
-              {product.sizes && (
-                <div className={styles.availableSizes}>
-                  <span>Tamanhos: {product.sizes.join(', ')}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Preços e ações */}
-            <div className={styles.productActions}>
-              <div className={styles.priceContainer}>
-                {product.salePrice ? (
-                  <>
-                    <span className={styles.originalPrice}>
-                      R\$ {product.price.toFixed(2)}
-                    </span>
-                    <span className={styles.salePrice}>
-                      R\$ {product.salePrice.toFixed(2)}
-                    </span>
-                  </>
-                ) : (
-                  <span className={styles.regularPrice}>
-                    R\$ {product.price.toFixed(2)}
-                  </span>
-                )}
-              </div>
-
-              <div className={styles.actionButtons}>
-                <button
-                  className={styles.favoriteButton}
-                  onClick={toggleFavorite}
-                  aria-label="Adicionar aos favoritos"
-                >
-                  {isFavorite ? <FaHeart /> : <FaRegHeart />}
-                </button>
-
-                <button
-                  className={styles.addToCartButton}
-                  onClick={handleAddToCart}
-                  disabled={!product.inStock || isAddingToCart}
-                >
-                  {isAddingToCart ? (
-                    <div className={styles.loading}>
-                      <div className={styles.spinner}></div>
-                    </div>
-                  ) : (
-                    <>
-                      <FaShoppingCart />
-                      {product.inStock ? 'Adicionar' : 'Indisponível'}
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Seletor de tamanho rápido */}
-        {renderQuickSizeSelector()}
       </div>
     );
   }
 
-  // Renderização em modo grid (padrão)
+  // Extrair preços de forma segura
+  const originalPrice = product.originalPrice || product.price || 0;
+  const salePrice = product.salePrice || 0;
+  const regularPrice = product.price || 0;
+  const isPromo = product.isPromo && salePrice > 0;
+
+  // Fallback para imagem
+  const fallbackImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDQwMCA2MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgwIj7wn5GXPC90ZXh0Pgo8dGV4dCB4PSIyMDAiIHk9IjM0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzcyMkYzNyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNjAwIj5GaW5hIEVzdGFtcGE8L3RleHQ+Cjx0ZXh0IHg9IjIwMCIgeT0iMzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkM3NTdEIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiPkltYWdlbSBuw6NvIGRpc3BvbsOtdmVsPC90ZXh0Pgo8L3N2Zz4K";
+
   return (
-    <div className={`${styles.productCard} ${styles.gridView}`}>
+    <div className={styles.productCard}>
       <Link to={`/produto/${product.id}`} className={styles.productLink}>
-        {/* Container da imagem */}
-        <div className={styles.productImageContainer}>
-          {imageError ? (
-            renderImagePlaceholder()
-          ) : (
-            <img
-              src={product.image}
-              alt={product.name}
-              className={styles.productImage}
-              onError={() => setImageError(true)}
-              loading="lazy"
-            />
+        <div className={styles.imageWrapper}>
+          {/* Loading state */}
+          {!imageLoaded && !imageError && (
+            <div className={styles.imageLoading}>
+              <div className={styles.loadingSpinner}></div>
+            </div>
           )}
 
-          {/* Overlay com ações rápidas */}
-          <div className={styles.productOverlay}>
-            <div className={styles.quickActions}>
-              {showQuickView && (
-                <button
-                  className={styles.quickViewButton}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Implementar quick view modal
-                  }}
-                  aria-label="Visualização rápida"
-                >
-                  <FaEye />
-                </button>
-              )}
-              
-              <button
-                className={styles.favoriteButton}
-                onClick={toggleFavorite}
-                aria-label="Adicionar aos favoritos"
-              >
-                {isFavorite ? <FaHeart /> : <FaRegHeart />}
-              </button>
+          {/* Imagem principal ou fallback */}
+          {!imageError ? (
+            <img
+              src={product.image || fallbackImage}
+              alt={product.name || 'Produto'}
+              className={`${styles.productImage} ${imageLoaded ? styles.loaded : ''}`}
+              loading="lazy"
+              onError={handleImageError}
+              onLoad={handleImageLoad}
+              style={{ display: imageLoaded ? 'block' : 'none' }}
+            />
+          ) : (
+            <div className={styles.imageFallback}>
+              <div className={styles.fallbackIcon}>👗</div>
+              <div className={styles.fallbackText}>
+                <div className={styles.brandName}>Fina Estampa</div>
+                <div className={styles.fallbackMessage}>Imagem não disponível</div>
+              </div>
             </div>
-
-            <button
-              className={styles.addToCartButton}
-              onClick={handleAddToCart}
-              disabled={!product.inStock || isAddingToCart}
-            >
-              {isAddingToCart ? (
-                <div className={styles.loading}>
-                  <div className={styles.spinner}></div>
-                  Adicionando...
-                </div>
-              ) : (
-                <>
-                  <FaShoppingCart />
-                  {product.inStock ? 'Adicionar ao Carrinho' : 'Indisponível'}
-                </>
-              )}
-            </button>
-          </div>
-
+          )}
+          
           {/* Badges */}
-          <div className={styles.productBadges}>
-            {isNew && (
-              <span className={`${styles.badge} ${styles.newBadge}`}>
-                <FaFire />
-                Novo
-              </span>
-            )}
-            {product.isPromo && (
-              <span className={`${styles.badge} ${styles.promoBadge}`}>
-                <FaTag />
-                -{discountPercentage}%
-              </span>
-            )}
-            {product.freeShipping && (
-              <span className={`${styles.badge} ${styles.shippingBadge}`}>
-                <FaGift />
-                Frete Grátis
-              </span>
-            )}
-            {!product.inStock && (
-              <span className={`${styles.badge} ${styles.outOfStockBadge}`}>
-                Esgotado
-              </span>
-            )}
+          {isPromo && product.discount && (
+            <div className={styles.discountBadge}>
+              -{product.discount}%
+            </div>
+          )}
+          {product.isNew && (
+            <div className={styles.newBadge}>Novo</div>
+          )}
+
+          {/* Ações - SEMPRE VISÍVEIS */}
+          <div className={styles.actions}>
+            <button 
+              className={styles.favoriteBtn}
+              onClick={handleFavorite}
+              aria-label={`Adicionar ${product.name || 'produto'} aos favoritos`}
+              type="button"
+              title="Adicionar aos favoritos"
+            >
+              <FaHeart />
+            </button>
+            <button 
+              className={styles.cartBtn}
+              onClick={handleAddToCart}
+              aria-label={`Adicionar ${product.name || 'produto'} ao carrinho`}
+              type="button"
+              title="Adicionar ao carrinho"
+            >
+              <FaShoppingCart />
+            </button>
           </div>
         </div>
 
-        {/* Informações do produto */}
         <div className={styles.productInfo}>
-          <h3 className={styles.productName}>{product.name}</h3>
+          <h3 className={styles.productName}>
+            {product.name || 'Produto sem nome'}
+          </h3>
           
-          {/* Avaliação */}
-          {product.rating && (
-            <div className={styles.productRating}>
-              <div className={styles.stars}>
-                {renderStars(product.rating)}
-              </div>
-              <span className={styles.ratingText}>
-                ({product.reviewCount || 0})
-              </span>
+          {/* Informações adicionais */}
+          {(product.brand || product.material) && (
+            <div className={styles.productMeta}>
+              {product.brand && (
+                <span className={styles.brandName}>{product.brand}</span>
+              )}
+              {product.material && (
+                <span className={styles.material}>{product.material}</span>
+              )}
             </div>
           )}
+          
+          <div className={styles.rating}>
+            <div className={styles.stars}>
+              {renderStars(product.rating)}
+            </div>
+            <span className={styles.reviewCount}>
+              ({product.reviews || product.reviewCount || 0})
+            </span>
+          </div>
 
-          {/* Preços */}
-          <div className={styles.priceContainer}>
-            {product.salePrice ? (
+          <div className={styles.pricing}>
+            {isPromo ? (
               <>
                 <span className={styles.originalPrice}>
-                  R\$ {product.price.toFixed(2)}
+                  {formatPrice(originalPrice)}
                 </span>
                 <span className={styles.salePrice}>
-                  R\$ {product.salePrice.toFixed(2)}
+                  {formatPrice(salePrice)}
                 </span>
               </>
             ) : (
               <span className={styles.regularPrice}>
-                R\$ {product.price.toFixed(2)}
+                {formatPrice(regularPrice)}
               </span>
             )}
           </div>
-
-          {/* Cores disponíveis */}
-          {product.colors && product.colors.length > 1 && (
-            <div className={styles.colorOptions}>
-              {product.colors.slice(0, 4).map((color, index) => (
-                <div
-                  key={index}
-                  className={`${styles.colorOption} ${selectedColor === color ? styles.selected : ''}`}
-                  style={{ backgroundColor: getColorCode(color) }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedColor(color);
-                  }}
-                  title={color}
-                />
-              ))}
-              {product.colors.length > 4 && (
-                <span className={styles.moreColors}>
-                  +{product.colors.length - 4}
-                </span>
-              )}
-            </div>
-          )}
         </div>
       </Link>
-
-      {/* Seletor de tamanho rápido */}
-      {renderQuickSizeSelector()}
     </div>
   );
 };
 
-// Função auxiliar para converter nome da cor em código
-const getColorCode = (colorName) => {
-  const colorMap = {
-    'Preto': '#000000',
-    'Branco': '#FFFFFF',
-    'Azul': '#0066CC',
-    'Rosa': '#FF69B4',
-    'Vinho': '#722F37',
-    'Bege': '#F5F5DC',
-    'Verde': '#228B22',
-    'Amarelo': '#FFD700',
-    'Cinza': '#808080',
-    'Marrom': '#8B4513',
-    'Roxo': '#800080',
-    'Laranja': '#FF8C00'
-  };
-  
-  return colorMap[colorName] || '#CCCCCC';
-};
-
-export default ProductCard;
+export default React.memo(ProductCard);

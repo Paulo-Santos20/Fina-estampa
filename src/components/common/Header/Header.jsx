@@ -64,13 +64,25 @@ const Header = () => {
     setShowPromoBar(false);
   }, []);
 
+  // CORRIGIR A FUNÇÃO DE BUSCA
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/busca?q=${encodeURIComponent(searchQuery)}`);
+      console.log('🔍 Navegando para busca:', searchQuery);
+      console.log('📍 URL atual:', location.pathname);
+      
+      const searchUrl = `/busca?q=${encodeURIComponent(searchQuery.trim())}`;
+      console.log('🎯 URL de busca:', searchUrl);
+      
+      navigate(searchUrl);
       setSearchQuery('');
+      
+      // Debug: verificar se a navegação funcionou
+      setTimeout(() => {
+        console.log('✅ URL após busca:', window.location.pathname + window.location.search);
+      }, 100);
     }
-  }, [searchQuery, navigate]);
+  }, [searchQuery, navigate, location.pathname]);
 
   // Função para navegar para categoria
   const navigateToCategory = useCallback((categorySlug, event) => {
@@ -110,7 +122,7 @@ const Header = () => {
           <div className={styles.promoContent}>
             <FaTags className={styles.promoIcon} />
             <span className={styles.promoText}>
-              🎉 FRETE GRÁTIS para compras acima de R$ 199,90 | Use o cupom: FINAFRETE
+              🎉 FRETE GRÁTIS para compras acima de R\$ 199,90 | Use o cupom: FINAFRETE
             </span>
             <button 
               className={styles.closePromo} 
@@ -199,7 +211,7 @@ const Header = () => {
         <nav className={styles.categoryNav}>
           <div className={styles.container}>
             <ul className={styles.categoryList}>
-              {categories.map((category, index) => (
+              {categories.map((category) => (
                 <li key={category.slug} className={styles.categoryItem}>
                   <button
                     type="button"
@@ -293,7 +305,7 @@ const Header = () => {
             <nav className={styles.mobileCategoryNav}>
               <h3 className={styles.mobileNavTitle}>Categorias</h3>
               <ul className={styles.mobileCategoryList}>
-                {categories.map((category, index) => (
+                {categories.map((category) => (
                   <li key={category.slug} className={styles.mobileCategoryItem}>
                     <button 
                       type="button"

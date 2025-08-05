@@ -8,316 +8,402 @@ export const allProducts = [
     id: 1,
     name: "Vestido Longo Festa Rosa",
     price: 189.90,
-    salePrice: 149.90,
-    image: "https://images.unsplash.com/photo-1566479179817-c0c8e7c5b1f3?w=400&h=500&fit=crop&crop=center",
-    category: "Vestidos",
-    sizes: ["PP", "P", "M", "G", "GG"],
-    colors: ["Rosa", "Azul", "Preto", "Branco"],
-    rating: 4.8,
-    reviewCount: 127,
-    isNew: false,
+    originalPrice: 229.90,
+    salePrice: 189.90,
     isPromo: true,
-    inStock: true,
-    freeShipping: true,
+    discount: 17,
+    isNew: false,
+    category: "Vestidos",
+    subcategory: "Social",
+    gender: "Feminino",
     brand: "Fina Estampa",
-    description: "Vestido longo elegante perfeito para festas e ocasiões especiais"
+    material: "Seda",
+    description: "Vestido longo elegante perfeito para ocasiões especiais. Tecido fluido e caimento impecável.",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&crop=center",
+    rating: 4.8,
+    reviews: 124,
+    reviewCount: 124,
+    sizes: ["P", "M", "G", "GG"],
+    colors: ["Rosa", "Azul", "Preto"]
   },
   {
     id: 2,
-    name: "Blusa Elegante Branca",
+    name: "Blusa Social Branca Feminina",
     price: 89.90,
-    image: "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=400&h=500&fit=crop&crop=center",
-    category: "Blusas",
-    sizes: ["P", "M", "G", "GG"],
-    colors: ["Branco", "Preto", "Bege"],
-    rating: 4.6,
-    reviewCount: 89,
-    isNew: true,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Fina Estampa",
-    description: "Blusa elegante para o dia a dia profissional"
+    isNew: true,
+    category: "Blusas",
+    subcategory: "Social",
+    gender: "Feminino",
+    brand: "Elegance",
+    material: "Algodão",
+    description: "Blusa social clássica em algodão premium. Ideal para o ambiente corporativo.",
+    image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=600&fit=crop&crop=center",
+    rating: 4.5,
+    reviews: 87,
+    reviewCount: 87,
+    sizes: ["PP", "P", "M", "G"],
+    colors: ["Branco", "Azul", "Rosa"]
   },
   {
     id: 3,
-    name: "Calça Social Preta",
+    name: "Calça Jeans Skinny Feminina",
     price: 129.90,
-    salePrice: 99.90,
-    image: "https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=400&h=500&fit=crop&crop=center",
-    category: "Calças",
-    sizes: ["36", "38", "40", "42", "44"],
-    colors: ["Preto", "Marinho", "Cinza"],
-    rating: 4.7,
-    reviewCount: 156,
-    isNew: false,
+    originalPrice: 159.90,
+    salePrice: 129.90,
     isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Premium",
-    description: "Calça social de alfaiataria com caimento perfeito"
+    discount: 19,
+    isNew: false,
+    category: "Calças",
+    subcategory: "Casual",
+    gender: "Feminino",
+    brand: "Denim Style",
+    material: "Jeans",
+    description: "Calça jeans skinny com elastano para maior conforto e modelagem perfeita.",
+    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=600&fit=crop&crop=center",
+    rating: 4.6,
+    reviews: 203,
+    reviewCount: 203,
+    sizes: ["36", "38", "40", "42", "44"],
+    colors: ["Azul", "Preto", "Cinza"]
   },
   {
     id: 4,
-    name: "Saia Midi Floral",
+    name: "Biquíni Tropical Estampado",
     price: 79.90,
-    image: "https://images.unsplash.com/photo-1583496661160-fb5886a13d9e?w=400&h=500&fit=crop&crop=center",
-    category: "Saias",
-    sizes: ["PP", "P", "M", "G"],
-    colors: ["Floral", "Rosa", "Azul"],
-    rating: 4.5,
-    reviewCount: 73,
-    isNew: true,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Casual",
-    description: "Saia midi com estampa floral romântica"
+    isNew: true,
+    category: "Moda Praia",
+    subcategory: "Praia",
+    gender: "Feminino",
+    brand: "Beach Life",
+    material: "Lycra",
+    description: "Biquíni com estampa tropical vibrante. Proteção UV e secagem rápida.",
+    image: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=600&fit=crop&crop=center",
+    rating: 4.3,
+    reviews: 156,
+    reviewCount: 156,
+    sizes: ["P", "M", "G"],
+    colors: ["Verde", "Azul", "Rosa", "Amarelo"]
   },
   {
     id: 5,
-    name: "Bolsa Couro Premium",
-    price: 249.90,
-    salePrice: 199.90,
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=500&fit=crop&crop=center",
-    category: "Acessórios",
-    sizes: ["Único"],
-    colors: ["Camel", "Preto", "Marrom"],
-    rating: 4.9,
-    reviewCount: 203,
+    name: "Top Fitness Feminino",
+    price: 59.90,
+    isPromo: false,
     isNew: false,
-    isPromo: true,
-    inStock: true,
-    freeShipping: true,
-    brand: "Premium",
-    description: "Bolsa em couro legítimo com acabamento premium"
+    category: "Fitness",
+    subcategory: "Fitness",
+    gender: "Feminino",
+    brand: "Active Wear",
+    material: "Poliéster",
+    description: "Top fitness com tecnologia dry-fit. Suporte médio e máximo conforto.",
+    image: "https://images.unsplash.com/photo-1506629905607-45c0f5b72962?w=400&h=600&fit=crop&crop=center",
+    rating: 4.7,
+    reviews: 89,
+    reviewCount: 89,
+    sizes: ["PP", "P", "M", "G"],
+    colors: ["Preto", "Rosa", "Azul", "Verde"]
   },
   {
     id: 6,
-    name: "Vestido Casual Azul",
-    price: 119.90,
-    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=500&fit=crop&crop=center",
-    category: "Vestidos",
-    sizes: ["P", "M", "G", "GG"],
-    colors: ["Azul", "Verde", "Rosa"],
-    rating: 4.4,
-    reviewCount: 91,
-    isNew: true,
+    name: "Camisa Polo Masculina",
+    price: 99.90,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Casual",
-    description: "Vestido casual confortável para o dia a dia"
+    isNew: false,
+    category: "Camisas",
+    subcategory: "Casual",
+    gender: "Masculino",
+    brand: "Classic Men",
+    material: "Algodão",
+    description: "Camisa polo clássica em algodão pima. Conforto e elegância para o dia a dia.",
+    image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&h=600&fit=crop&crop=center",
+    rating: 4.4,
+    reviews: 67,
+    reviewCount: 67,
+    sizes: ["P", "M", "G", "GG"],
+    colors: ["Branco", "Azul", "Preto", "Verde"]
   },
   {
     id: 7,
-    name: "Blazer Executivo",
-    price: 199.90,
-    salePrice: 159.90,
-    image: "https://images.unsplash.com/photo-1544957992-20514f595d6f?w=400&h=500&fit=crop&crop=center",
-    category: "Blazers",
-    sizes: ["P", "M", "G", "GG"],
-    colors: ["Preto", "Marinho", "Bege"],
+    name: "Vestido Infantil Florido",
+    price: 69.90,
+    isPromo: false,
+    isNew: true,
+    category: "Vestidos",
+    subcategory: "Casual",
+    gender: "Infantil",
+    brand: "Kids Fashion",
+    material: "Algodão",
+    description: "Vestido infantil com estampa floral delicada. 100% algodão para pele sensível.",
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=600&fit=crop&crop=center",
     rating: 4.8,
-    reviewCount: 134,
-    isNew: false,
-    isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Elegance",
-    description: "Blazer executivo de alfaiataria impecável"
+    reviews: 45,
+    reviewCount: 45,
+    sizes: ["2", "4", "6", "8", "10"],
+    colors: ["Rosa", "Azul", "Amarelo"]
   },
   {
     id: 8,
-    name: "Macacão Elegante",
-    price: 159.90,
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=500&fit=crop&crop=center",
-    category: "Macacões",
-    sizes: ["PP", "P", "M", "G"],
-    colors: ["Preto", "Vinho", "Azul"],
-    rating: 4.6,
-    reviewCount: 67,
-    isNew: true,
-    isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Fina Estampa",
-    description: "Macacão elegante versátil para diversas ocasiões"
+    name: "Shorts Jeans Feminino",
+    price: 79.90,
+    originalPrice: 99.90,
+    salePrice: 79.90,
+    isPromo: true,
+    discount: 20,
+    isNew: false,
+    category: "Shorts",
+    subcategory: "Casual",
+    gender: "Feminino",
+    brand: "Denim Style",
+    material: "Jeans",
+    description: "Shorts jeans com barra desfiada. Estilo despojado para o verão.",
+    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop&crop=center",
+    rating: 4.2,
+    reviews: 134,
+    reviewCount: 134,
+    sizes: ["36", "38", "40", "42"],
+    colors: ["Azul", "Preto", "Branco"]
   },
   {
     id: 9,
-    name: "Colar Dourado",
-    price: 69.90,
-    salePrice: 49.90,
-    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=500&fit=crop&crop=center",
-    category: "Acessórios",
-    sizes: ["Único"],
-    colors: ["Dourado", "Prateado"],
-    rating: 4.7,
-    reviewCount: 89,
+    name: "Blazer Social Feminino",
+    price: 199.90,
+    isPromo: false,
     isNew: false,
-    isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Elegance",
-    description: "Colar dourado delicado para complementar o look"
+    category: "Blazers",
+    subcategory: "Social",
+    gender: "Feminino",
+    brand: "Executive",
+    material: "Linho",
+    description: "Blazer em linho com corte estruturado. Elegância para o ambiente profissional.",
+    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop&crop=center",
+    rating: 4.6,
+    reviews: 78,
+    reviewCount: 78,
+    sizes: ["P", "M", "G", "GG"],
+    colors: ["Preto", "Azul", "Cinza"]
   },
   {
     id: 10,
-    name: "Camisa Social Listrada",
-    price: 99.90,
-    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=500&fit=crop&crop=center",
-    category: "Blusas",
-    sizes: ["P", "M", "G", "GG"],
-    colors: ["Listrada", "Branco", "Azul"],
-    rating: 4.5,
-    reviewCount: 112,
-    isNew: true,
+    name: "Legging Fitness Feminina",
+    price: 89.90,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Premium",
-    description: "Camisa social listrada clássica e atemporal"
+    isNew: true,
+    category: "Leggings",
+    subcategory: "Fitness",
+    gender: "Feminino",
+    brand: "Active Wear",
+    material: "Poliéster",
+    description: "Legging fitness com tecnologia anti-odor. Compressão graduada e costura plana.",
+    image: "https://images.unsplash.com/photo-1506629905607-45c0f5b72962?w=400&h=600&fit=crop&crop=center",
+    rating: 4.5,
+    reviews: 167,
+    reviewCount: 167,
+    sizes: ["PP", "P", "M", "G"],
+    colors: ["Preto", "Cinza", "Azul", "Verde"]
   },
   {
     id: 11,
-    name: "Sapato Salto Alto",
-    price: 179.90,
-    salePrice: 139.90,
-    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=500&fit=crop&crop=center",
-    category: "Calçados",
-    sizes: ["35", "36", "37", "38", "39", "40"],
-    colors: ["Preto", "Nude", "Vermelho"],
-    rating: 4.8,
-    reviewCount: 178,
+    name: "Camiseta Básica Masculina",
+    price: 39.90,
+    isPromo: false,
     isNew: false,
-    isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Elegance",
-    description: "Sapato de salto alto elegante e confortável"
+    category: "Camisetas",
+    subcategory: "Casual",
+    gender: "Masculino",
+    brand: "Basic Wear",
+    material: "Algodão",
+    description: "Camiseta básica em algodão 100%. Corte reto e modelagem confortável.",
+    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=600&fit=crop&crop=center",
+    rating: 4.3,
+    reviews: 234,
+    reviewCount: 234,
+    sizes: ["P", "M", "G", "GG", "XGG"],
+    colors: ["Branco", "Preto", "Cinza", "Azul", "Verde"]
   },
   {
     id: 12,
-    name: "Jaqueta Jeans",
-    price: 139.90,
-    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop&crop=center",
-    category: "Jaquetas",
-    sizes: ["P", "M", "G", "GG"],
-    colors: ["Jeans", "Preto", "Branco"],
-    rating: 4.6,
-    reviewCount: 95,
-    isNew: true,
+    name: "Saída de Praia Feminina",
+    price: 119.90,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Casual",
-    description: "Jaqueta jeans clássica para looks despojados"
+    isNew: true,
+    category: "Moda Praia",
+    subcategory: "Praia",
+    gender: "Feminino",
+    brand: "Beach Life",
+    material: "Viscose",
+    description: "Saída de praia em viscose fluida. Proteção solar e estilo para a praia.",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop&crop=center",
+    rating: 4.4,
+    reviews: 92,
+    reviewCount: 92,
+    sizes: ["P", "M", "G"],
+    colors: ["Branco", "Azul", "Verde", "Rosa"]
   },
   {
     id: 13,
-    name: "Vestido Midi Preto",
+    name: "Jaqueta Jeans Feminina",
     price: 149.90,
-    salePrice: 119.90,
-    image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=500&fit=crop&crop=center",
-    category: "Vestidos",
-    sizes: ["PP", "P", "M", "G", "GG"],
-    colors: ["Preto", "Marinho", "Vinho"],
-    rating: 4.7,
-    reviewCount: 145,
-    isNew: false,
+    originalPrice: 189.90,
+    salePrice: 149.90,
     isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Fina Estampa",
-    description: "Vestido midi clássico para todas as ocasiões"
+    discount: 21,
+    isNew: false,
+    category: "Jaquetas",
+    subcategory: "Casual",
+    gender: "Feminino",
+    brand: "Denim Style",
+    material: "Jeans",
+    description: "Jaqueta jeans clássica com lavagem especial. Versátil para diversas ocasiões.",
+    image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=600&fit=crop&crop=center",
+    rating: 4.7,
+    reviews: 156,
+    reviewCount: 156,
+    sizes: ["P", "M", "G", "GG"],
+    colors: ["Azul", "Preto", "Branco"]
   },
   {
     id: 14,
-    name: "Blusa Manga Longa",
-    price: 79.90,
-    image: "https://images.unsplash.com/photo-1564257577-0b8b4b6b6b6b?w=400&h=500&fit=crop&crop=center",
-    category: "Blusas",
-    sizes: ["P", "M", "G", "GG"],
-    colors: ["Branco", "Preto", "Rosa", "Azul"],
-    rating: 4.3,
-    reviewCount: 67,
-    isNew: true,
+    name: "Conjunto Fitness Feminino",
+    price: 129.90,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Casual",
-    description: "Blusa manga longa básica e versátil"
+    isNew: true,
+    category: "Conjuntos",
+    subcategory: "Fitness",
+    gender: "Feminino",
+    brand: "Active Wear",
+    material: "Poliéster",
+    description: "Conjunto fitness completo com top e legging. Tecnologia dry-fit avançada.",
+    image: "https://images.unsplash.com/photo-1506629905607-45c0f5b72962?w=400&h=600&fit=crop&crop=center",
+    rating: 4.6,
+    reviews: 98,
+    reviewCount: 98,
+    sizes: ["PP", "P", "M", "G"],
+    colors: ["Preto", "Rosa", "Azul", "Verde", "Cinza"]
   },
   {
     id: 15,
-    name: "Calça Skinny Jeans",
-    price: 109.90,
-    salePrice: 89.90,
-    image: "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=400&h=500&fit=crop&crop=center",
-    category: "Calças",
-    sizes: ["36", "38", "40", "42", "44", "46"],
-    colors: ["Jeans", "Preto", "Branco"],
-    rating: 4.5,
-    reviewCount: 198,
+    name: "Bermuda Masculina",
+    price: 69.90,
+    isPromo: false,
     isNew: false,
-    isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Casual",
-    description: "Calça skinny jeans com elastano para maior conforto"
+    category: "Bermudas",
+    subcategory: "Casual",
+    gender: "Masculino",
+    brand: "Classic Men",
+    material: "Algodão",
+    description: "Bermuda masculina em sarja de algodão. Conforto e praticidade para o dia a dia.",
+    image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&h=600&fit=crop&crop=center",
+    rating: 4.2,
+    reviews: 143,
+    reviewCount: 143,
+    sizes: ["P", "M", "G", "GG", "XGG"],
+    colors: ["Azul", "Preto", "Cinza", "Verde"]
   },
   {
     id: 16,
-    name: "Saia Longa Plissada",
-    price: 129.90,
-    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=500&fit=crop&crop=center",
+    name: "Saia Midi Feminina",
+    price: 99.90,
+    originalPrice: 129.90,
+    salePrice: 99.90,
+    isPromo: true,
+    discount: 23,
+    isNew: false,
     category: "Saias",
-    sizes: ["PP", "P", "M", "G", "GG"],
-    colors: ["Preto", "Bege", "Rosa", "Azul"],
-    rating: 4.6,
-    reviewCount: 87,
-    isNew: true,
-    isPromo: false,
-    inStock: true,
-    freeShipping: false,
+    subcategory: "Social",
+    gender: "Feminino",
     brand: "Elegance",
-    description: "Saia longa plissada elegante e fluida"
+    material: "Viscose",
+    description: "Saia midi em viscose com caimento fluido. Elegante e versátil para diversas ocasiões.",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&crop=center",
+    rating: 4.5,
+    reviews: 187,
+    reviewCount: 187,
+    sizes: ["P", "M", "G", "GG"],
+    colors: ["Preto", "Azul", "Rosa", "Cinza"]
   },
   {
     id: 17,
-    name: "Óculos de Sol",
-    price: 89.90,
-    salePrice: 69.90,
-    image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=500&fit=crop&crop=center",
-    category: "Acessórios",
-    sizes: ["Único"],
-    colors: ["Preto", "Marrom", "Dourado"],
-    rating: 4.4,
-    reviewCount: 156,
-    isNew: false,
+    name: "Macacão Feminino",
+    price: 159.90,
+    originalPrice: 199.90,
+    salePrice: 159.90,
     isPromo: true,
-    inStock: true,
-    freeShipping: false,
-    brand: "Premium",
-    description: "Óculos de sol com proteção UV e design moderno"
+    discount: 20,
+    isNew: true,
+    category: "Macacões",
+    subcategory: "Casual",
+    gender: "Feminino",
+    brand: "Fina Estampa",
+    material: "Viscose",
+    description: "Macacão feminino com amarração na cintura. Estilo moderno e confortável.",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&crop=center",
+    rating: 4.7,
+    reviews: 112,
+    reviewCount: 112,
+    sizes: ["P", "M", "G", "GG"],
+    colors: ["Preto", "Verde", "Azul"]
   },
   {
     id: 18,
-    name: "Sandália Rasteirinha",
-    price: 59.90,
-    image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400&h=500&fit=crop&crop=center",
-    category: "Calçados",
-    sizes: ["35", "36", "37", "38", "39", "40"],
-    colors: ["Nude", "Preto", "Camel", "Branco"],
-    rating: 4.2,
-    reviewCount: 234,
-    isNew: true,
+    name: "Tênis Feminino",
+    price: 179.90,
     isPromo: false,
-    inStock: true,
-    freeShipping: false,
-    brand: "Casual",
-    description: "Sandália rasteirinha confortável para o verão"
+    isNew: true,
+    category: "Calçados",
+    subcategory: "Casual",
+    gender: "Feminino",
+    brand: "Sport Style",
+    material: "Sintético",
+    description: "Tênis feminino com design moderno. Solado anatômico e máximo conforto.",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&crop=center",
+    rating: 4.4,
+    reviews: 89,
+    reviewCount: 89,
+    sizes: ["35", "36", "37", "38", "39", "40"],
+    colors: ["Branco", "Preto", "Rosa"]
+  },
+  {
+    id: 19,
+    name: "Bolsa Feminina",
+    price: 129.90,
+    isPromo: false,
+    isNew: false,
+    category: "Acessórios",
+    subcategory: "Social",
+    gender: "Feminino",
+    brand: "Elegance",
+    material: "Couro Sintético",
+    description: "Bolsa feminina em couro sintético. Design elegante com compartimentos organizadores.",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&crop=center",
+    rating: 4.3,
+    reviews: 156,
+    reviewCount: 156,
+    sizes: ["Único"],
+    colors: ["Preto", "Marrom", "Bege"]
+  },
+  {
+    id: 20,
+    name: "Colar Feminino",
+    price: 49.90,
+    originalPrice: 69.90,
+    salePrice: 49.90,
+    isPromo: true,
+    discount: 29,
+    isNew: false,
+    category: "Acessórios",
+    subcategory: "Social",
+    gender: "Feminino",
+    brand: "Jewelry",
+    material: "Metal",
+    description: "Colar feminino dourado com pingente delicado. Acabamento premium e hipoalergênico.",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&crop=center",
+    rating: 4.6,
+    reviews: 234,
+    reviewCount: 234,
+    sizes: ["Único"],
+    colors: ["Dourado", "Prateado"]
   }
 ];
 
@@ -328,75 +414,57 @@ export const allProducts = [
 export const categories = [
   {
     id: 1,
-    name: 'Vestidos',
-    slug: 'vestidos',
-    description: 'Elegância em cada ocasião - do casual ao formal',
-    image: 'https://images.unsplash.com/photo-1566479179817-c0c8e7c5b1f3?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: true
+    name: "Vestidos",
+    slug: "vestidos",
+    description: "Vestidos elegantes para todas as ocasiões",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=300&fit=crop",
+    featured: true,
+    itemCount: 0
   },
   {
     id: 2,
-    name: 'Blusas',
-    slug: 'blusas',
-    description: 'Sofisticação no dia a dia com muito estilo',
-    image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: true
+    name: "Blusas & Camisas",
+    slug: "blusas",
+    description: "Blusas e camisas para o dia a dia e trabalho",
+    image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop",
+    featured: true,
+    itemCount: 0
   },
   {
     id: 3,
-    name: 'Calças',
-    slug: 'calcas',
-    description: 'Conforto e estilo para todas as ocasiões',
-    image: 'https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: true
+    name: "Calças & Shorts",
+    slug: "calcas",
+    description: "Calças e shorts para todos os estilos",
+    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&h=300&fit=crop",
+    featured: true,
+    itemCount: 0
   },
   {
     id: 4,
-    name: 'Saias',
-    slug: 'saias',
-    description: 'Feminilidade moderna em cada movimento',
-    image: 'https://images.unsplash.com/photo-1583496661160-fb5886a13d9e?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: false
+    name: "Saias & Macacões",
+    slug: "saias",
+    description: "Saias e macacões modernos e elegantes",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=300&fit=crop",
+    featured: true,
+    itemCount: 0
   },
   {
     id: 5,
-    name: 'Acessórios',
-    slug: 'acessorios',
-    description: 'Detalhes que fazem toda a diferença',
-    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: true
+    name: "Acessórios",
+    slug: "acessorios",
+    description: "Bolsas, joias e acessórios para completar o look",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=300&fit=crop",
+    featured: true,
+    itemCount: 0
   },
   {
     id: 6,
-    name: 'Calçados',
-    slug: 'calcados',
-    description: 'Pisada com personalidade e conforto',
-    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: false
-  },
-  {
-    id: 7,
-    name: 'Blazers',
-    slug: 'blazers',
-    description: 'Elegância profissional e casual',
-    image: 'https://images.unsplash.com/photo-1544957992-20514f595d6f?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: false
-  },
-  {
-    id: 8,
-    name: 'Jaquetas',
-    slug: 'jaquetas',
-    description: 'Proteção com muito estilo',
-    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=400&fit=crop&crop=center',
-    itemCount: 0, // Será calculado dinamicamente
-    featured: false
+    name: "Calçados",
+    slug: "calcados",
+    description: "Sapatos, sandálias e tênis femininos",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=300&fit=crop",
+    featured: true,
+    itemCount: 0
   }
 ];
 
@@ -404,38 +472,67 @@ export const categories = [
 // PRODUTOS ORGANIZADOS
 // ===========================================
 
-// Produtos em destaque
+// Produtos em destaque (apenas uma declaração)
 export const featuredProducts = allProducts.filter(product => 
-  product.rating >= 4.7 || product.reviewCount >= 100
+  product.rating >= 4.5 || product.reviewCount >= 100
 ).slice(0, 8);
 
 // Novidades (produtos novos)
-export const newArrivals = allProducts.filter(product => 
+export const newArrivals = allProducts.filter(product =>
   product.isNew === true
 ).slice(0, 6);
 
 // Produtos em promoção
-export const saleProducts = allProducts.filter(product => 
+export const saleProducts = allProducts.filter(product =>
   product.isPromo === true && product.salePrice
 ).slice(0, 8);
 
 // Produtos por categoria
 export const productsByCategory = {
   vestidos: allProducts.filter(p => p.category === "Vestidos"),
-  blusas: allProducts.filter(p => p.category === "Blusas"),
-  calcas: allProducts.filter(p => p.category === "Calças"),
+  blusas: allProducts.filter(p => p.category === "Blusas" || p.category === "Camisas"),
+  calcas: allProducts.filter(p => p.category === "Calças" || p.category === "Shorts" || p.category === "Bermudas"),
   saias: allProducts.filter(p => p.category === "Saias" || p.category === "Macacões"),
   acessorios: allProducts.filter(p => p.category === "Acessórios"),
-  blazers: allProducts.filter(p => p.category === "Blazers"),
-  jaquetas: allProducts.filter(p => p.category === "Jaquetas"),
   calcados: allProducts.filter(p => p.category === "Calçados")
 };
 
 // Atualizar contagem de itens nas categorias
 categories.forEach(category => {
-  const categoryKey = category.slug === 'saias' ? 'saias' : category.slug;
+  const categoryKey = category.slug;
   category.itemCount = productsByCategory[categoryKey]?.length || 0;
 });
+
+// ===========================================
+// DADOS PARA FILTROS
+// ===========================================
+
+export const filterOptions = {
+  genders: ["Feminino", "Masculino", "Infantil"],
+  subcategories: ["Casual", "Social", "Fitness", "Praia"],
+  brands: [
+    "Fina Estampa", 
+    "Elegance", 
+    "Denim Style", 
+    "Beach Life", 
+    "Active Wear", 
+    "Classic Men", 
+    "Kids Fashion", 
+    "Executive", 
+    "Basic Wear",
+    "Sport Style",
+    "Jewelry"
+  ],
+  materials: ["Algodão", "Jeans", "Seda", "Lycra", "Poliéster", "Linho", "Viscose", "Sintético", "Couro Sintético", "Metal"],
+  colors: ["Branco", "Preto", "Azul", "Rosa", "Verde", "Cinza", "Amarelo", "Marrom", "Bege", "Dourado", "Prateado"],
+  priceRanges: [
+    { label: "Até R\$ 50", min: 0, max: 50 },
+    { label: "R\$ 51 - R\$ 100", min: 51, max: 100 },
+    { label: "R\$ 101 - R\$ 150", min: 101, max: 150 },
+    { label: "R\$ 151 - R\$ 200", min: 151, max: 200 },
+    { label: "Acima de R\$ 200", min: 201, max: Infinity }
+  ]
+};
 
 // ===========================================
 // FUNÇÕES HELPER
@@ -465,17 +562,47 @@ export const getProductById = (id) => {
 export const getProductsByCategory = (categorySlug) => {
   const categoryMapping = {
     'vestidos': ['Vestidos'],
-    'blusas': ['Blusas'],
-    'calcas': ['Calças'],
+    'blusas': ['Blusas', 'Camisas'],
+    'calcas': ['Calças', 'Shorts', 'Bermudas'],
     'saias': ['Saias', 'Macacões'],
     'acessorios': ['Acessórios'],
-    'blazers': ['Blazers'],
-    'jaquetas': ['Jaquetas'],
     'calcados': ['Calçados']
   };
 
   const categoryNames = categoryMapping[categorySlug] || [];
   return allProducts.filter(product => categoryNames.includes(product.category));
+};
+
+// Função para buscar produtos por subcategoria
+export const getProductsBySubcategory = (subcategory) => {
+  return allProducts.filter(product => 
+    product.subcategory?.toLowerCase() === subcategory.toLowerCase()
+  );
+};
+
+// Função para buscar produtos por gênero
+export const getProductsByGender = (gender) => {
+  return allProducts.filter(product => 
+    product.gender?.toLowerCase() === gender.toLowerCase()
+  );
+};
+
+// Função para buscar produtos em promoção
+export const getPromotionProducts = () => {
+  return allProducts.filter(product => product.isPromo);
+};
+
+// Função para buscar produtos novos
+export const getNewProducts = () => {
+  return allProducts.filter(product => product.isNew);
+};
+
+// Função para buscar produtos por faixa de preço
+export const getProductsByPriceRange = (min, max) => {
+  return allProducts.filter(product => {
+    const price = product.salePrice || product.price;
+    return price >= min && price <= max;
+  });
 };
 
 // Função para buscar produtos similares
@@ -565,7 +692,7 @@ export const sizesByCategory = {
 
 // Cores disponíveis
 export const availableColors = [
-  "Preto", "Branco", "Azul", "Rosa", "Vinho", 
+  "Preto", "Branco", "Azul", "Rosa", "Vinho",
   "Bege", "Verde", "Amarelo", "Cinza", "Marrom",
   "Roxo", "Laranja", "Nude", "Dourado", "Prateado",
   "Jeans", "Floral", "Listrada"

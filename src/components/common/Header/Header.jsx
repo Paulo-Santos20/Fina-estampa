@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FaSearch, 
@@ -11,7 +11,7 @@ import {
   FaTimes as FaClose
 } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
-import CartSidebar from '../../cart/CartSideBar/CartSideBar';
+import CartDrawer from '../../cart/CartDrawer/CartDrawer';
 import styles from './Header.module.css';
 
 const Header = () => {
@@ -24,33 +24,56 @@ const Header = () => {
 
   const { getTotalItems, getTotalPrice } = useCart();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  // Memoizar categorias para evitar recriação desnecessária
+  const categories = useMemo(() => [
+    { name: 'Vestidos', slug: 'vestidos' },
+    { name: 'Blusas & Camisas', slug: 'blusas' },
+    { name: 'Calças & Shorts', slug: 'calcas' },
+    { name: 'Saias & Macacões', slug: 'saias' },
+    { name: 'Acessórios', slug: 'acessorios' },
+    { name: 'Calçados', slug: 'calcados' }
+  ], []);
 
-  const toggleCartSidebar = (e) => {
+  // Memoizar valores do carrinho
+  const totalItems = useMemo(() => getTotalItems(), [getTotalItems]);
+  const totalPrice = useMemo(() => getTotalPrice(), [getTotalPrice]);
+
+  // Função para formatar preço
+  const formatPrice = useCallback((price) => {
+    return price.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  }, []);
+
+  // Handlers otimizados com useCallback
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  const toggleCartSidebar = useCallback((e) => {
     e.preventDefault();
-    setIsCartSidebarOpen(!isCartSidebarOpen);
-  };
+    setIsCartSidebarOpen(prev => !prev);
+  }, []);
 
-  const closeCartSidebar = () => {
+  const closeCartSidebar = useCallback(() => {
     setIsCartSidebarOpen(false);
-  };
+  }, []);
 
-  const handleSearch = (e) => {
+  const closePromoBar = useCallback(() => {
+    setShowPromoBar(false);
+  }, []);
+
+  const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/busca?q=${encodeURIComponent(searchQuery)}`);
       setSearchQuery('');
     }
-  };
+  }, [searchQuery, navigate]);
 
-  const closePromoBar = () => {
-    setShowPromoBar(false);
-  };
-
-  // Função para navegar para categoria com debug
-  const navigateToCategory = (categorySlug, event) => {
+  // Função para navegar para categoria
+  const navigateToCategory = useCallback((categorySlug, event) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -62,44 +85,21 @@ const Header = () => {
     const targetPath = `/categoria/${categorySlug}`;
     console.log('🎯 URL destino:', targetPath);
     
-    setIsMobileMenuOpen(false); // Fechar menu mobile se estiver aberto
-    
-    // Forçar navegação
+    setIsMobileMenuOpen(false);
     navigate(targetPath, { replace: false });
     
-    // Verificar se a navegação funcionou
     setTimeout(() => {
       console.log('✅ URL após navegação:', window.location.pathname);
     }, 100);
-  };
+  }, [location.pathname, navigate]);
 
   // Verificar se link está ativo
-  const isActiveCategory = (categorySlug) => {
+  const isActiveCategory = useCallback((categorySlug) => {
     const isActive = location.pathname === `/categoria/${categorySlug}`;
     console.log(`🔍 Categoria ${categorySlug} ativa:`, isActive);
     return isActive;
-  };
+  }, [location.pathname]);
 
-  const categories = [
-    { name: 'Vestidos', slug: 'vestidos' },
-    { name: 'Blusas & Camisas', slug: 'blusas' },
-    { name: 'Calças & Shorts', slug: 'calcas' },
-    { name: 'Saias & Macacões', slug: 'saias' },
-    { name: 'Acessórios', slug: 'acessorios' },
-    { name: 'Calçados', slug: 'calcados' }
-  ];
-
-  const formatPrice = (price) => {
-    return price.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
-  };
-
-  const totalItems = getTotalItems();
-  const totalPrice = getTotalPrice();
-
-  // Debug: Log da localização atual
   console.log('📍 Header - Localização atual:', location.pathname);
 
   return (
@@ -110,7 +110,7 @@ const Header = () => {
           <div className={styles.promoContent}>
             <FaTags className={styles.promoIcon} />
             <span className={styles.promoText}>
-              🎉 FRETE GRÁTIS para compras acima de R\$ 199,90 | Use o cupom: FINAFRETE
+              🎉 FRETE GRÁTIS para compras acima de R$ 199,90 | Use o cupom: FINAFRETE
             </span>
             <button 
               className={styles.closePromo} 
@@ -200,7 +200,7 @@ const Header = () => {
           <div className={styles.container}>
             <ul className={styles.categoryList}>
               {categories.map((category, index) => (
-                <li key={index} className={styles.categoryItem}>
+                <li key={category.slug} className={styles.categoryItem}>
                   <button
                     type="button"
                     onClick={(e) => navigateToCategory(category.slug, e)}
@@ -294,7 +294,7 @@ const Header = () => {
               <h3 className={styles.mobileNavTitle}>Categorias</h3>
               <ul className={styles.mobileCategoryList}>
                 {categories.map((category, index) => (
-                  <li key={index} className={styles.mobileCategoryItem}>
+                  <li key={category.slug} className={styles.mobileCategoryItem}>
                     <button 
                       type="button"
                       onClick={(e) => navigateToCategory(category.slug, e)}
@@ -331,7 +331,7 @@ const Header = () => {
       )}
 
       {/* Cart Sidebar */}
-      <CartSidebar 
+      <CartDrawer 
         isOpen={isCartSidebarOpen} 
         onClose={closeCartSidebar} 
       />

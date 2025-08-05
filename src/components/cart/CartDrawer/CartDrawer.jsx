@@ -1,107 +1,80 @@
-import React, { useEffect } from 'react';
-import { FaTimes, FaPlus, FaMinus, FaShoppingBag } from 'react-icons/fa';
+import React from 'react';
+import { 
+  FaTimes, 
+  FaShoppingCart, 
+  FaPlus, 
+  FaMinus, 
+  FaTrash,
+  FaWhatsapp 
+} from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
 import styles from './CartDrawer.module.css';
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { 
-    cartItems = [],
+    cartItems, 
     removeFromCart, 
     updateQuantity, 
-    getTotalItems, 
-    getTotalPrice,
-    clearCart 
-  } = useCart() || {};
-
-  // Fechar drawer com ESC
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
+    clearCart, 
+    getTotalPrice, 
+    getTotalItems 
+  } = useCart();
 
   const formatPrice = (price) => {
-    if (typeof price !== 'number' || isNaN(price)) {
-      return 'R\$ 0,00';
-    }
     return price.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     });
   };
 
-  const handleQuantityChange = (productId, size, color, newQuantity) => {
-    if (!updateQuantity || !removeFromCart) return;
+  const handleWhatsAppOrder = () => {
+    if (cartItems.length === 0) return;
 
+    let message = `🛍️ *NOVO PEDIDO - FINA ESTAMPA*\n\n`;
+    message += `👤 *Cliente:* [Nome do Cliente]\n`;
+    message += `📱 *Telefone:* [Telefone do Cliente]\n`;
+    message += `📍 *Endereço:* [Endereço do Cliente]\n\n`;
+    message += `🛒 *PRODUTOS:*\n`;
+
+    cartItems.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      message += `• ${item.name} - Tam: ${item.size} - Cor: ${item.color} - Qtd: ${item.quantity} - ${formatPrice(itemTotal)}\n`;
+    });
+
+    message += `\n💰 *TOTAL:* ${formatPrice(getTotalPrice())}\n`;
+    message += `💳 *Pagamento:* A definir\n`;
+    message += `📦 *Frete:* A calcular\n\n`;
+    message += `🕐 *Data/Hora:* ${new Date().toLocaleString('pt-BR')}\n`;
+    message += `🔗 *Pedido #:* ${Date.now()}`;
+
+    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleQuantityChange = (id, size, color, newQuantity) => {
     if (newQuantity <= 0) {
-      removeFromCart(productId, size, color);
+      removeFromCart(id, size, color);
     } else {
-      updateQuantity(productId, size, color, newQuantity);
+      updateQuantity(id, size, color, newQuantity);
     }
   };
-
-  const handleCheckout = () => {
-    if (!cartItems || cartItems.length === 0) {
-      alert('Seu carrinho está vazio!');
-      return;
-    }
-
-    try {
-      const message = `🛍️ *NOVO PEDIDO - FINA ESTAMPA*\n\n`;
-      const itemsText = cartItems.map(item => 
-        `• ${item.name || 'Produto'} - Tam: ${item.size || 'N/A'} - Cor: ${item.color || 'N/A'} - Qtd: ${item.quantity || 1} - ${formatPrice((item.price || 0) * (item.quantity || 1))}`
-      ).join('\n');
-      
-      const total = `\n\n💰 *TOTAL:* ${formatPrice(getTotalItems ? getTotalPrice() : 0)}`;
-      const whatsappMessage = encodeURIComponent(message + itemsText + total);
-      
-      window.open(`https://wa.me/5511999999999?text=${whatsappMessage}`, '_blank');
-      onClose();
-    } catch (error) {
-      console.error('Erro ao processar checkout:', error);
-      alert('Erro ao processar pedido. Tente novamente.');
-    }
-  };
-
-  const totalItems = getTotalItems ? getTotalItems() : 0;
-  const totalPrice = getTotalPrice ? getTotalPrice() : 0;
-
-  // Se não estiver aberto, não renderizar
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <>
-      {/* Overlay para fechar ao clicar fora */}
-      <div 
-        className={styles.overlay} 
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      
-      {/* Drawer do Carrinho */}
-      <div className={`${styles.cartDrawer} ${isOpen ? styles.open : ''}`}>
-        {/* Header do Carrinho */}
-        <div className={styles.cartHeader}>
-          <div className={styles.headerContent}>
-            <FaShoppingBag className={styles.cartIcon} />
-            <div className={styles.headerInfo}>
-              <h3 className={styles.cartTitle}>Meu Carrinho</h3>
-              <span className={styles.itemCount}>({totalItems} itens)</span>
-            </div>
+      {/* Backdrop */}
+      {isOpen && (
+        <div 
+          className={styles.backdrop} 
+          onClick={onClose}
+        />
+      )}
+
+      {/* Drawer */}
+      <div className={`${styles.drawer} ${isOpen ? styles.open : ''}`}>
+        <div className={styles.header}>
+          <div className={styles.title}>
+            <FaShoppingCart />
+            <span>Carrinho ({getTotalItems()})</span>
           </div>
           <button 
             className={styles.closeButton}
@@ -112,115 +85,82 @@ const CartDrawer = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Conteúdo do Carrinho */}
-        <div className={styles.cartContent}>
+        <div className={styles.content}>
           {cartItems.length === 0 ? (
             <div className={styles.emptyCart}>
-              <FaShoppingBag className={styles.emptyIcon} />
-              <h4 className={styles.emptyTitle}>Sua sacola ainda está vazia</h4>
-              <p className={styles.emptyText}>Comece adicionando um produto</p>
-              <button 
-                className={styles.continueButton}
-                onClick={onClose}
-              >
-                Continuar Comprando
-              </button>
+              <FaShoppingCart className={styles.emptyIcon} />
+              <h3>Seu carrinho está vazio</h3>
+              <p>Adicione produtos para começar suas compras</p>
             </div>
           ) : (
             <>
-              {/* Lista de Itens */}
-              <div className={styles.cartItems}>
-                {cartItems.map((item, index) => {
-                  const itemKey = item.id && item.size && item.color 
-                    ? `${item.id}-${item.size}-${item.color}` 
-                    : `item-${index}`;
-                  
-                  return (
-                    <div key={itemKey} className={styles.cartItem}>
-                      <div className={styles.itemImage}>
-                        <img 
-                          src={item.image || '/placeholder-image.jpg'} 
-                          alt={item.name || 'Produto'}
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjhGOUZBIi8+CjxwYXRoIGQ9Ik00MCAyMEM0Ni42Mjc0IDIwIDUyIDI1LjM3MjYgNTIgMzJDNTIgMzguNjI3NCA0Ni42Mjc0IDQ0IDQwIDQ0QzMzLjM3MjYgNDQgMjggMzguNjI3NCAyOCAzMkMyOCAyNS4zNzI2IDMzLjM3MjYgMjAgNDAgMjBaIiBmaWxsPSIjNkM3NTdEIi8+CjxwYXRoIGQ9Ik0yMCA1Nkw2MCA1NkM2MS4xMDQ2IDU2IDYyIDU2Ljg5NTQgNjIgNThDNjIgNTkuMTA0NiA2MS4xMDQ2IDYwIDYwIDYwTDIwIDYwQzE4Ljg5NTQgNjAgMTggNTkuMTA0NiAxOCA1OEMxOCA1Ni44OTU0IDE4Ljg5NTQgNTYgMjAgNTZaIiBmaWxsPSIjNkM3NTdEIi8+Cjwvc3ZnPgo=';
-                          }}
-                        />
+              <div className={styles.items}>
+                {cartItems.map((item) => (
+                  <div key={`${item.id}-${item.size}-${item.color}`} className={styles.item}>
+                    <div className={styles.itemImage}>
+                      <img src={item.image} alt={item.name} />
+                    </div>
+                    
+                    <div className={styles.itemDetails}>
+                      <h4 className={styles.itemName}>{item.name}</h4>
+                      <div className={styles.itemVariants}>
+                        <span>Tamanho: {item.size}</span>
+                        <span>Cor: {item.color}</span>
                       </div>
-                      
-                      <div className={styles.itemDetails}>
-                        <h5 className={styles.itemName}>{item.name || 'Produto'}</h5>
-                        <div className={styles.itemVariants}>
-                          <span className={styles.variant}>Tam: {item.size || 'N/A'}</span>
-                          <span className={styles.variant}>Cor: {item.color || 'N/A'}</span>
-                        </div>
-                        <div className={styles.itemPrice}>
-                          {formatPrice(item.price || 0)}
-                        </div>
-                        
-                        <div className={styles.itemActions}>
-                          <div className={styles.quantityControl}>
-                            <button
-                              className={styles.quantityBtn}
-                              onClick={() => handleQuantityChange(item.id, item.size, item.color, (item.quantity || 1) - 1)}
-                              aria-label="Diminuir quantidade"
-                            >
-                              <FaMinus />
-                            </button>
-                            <span className={styles.quantity}>{item.quantity || 1}</span>
-                            <button
-                              className={styles.quantityBtn}
-                              onClick={() => handleQuantityChange(item.id, item.size, item.color, (item.quantity || 1) + 1)}
-                              aria-label="Aumentar quantidade"
-                            >
-                              <FaPlus />
-                            </button>
-                          </div>
-                          
-                          <button
-                            className={styles.removeBtn}
-                            onClick={() => removeFromCart && removeFromCart(item.id, item.size, item.color)}
-                            aria-label="Remover item"
-                          >
-                            <FaTimes />
-                          </button>
-                        </div>
+                      <div className={styles.itemPrice}>
+                        {formatPrice(item.price)}
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div className={styles.itemActions}>
+                      <div className={styles.quantityControls}>
+                        <button
+                          className={styles.quantityBtn}
+                          onClick={() => handleQuantityChange(item.id, item.size, item.color, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                        >
+                          <FaMinus />
+                        </button>
+                        <span className={styles.quantity}>{item.quantity}</span>
+                        <button
+                          className={styles.quantityBtn}
+                          onClick={() => handleQuantityChange(item.id, item.size, item.color, item.quantity + 1)}
+                        >
+                          <FaPlus />
+                        </button>
+                      </div>
+                      
+                      <button
+                        className={styles.removeBtn}
+                        onClick={() => removeFromCart(item.id, item.size, item.color)}
+                        aria-label="Remover item"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {/* Total e Checkout */}
-              <div className={styles.cartFooter}>
-                <div className={styles.totalSection}>
-                  <div className={styles.summaryRow}>
-                    <span>Subtotal ({totalItems} itens):</span>
-                    <span className={styles.subtotal}>{formatPrice(totalPrice)}</span>
-                  </div>
-                  <div className={styles.summaryRow}>
-                    <span>Frete:</span>
-                    <span className={styles.shipping}>Grátis</span>
-                  </div>
-                  <div className={styles.totalRow}>
-                    <span>Total:</span>
-                    <span className={styles.totalPrice}>{formatPrice(totalPrice)}</span>
-                  </div>
+              <div className={styles.summary}>
+                <div className={styles.total}>
+                  <span className={styles.totalLabel}>Total:</span>
+                  <span className={styles.totalPrice}>{formatPrice(getTotalPrice())}</span>
                 </div>
                 
-                <div className={styles.actionButtons}>
+                <div className={styles.actions}>
                   <button 
                     className={styles.clearBtn}
-                    onClick={() => clearCart && clearCart()}
-                    disabled={cartItems.length === 0}
+                    onClick={clearCart}
                   >
                     Limpar Carrinho
                   </button>
+                  
                   <button 
                     className={styles.checkoutBtn}
-                    onClick={handleCheckout}
-                    disabled={cartItems.length === 0}
+                    onClick={handleWhatsAppOrder}
                   >
+                    <FaWhatsapp />
                     Finalizar Pedido
                   </button>
                 </div>

@@ -71,7 +71,7 @@
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-full);
   transition: background-color var(--transition-normal);
   flex-shrink: 0;
 }
@@ -96,7 +96,7 @@
 
 .container {
   width: 100%;
-  max-width: var(--container-max-width);
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
   box-sizing: border-box;
@@ -136,7 +136,7 @@
 }
 
 .logoText {
-  font-family: var(--font-heading);
+  font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
   font-weight: 700;
   color: var(--wine-destaque);
@@ -145,7 +145,7 @@
 }
 
 .logoAccent {
-  font-family: var(--font-heading);
+  font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
   font-weight: 400;
   color: var(--dourado-sutil);
@@ -180,7 +180,7 @@
   padding: 1rem 1.2rem;
   padding-right: 3.5rem;
   border: 2px solid var(--cinza-claro);
-  border-radius: var(--radius-pill);
+  border-radius: 50px;
   font-size: 0.95rem;
   outline: none;
   transition: all var(--transition-normal);
@@ -207,7 +207,7 @@
   border: none;
   color: var(--white-principal);
   padding: 0.8rem;
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-full);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -318,7 +318,7 @@
   color: var(--white-principal);
   font-size: 0.7rem;
   font-weight: bold;
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-full);
   padding: 0.2rem 0.5rem;
   min-width: 18px;
   text-align: center;
@@ -409,21 +409,32 @@
 }
 
 .categoryLink {
+  background: none;
+  border: none;
   color: var(--preto-secundario);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
-  border-radius: var(--radius-pill);
+  border-radius: 50px;
   transition: all var(--transition-normal);
   white-space: nowrap;
   display: block;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .categoryLink:hover {
   color: var(--wine-destaque);
   background-color: var(--white-principal);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-wine);
+}
+
+.categoryLink.active {
+  color: var(--wine-destaque);
+  background-color: var(--white-principal);
+  font-weight: 600;
   box-shadow: var(--shadow-wine);
 }
 
@@ -601,12 +612,23 @@
   word-wrap: break-word;
   background: var(--white-principal);
   border: 1px solid var(--cinza-claro);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: left;
 }
 
 .mobileCategoryLink:hover {
   background-color: var(--wine-destaque);
   color: var(--white-principal);
   border-color: var(--wine-destaque);
+}
+
+.mobileCategoryLink.active {
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+  font-weight: 600;
 }
 
 .mobileExtraLinks {
@@ -637,10 +659,9 @@
 }
 
 /* ===========================================
-   RESPONSIVIDADE PARA TELAS GRANDES
+   RESPONSIVIDADE
    =========================================== */
 
-/* Para telas muito grandes */
 @media (min-width: 1400px) {
   .container,
   .promoContent {
@@ -656,42 +677,6 @@
     gap: 3rem;
   }
 }
-
-@media (min-width: 1600px) {
-  .container,
-  .promoContent {
-    max-width: 1800px;
-    padding: 0 4rem;
-  }
-  
-  .userActions {
-    gap: 2rem;
-  }
-  
-  .categoryList {
-    gap: 3.5rem;
-  }
-}
-
-@media (min-width: 1920px) {
-  .container,
-  .promoContent {
-    max-width: 90%;
-    padding: 0 5rem;
-  }
-  
-  .userActions {
-    gap: 2.5rem;
-  }
-  
-  .categoryList {
-    gap: 4rem;
-  }
-}
-
-/* ===========================================
-   RESPONSIVIDADE PARA TABLETS
-   =========================================== */
 
 @media (max-width: 1024px) {
   .mainHeader .container {
@@ -715,10 +700,6 @@
     font-size: 2rem;
   }
 }
-
-/* ===========================================
-   RESPONSIVIDADE PARA MOBILE
-   =========================================== */
 
 @media (max-width: 768px) {
   .container,
@@ -803,10 +784,6 @@
   }
 }
 
-/* ===========================================
-   RESPONSIVIDADE PARA MOBILE PEQUENO
-   =========================================== */
-
 @media (max-width: 480px) {
   .container,
   .promoContent {
@@ -879,10 +856,9 @@
 }
 
 /* ===========================================
-   ACESSIBILIDADE E PERFORMANCE
+   PERFORMANCE E ACESSIBILIDADE
    =========================================== */
 
-/* Melhorar performance */
 .cartButton,
 .actionButton,
 .categoryLink,
@@ -890,7 +866,17 @@
   will-change: transform;
 }
 
-/* Reduzir animações para usuários que preferem */
+.categoryLink:focus,
+.mobileCategoryLink:focus {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+.categoryLink:focus:not(:focus-visible),
+.mobileCategoryLink:focus:not(:focus-visible) {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .promoBar,
   .cartCount,
@@ -906,7 +892,6 @@
   }
 }
 
-/* Alto contraste */
 @media (prefers-contrast: high) {
   .header {
     border-bottom: 2px solid var(--preto-secundario);
@@ -927,11 +912,6 @@
   }
 }
 
-/* ===========================================
-   CORREÇÕES ESPECÍFICAS PARA OVERFLOW
-   =========================================== */
-
-/* Garantir que nenhum elemento exceda a largura */
 .header,
 .promoBar,
 .categoryNav,
@@ -940,7 +920,6 @@
   overflow-x: hidden;
 }
 
-/* Containers flexíveis */
 .container,
 .promoContent,
 .userActions,
@@ -949,7 +928,6 @@
   overflow-x: hidden;
 }
 
-/* Elementos que podem vazar */
 .searchInput,
 .actionText,
 .cartLabel,
@@ -960,111 +938,9 @@
   text-overflow: ellipsis;
 }
 
-/* Flex items que precisam de controle */
 .searchSection,
 .cartTextWrapper,
 .mobileCartDetails {
   min-width: 0;
   flex-shrink: 1;
-}
-/* ===========================================
-   ESTILOS PARA BOTÕES DE CATEGORIA
-   =========================================== */
-
-.categoryLink {
-  background: none;
-  border: none;
-  color: var(--preto-secundario);
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-pill);
-  transition: all var(--transition-normal);
-  white-space: nowrap;
-  display: block;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.categoryLink:hover {
-  color: var(--wine-destaque);
-  background-color: var(--white-principal);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-wine);
-}
-
-.categoryLink.active {
-  color: var(--wine-destaque);
-  background-color: var(--white-principal);
-  font-weight: 600;
-  box-shadow: var(--shadow-wine);
-}
-
-/* ===========================================
-   ESTILOS PARA BOTÕES MOBILE
-   =========================================== */
-
-.mobileCategoryLink {
-  display: block;
-  padding: 1rem;
-  color: var(--preto-secundario);
-  text-decoration: none;
-  border-radius: var(--radius-medium);
-  transition: all var(--transition-normal);
-  width: 100%;
-  box-sizing: border-box;
-  word-wrap: break-word;
-  background: var(--white-principal);
-  border: 1px solid var(--cinza-claro);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 1rem;
-  text-align: left;
-}
-
-.mobileCategoryLink:hover {
-  background-color: var(--wine-destaque);
-  color: var(--white-principal);
-  border-color: var(--wine-destaque);
-}
-
-.mobileCategoryLink.active {
-  background-color: var(--wine-destaque);
-  color: var(--white-principal);
-  border-color: var(--wine-destaque);
-  font-weight: 600;
-}
-
-/* ===========================================
-   MELHORIAS DE ACESSIBILIDADE
-   =========================================== */
-
-.categoryLink:focus,
-.mobileCategoryLink:focus {
-  outline: 2px solid var(--wine-destaque);
-  outline-offset: 2px;
-}
-
-.categoryLink:focus:not(:focus-visible),
-.mobileCategoryLink:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* ===========================================
-   RESPONSIVIDADE ADICIONAL
-   =========================================== */
-
-@media (max-width: 768px) {
-  .categoryLink {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .mobileCategoryLink {
-    padding: 0.8rem;
-    font-size: 0.9rem;
-  }
 }

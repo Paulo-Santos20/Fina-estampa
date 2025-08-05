@@ -1,0 +1,1130 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+/* ===========================================
+   DASHBOARD LAYOUT
+   =========================================== */
+
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background: var(--white-principal);
+  font-family: var(--font-family-base);
+  margin: 0;
+  padding: 0;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  color: var(--wine-destaque);
+  background: var(--white-principal);
+}
+
+/* ===========================================
+   SIDEBAR
+   =========================================== */
+
+.sidebar {
+  width: 280px;
+  background: var(--white-principal);
+  border-right: 2px solid var(--cinza-claro);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform var(--transition-normal);
+  box-shadow: 4px 0 15px rgba(114, 47, 55, 0.1);
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar.sidebarOpen {
+  transform: translateX(0);
+}
+
+.sidebarHeader {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 2px solid var(--cinza-claro);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white-principal);
+  margin: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.logoText {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+  letter-spacing: 0.05em;
+}
+
+.logoAccent {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--dourado-sutil);
+  font-style: italic;
+}
+
+.closeSidebar {
+  display: none;
+  background: var(--cinza-claro);
+  border: none;
+  color: var(--wine-destaque);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+}
+
+.closeSidebar:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+/* ===========================================
+   SIDEBAR NAVIGATION
+   =========================================== */
+
+.sidebarNav {
+  flex: 1;
+  padding: 1.5rem 0;
+  overflow-y: auto;
+  background: var(--white-principal);
+  margin: 0;
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menuItem {
+  margin-bottom: 0.3rem;
+}
+
+.menuButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--preto-secundario);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+  border-radius: 0;
+  position: relative;
+  margin: 0;
+}
+
+.menuButton:hover {
+  background: var(--rosa-suave);
+  color: var(--wine-destaque);
+}
+
+.menuButton.menuButtonActive {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.menuButton.menuButtonActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--dourado-sutil);
+}
+
+.menuIcon {
+  font-size: 1.1rem;
+  width: 1.5rem;
+  display: flex;
+  justify-content: center;
+  color: inherit;
+}
+
+.menuLabel {
+  flex: 1;
+  color: inherit;
+}
+
+/* ===========================================
+   SIDEBAR FOOTER
+   =========================================== */
+
+.sidebarFooter {
+  padding: 1.5rem;
+  border-top: 2px solid var(--cinza-claro);
+  background: var(--white-principal);
+  margin: 0;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  border: 1px solid rgba(114, 47, 55, 0.1);
+  margin: 0;
+}
+
+.userAvatar {
+  width: 3rem;
+  height: 3rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRole {
+  font-size: 0.8rem;
+  color: var(--wine-destaque);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===========================================
+   SIDEBAR OVERLAY
+   =========================================== */
+
+.sidebarOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
+/* ===========================================
+   MAIN CONTENT - CORREÇÃO AQUI
+   =========================================== */
+
+.mainContent {
+  flex: 1;
+  margin-left: 0; /* Removido margin para mobile */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--white-principal);
+  width: 100%; /* Garantir largura total */
+}
+
+/* ===========================================
+   TOP HEADER
+   =========================================== */
+
+.topHeader {
+  background: var(--white-principal);
+  border-bottom: 2px solid var(--cinza-claro);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(114, 47, 55, 0.1);
+  margin: 0; /* Garantir sem margin */
+  width: 100%; /* Largura total */
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.menuToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cinza-claro);
+  border: 2px solid transparent;
+  color: var(--wine-destaque);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+}
+
+.menuToggle:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.timeSelect {
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.timeSelect:focus {
+  border-color: var(--wine-destaque);
+  outline: none;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--cinza-claro);
+  color: var(--wine-destaque);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.actionButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: 2px solid var(--wine-destaque);
+  border-radius: var(--radius-medium);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.logoutButton:hover {
+  background: var(--preto-secundario);
+  border-color: var(--preto-secundario);
+}
+
+/* ===========================================
+   DASHBOARD CONTENT
+   =========================================== */
+
+.dashboardContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background: var(--cinza-claro);
+  margin: 0; /* Garantir sem margin */
+  width: 100%; /* Largura total */
+}
+
+/* ===========================================
+   STATS SECTION
+   =========================================== */
+
+.statsSection {
+  margin-bottom: 2rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.statCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--cinza-claro);
+}
+
+.statCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(114, 47, 55, 0.15);
+}
+
+.statIcon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--white-principal);
+  flex-shrink: 0;
+}
+
+.statCard.primary .statIcon {
+  background: var(--wine-destaque);
+}
+
+.statCard.success .statIcon {
+  background: #10B981;
+}
+
+.statCard.info .statIcon {
+  background: var(--dourado-sutil);
+  color: var(--preto-secundario);
+}
+
+.statCard.warning .statIcon {
+  background: #F59E0B;
+}
+
+.statCard.danger .statIcon {
+  background: #EF4444;
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--preto-secundario);
+  margin: 0 0 0.5rem 0;
+}
+
+.statTitle {
+  font-size: 1rem;
+  color: var(--cinza-medio);
+  margin: 0 0 0.8rem 0;
+}
+
+.statChange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.statChange.up {
+  color: #10B981;
+}
+
+.statChange.down {
+  color: #EF4444;
+}
+
+/* ===========================================
+   CONTENT GRID
+   =========================================== */
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ===========================================
+   SECTIONS
+   =========================================== */
+
+.section {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+  border: 1px solid var(--cinza-claro);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin: 0;
+}
+
+.sectionIcon {
+  color: var(--wine-destaque);
+  font-size: 1.2rem;
+}
+
+.viewAllButton {
+  background: var(--cinza-claro);
+  border: 2px solid var(--cinza-claro);
+  color: var(--wine-destaque);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+}
+
+.viewAllButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+/* ===========================================
+   ORDERS TABLE
+   =========================================== */
+
+.ordersTable {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(114, 47, 55, 0.1);
+}
+
+.orderRow:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.orderId {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+}
+
+.customerName {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  font-weight: 500;
+}
+
+.productName {
+  font-size: 1rem;
+  color: var(--preto-secundario);
+  font-weight: 500;
+}
+
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.orderValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--preto-secundario);
+}
+
+.orderStatus {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.orderStatus.pago,
+.orderStatus.entregue {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.orderStatus.pendente,
+.orderStatus.preparando {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.orderStatus.enviado,
+.orderStatus.acaminho {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.orderDate {
+  font-size: 0.85rem;
+  color: var(--cinza-medio);
+  font-weight: 500;
+}
+
+/* ===========================================
+   CHART PLACEHOLDER
+   =========================================== */
+
+.chartPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  text-align: center;
+  border: 2px dashed var(--wine-destaque);
+}
+
+.chartIcon {
+  font-size: 3.5rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1rem;
+}
+
+.chartPlaceholder p {
+  font-size: 1.2rem;
+  color: var(--preto-secundario);
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.chartPlaceholder small {
+  color: var(--cinza-medio);
+  font-size: 1rem;
+}
+
+/* ===========================================
+   COUPONS
+   =========================================== */
+
+.couponsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.couponCard {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--wine-destaque), var(--preto-secundario));
+  color: var(--white-principal);
+  border-radius: var(--radius-medium);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
+}
+
+.couponCard h4 {
+  font-size: 1.3rem;
+  margin: 0 0 0.8rem 0;
+  font-weight: 700;
+}
+
+.couponCard p {
+  font-size: 1rem;
+  margin: 0 0 1.2rem 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.couponCode {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background: var(--white-principal);
+  color: var(--wine-destaque);
+  border-radius: var(--radius-medium);
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+/* ===========================================
+   PRODUCTS LIST
+   =========================================== */
+
+.productsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  border: 1px solid rgba(114, 47, 55, 0.1);
+  transition: all var(--transition-normal);
+}
+
+.productItem:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+}
+
+.productRank {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.productDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.productName {
+  font-size: 1rem;
+  color: var(--preto-secundario);
+  font-weight: 600;
+}
+
+.productStats {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  font-weight: 500;
+}
+
+/* ===========================================
+   FAVORITES
+   =========================================== */
+
+.favoriteItem {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(114, 47, 55, 0.1);
+}
+
+.favoriteItem:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+}
+
+.favoriteImage {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-medium);
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--white-principal);
+}
+
+.favoriteDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.favoriteName {
+  font-size: 1rem;
+  color: var(--preto-secundario);
+  font-weight: 600;
+}
+
+.favoritePrice {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.originalPrice {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  text-decoration: line-through;
+}
+
+.salePrice {
+  font-size: 1rem;
+  color: var(--wine-destaque);
+  font-weight: 700;
+}
+
+.regularPrice {
+  font-size: 1rem;
+  color: var(--wine-destaque);
+  font-weight: 700;
+}
+
+.favoriteAction {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: 0.8rem;
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.favoriteAction:hover {
+  background: var(--preto-secundario);
+  transform: scale(1.05);
+}
+
+/* ===========================================
+   QUICK ACTIONS
+   =========================================== */
+
+.quickActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.quickActionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  background: var(--cinza-claro);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: center;
+  color: var(--preto-secundario);
+}
+
+.quickActionButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.2);
+}
+
+.quickActionButton svg {
+  font-size: 1.5rem;
+}
+
+.quickActionButton span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ===========================================
+   RESPONSIVIDADE DESKTOP - CORREÇÃO PRINCIPAL
+   =========================================== */
+
+@media (min-width: 1024px) {
+  .sidebar {
+    position: static;
+    transform: translateX(0);
+  }
+  
+  .mainContent {
+    margin-left: 0; /* REMOVIDO: margin-left: 280px; */
+    width: calc(100% - 280px); /* ADICIONADO: Calcular largura correta */
+  }
+  
+  .closeSidebar {
+    display: none;
+  }
+  
+  .sidebarOverlay {
+    display: none !important;
+  }
+}
+
+/* ===========================================
+   RESPONSIVIDADE TABLET
+   =========================================== */
+
+@media (max-width: 1023px) {
+  .closeSidebar {
+    display: flex;
+  }
+  
+  .sidebarOverlay {
+    display: block;
+  }
+  
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboardContent {
+    padding: 1.5rem;
+  }
+  
+  .topHeader {
+    padding: 1rem 1.5rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .statCard {
+    padding: 1.5rem;
+  }
+  
+  .section {
+    padding: 1.5rem;
+  }
+}
+
+/* ===========================================
+   RESPONSIVIDADE MOBILE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .dashboardContent {
+    padding: 1rem;
+  }
+  
+  .topHeader {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .headerLeft,
+  .headerRight {
+    justify-content: space-between;
+  }
+  
+  .headerActions {
+    justify-content: center;
+  }
+  
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .statCard {
+    padding: 1.2rem;
+  }
+  
+  .statIcon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.2rem;
+  }
+  
+  .statValue {
+    font-size: 1.6rem;
+  }
+  
+  .section {
+    padding: 1.2rem;
+  }
+  
+  .orderRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem;
+  }
+  
+  .orderDetails {
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .quickActions {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardContent {
+    padding: 0.8rem;
+  }
+  
+  .topHeader {
+    padding: 0.8rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.2rem;
+  }
+  
+  .actionButton span,
+  .logoutButton span {
+    display: none;
+  }
+  
+  .section {
+    padding: 1rem;
+  }
+  
+  .statCard {
+    padding: 1rem;
+  }
+  
+  .quickActionButton {
+    padding: 1rem;
+  }
+}
+
+/* ===========================================
+   ACESSIBILIDADE
+   =========================================== */
+
+.menuButton:focus,
+.quickActionButton:focus,
+.actionButton:focus,
+.logoutButton:focus,
+.timeSelect:focus,
+.favoriteAction:focus,
+.viewAllButton:focus,
+.menuToggle:focus,
+.closeSidebar:focus {
+  outline: 3px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   SCROLLBAR CUSTOMIZADA
+   =========================================== */
+
+.sidebarNav::-webkit-scrollbar,
+.dashboardContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebarNav::-webkit-scrollbar-track,
+.dashboardContent::-webkit-scrollbar-track {
+  background: var(--cinza-claro);
+}
+
+.sidebarNav::-webkit-scrollbar-thumb,
+.dashboardContent::-webkit-scrollbar-thumb {
+  background: var(--wine-destaque);
+  border-radius: 3px;
+}
+
+.sidebarNav::-webkit-scrollbar-thumb:hover,
+.dashboardContent::-webkit-scrollbar-thumb:hover {
+  background: var(--preto-secundario);
+}

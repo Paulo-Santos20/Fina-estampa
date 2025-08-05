@@ -6,6 +6,8 @@ import Home from './pages/Home/Home';
 import Product from './pages/Product/Product';
 import Search from './pages/Search/Search';
 import Category from './pages/Category/Category';
+import Login from './pages/Login/Login';
+import Dashboard from './pages/Dashboard/Dashboard'; 
 import './styles/globals.css';
 
 function App() {
@@ -18,7 +20,11 @@ function App() {
             <Route path="/produto/:id" element={<Product />} />
             <Route path="/busca" element={<Search />} />
             <Route path="/categoria/:categoria" element={<Category />} />
-            <Route path="/login" element={
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} /> {/* NOVO */}
+            
+            {/* Outras rotas existentes... */}
+            <Route path="/cadastro" element={
               <div style={{ 
                 padding: '4rem 2rem', 
                 textAlign: 'center',
@@ -29,24 +35,84 @@ function App() {
                 alignItems: 'center',
                 background: '#F8F9FA'
               }}>
-                <h1 style={{ fontSize: '2.5rem', color: '#722F37', marginBottom: '1rem' }}>🔐 Login</h1>
+                <h1 style={{ fontSize: '2.5rem', color: '#722F37', marginBottom: '1rem' }}>📝 Cadastro</h1>
                 <h2 style={{ fontSize: '1.5rem', color: '#000', marginBottom: '1rem' }}>Página em desenvolvimento</h2>
                 <p style={{ color: '#6C757D', marginBottom: '2rem', maxWidth: '400px', lineHeight: '1.6' }}>
-                  Estamos trabalhando na página de login. Em breve você poderá acessar sua conta!
+                  Estamos preparando uma página especial para você criar sua conta na Fina Estampa!
                 </p>
-                <a href="/" style={{ 
-                  background: '#722F37', 
-                  color: 'white', 
-                  padding: '1rem 2rem', 
-                  textDecoration: 'none', 
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                  transition: 'all 0.3s ease'
-                }}>
-                  Voltar ao Início
-                </a>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <a href="/login" style={{ 
+                    background: '#722F37', 
+                    color: 'white', 
+                    padding: '1rem 2rem', 
+                    textDecoration: 'none', 
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    🔐 Fazer Login
+                  </a>
+                  <a href="/" style={{ 
+                    background: 'transparent', 
+                    color: '#722F37', 
+                    padding: '1rem 2rem', 
+                    textDecoration: 'none', 
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    border: '2px solid #722F37',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    🏠 Voltar ao Início
+                  </a>
+                </div>
               </div>
             } />
+
+            {/* Demais rotas existentes... */}
+            <Route path="/esqueci-senha" element={
+              <div style={{ 
+                padding: '4rem 2rem', 
+                textAlign: 'center',
+                minHeight: '60vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: '#F8F9FA'
+              }}>
+                <h1 style={{ fontSize: '2.5rem', color: '#722F37', marginBottom: '1rem' }}>🔑 Recuperar Senha</h1>
+                <h2 style={{ fontSize: '1.5rem', color: '#000', marginBottom: '1rem' }}>Página em desenvolvimento</h2>
+                <p style={{ color: '#6C757D', marginBottom: '2rem', maxWidth: '400px', lineHeight: '1.6' }}>
+                  Em breve você poderá recuperar sua senha de forma fácil e segura!
+                </p>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <a href="/login" style={{ 
+                    background: '#722F37', 
+                    color: 'white', 
+                    padding: '1rem 2rem', 
+                    textDecoration: 'none', 
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    🔐 Voltar ao Login
+                  </a>
+                  <a href="/" style={{ 
+                    background: 'transparent', 
+                    color: '#722F37', 
+                    padding: '1rem 2rem', 
+                    textDecoration: 'none', 
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    border: '2px solid #722F37',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    🏠 Página Inicial
+                  </a>
+                </div>
+              </div>
+            } />
+            
             <Route path="/favoritos" element={
               <div style={{ 
                 padding: '4rem 2rem', 

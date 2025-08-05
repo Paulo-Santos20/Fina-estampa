@@ -956,3 +956,318 @@
   position: relative;
   z-index: 1;
 }
+
+/* ===========================================
+   MOBILE LAYOUT CORRIGIDO
+   =========================================== */
+
+/* Esconder elementos no mobile */
+.desktopOnly {
+  display: flex;
+}
+
+/* Botão de busca mobile */
+.mobileSearchButton {
+  display: none;
+  background: var(--white-principal);
+  border: none;
+  color: var(--preto-secundario);
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1.4rem;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-medium);
+}
+
+.mobileSearchButton:hover {
+  color: var(--wine-destaque);
+  background-color: var(--rosa-suave);
+}
+
+/* Menu mobile corrigido */
+.mobileMenuButton {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  background: var(--white-principal);
+  border: none;
+  color: var(--preto-secundario);
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1.4rem;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-medium);
+  order: -1; /* Primeiro elemento */
+}
+
+.mobileMenuButton:hover {
+  color: var(--wine-destaque);
+  background-color: var(--rosa-suave);
+}
+
+/* Overlay mobile corrigido */
+.mobileMenuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--white-principal);
+  z-index: 1500;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mobileMenuOverlay.mobileMenuOpen {
+  transform: translateX(0);
+}
+
+/* ===========================================
+   RESPONSIVIDADE MOBILE
+   =========================================== */
+
+@media (max-width: 768px) {
+  /* Esconder elementos desktop */
+  .desktopOnly {
+    display: none !important;
+  }
+  
+  /* Mostrar elementos mobile */
+  .mobileMenuButton,
+  .mobileSearchButton {
+    display: flex;
+  }
+  
+  /* Layout mobile do header */
+  .mainHeader .container {
+    grid-template-columns: auto 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  /* Logo centralizado no mobile */
+  .logo {
+    justify-self: center;
+    text-align: center;
+  }
+  
+  /* Ações do usuário mobile */
+  .userActions {
+    gap: 0.5rem;
+    justify-self: end;
+  }
+  
+  /* Carrinho mobile simplificado */
+  .cartButton {
+    padding: 0.5rem;
+    gap: 0;
+  }
+  
+  .cartIcon {
+    font-size: 1.3rem;
+  }
+  
+  /* Menu mobile content */
+  .mobileMenuContent {
+    padding: 1rem;
+  }
+  
+  .mobileUserActions {
+    margin-bottom: 1.5rem;
+  }
+  
+  .mobileCategoryNav {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainHeader {
+    padding: 0.8rem 0;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .logoText,
+  .logoAccent {
+    font-size: 1.6rem;
+  }
+  
+  .mobileMenuButton,
+  .mobileSearchButton {
+    padding: 0.4rem;
+    font-size: 1.2rem;
+  }
+  
+  .cartIcon {
+    font-size: 1.2rem;
+  }
+  
+  .cartCount {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+    min-width: 16px;
+  }
+}
+
+/* ===========================================
+   LOGO COM IMAGEM
+   =========================================== */
+
+.logoImage {
+  height: 40px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  transition: transform var(--transition-normal);
+}
+
+.logoImageMobile {
+  height: 35px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.logoText {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.logoTextPrimary {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.logoTextAccent {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--dourado-sutil);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.logo:hover .logoImage {
+  transform: scale(1.05);
+}
+
+/* ===========================================
+   BARRA DE PESQUISA MOBILE
+   =========================================== */
+
+.mobileSearchSection {
+  display: none;
+  background-color: var(--white-principal);
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.mobileOnly {
+  display: none;
+}
+
+/* ===========================================
+   RESPONSIVIDADE ATUALIZADA
+   =========================================== */
+
+@media (max-width: 768px) {
+  /* Mostrar elementos mobile */
+  .mobileOnly {
+    display: block !important;
+  }
+  
+  .mobileSearchSection {
+    display: block;
+  }
+  
+  /* Esconder elementos desktop */
+  .desktopOnly {
+    display: none !important;
+  }
+  
+  /* Layout mobile do header principal */
+  .mainHeader .container {
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  /* Logo mobile */
+  .logoImage {
+    height: 35px;
+    max-width: 120px;
+  }
+  
+  .logoTextPrimary,
+  .logoTextAccent {
+    font-size: 1.8rem;
+  }
+  
+  /* Menu mobile button */
+  .mobileMenuButton {
+    display: flex;
+    order: -1;
+  }
+  
+  /* Ações do usuário mobile simplificadas */
+  .userActions {
+    gap: 0.5rem;
+    justify-self: end;
+  }
+  
+  /* Carrinho mobile */
+  .cartButton {
+    padding: 0.5rem;
+    gap: 0;
+  }
+  
+  .cartIcon {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logoImage {
+    height: 30px;
+    max-width: 100px;
+  }
+  
+  .logoImageMobile {
+    height: 30px;
+    max-width: 100px;
+  }
+  
+  .logoTextPrimary,
+  .logoTextAccent {
+    font-size: 1.6rem;
+  }
+  
+  .mobileSearchSection {
+    padding: 0.8rem 0;
+  }
+  
+  .mobileMenuButton {
+    padding: 0.4rem;
+    font-size: 1.2rem;
+  }
+  
+  .cartIcon {
+    font-size: 1.2rem;
+  }
+  
+  .cartCount {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+    min-width: 16px;
+  }
+}

@@ -11,29 +11,36 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1998; /* AUMENTADO: Maior que o header */
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  z-index: 1998;
   animation: fadeIn 0.2s ease-out;
 }
 
 .searchMenu {
   position: fixed;
-  top: 150px; /* Posicionado abaixo da barra de pesquisa */
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  max-width: 800px;
+  max-width: 900px;
   background: var(--white-principal);
   border-radius: var(--radius-large);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  z-index: 1999; /* AUMENTADO: Maior que o header e overlay */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 1999;
   overflow: hidden;
   animation: slideDown 0.3s ease-out;
-  max-height: calc(100vh - 200px);
-  display: flex;
+  max-height: calc(100vh - 120px);
+  display: flex !important;
   flex-direction: column;
   border: 1px solid var(--cinza-claro);
+  visibility: visible !important;
+  opacity: 1 !important;
 }
+
+/* ===========================================
+   ANIMAÇÕES
+   =========================================== */
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -49,6 +56,81 @@
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+}
+
+/* ===========================================
+   HEADER DE BUSCA EM EVIDÊNCIA
+   =========================================== */
+
+.searchHeader {
+  background: var(--white-principal);
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--wine-destaque);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.searchForm {
+  width: 100%;
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--white-principal);
+  border: 2px solid var(--wine-destaque);
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(114, 47, 55, 0.15);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1.2rem;
+  color: var(--wine-destaque);
+  font-size: 1.1rem;
+  z-index: 2;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 1.2rem 3.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--preto-secundario);
+  outline: none;
+  font-weight: 500;
+}
+
+.searchInput::placeholder {
+  color: var(--cinza-medio);
+  font-weight: 400;
+}
+
+.closeButton {
+  position: absolute;
+  right: 1rem;
+  background: var(--cinza-claro);
+  border: none;
+  color: var(--cinza-medio);
+  cursor: pointer;
+  padding: 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.closeButton:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: scale(1.05);
 }
 
 /* ===========================================
@@ -96,7 +178,6 @@
   margin: 0 0 1rem 0;
   font-weight: 600;
   letter-spacing: 0.5px;
-  background: var(--white-principal);
 }
 
 /* ===========================================
@@ -210,16 +291,10 @@
   color: var(--cinza-medio) !important;
 }
 
-.categoryButton:hover .categoryName {
-  color: var(--white-principal) !important;
-}
-
-.categoryButton:hover .categoryDesc {
-  color: var(--white-principal) !important;
-}
-
+.categoryButton:hover .categoryName,
+.categoryButton:hover .categoryDesc,
 .categoryButton:hover .arrow {
-  color: var(--white-principal);
+  color: var(--white-principal) !important;
   transform: translateX(2px);
 }
 
@@ -367,12 +442,36 @@
 }
 
 /* ===========================================
-   RESPONSIVIDADE
+   SCROLLBAR CUSTOMIZADA
+   =========================================== */
+
+.leftColumn::-webkit-scrollbar,
+.rightColumn::-webkit-scrollbar {
+  width: 4px;
+}
+
+.leftColumn::-webkit-scrollbar-track,
+.rightColumn::-webkit-scrollbar-track {
+  background: var(--cinza-claro);
+}
+
+.leftColumn::-webkit-scrollbar-thumb,
+.rightColumn::-webkit-scrollbar-thumb {
+  background: var(--wine-destaque);
+  border-radius: 2px;
+}
+
+.leftColumn::-webkit-scrollbar-thumb:hover,
+.rightColumn::-webkit-scrollbar-thumb:hover {
+  background: var(--preto-secundario);
+}
+
+/* ===========================================
+   RESPONSIVIDADE TABLET
    =========================================== */
 
 @media (max-width: 1024px) {
   .searchMenu {
-    top: 130px;
     width: 95%;
     max-width: 700px;
   }
@@ -390,11 +489,35 @@
   }
 }
 
+/* ===========================================
+   RESPONSIVIDADE MOBILE
+   =========================================== */
+
 @media (max-width: 768px) {
   .searchMenu {
-    top: 110px;
-    width: 98%;
-    max-height: calc(100vh - 150px);
+    top: 70px;
+    width: 95%;
+    max-height: calc(100vh - 100px);
+  }
+  
+  .searchHeader {
+    padding: 1rem;
+  }
+  
+  .searchInput {
+    padding: 1rem 3rem;
+    font-size: 0.95rem;
+  }
+  
+  .searchIcon {
+    left: 1rem;
+    font-size: 1rem;
+  }
+  
+  .closeButton {
+    right: 0.8rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
   }
   
   .searchContent {
@@ -447,12 +570,36 @@
   }
 }
 
+/* ===========================================
+   RESPONSIVIDADE MOBILE PEQUENO
+   =========================================== */
+
 @media (max-width: 480px) {
   .searchMenu {
-    top: 90px;
-    width: 100%;
+    top: 60px;
+    width: 98%;
+    max-height: calc(100vh - 90px);
     border-radius: var(--radius-medium);
-    max-height: calc(100vh - 130px);
+  }
+  
+  .searchHeader {
+    padding: 0.8rem;
+  }
+  
+  .searchInput {
+    padding: 0.9rem 2.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .searchIcon {
+    left: 0.9rem;
+    font-size: 0.9rem;
+  }
+  
+  .closeButton {
+    right: 0.7rem;
+    padding: 0.4rem;
+    font-size: 0.75rem;
   }
   
   .suggestionsSection {
@@ -531,7 +678,7 @@
 }
 
 /* ===========================================
-   PERFORMANCE E ACESSIBILIDADE
+   ACESSIBILIDADE
    =========================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -541,15 +688,16 @@
   .categoryButton,
   .productCard,
   .productImage img,
-  .arrow {
+  .arrow,
+  .closeButton {
     animation: none !important;
     transition: none !important;
-    transform: none !important;
   }
   
   .productCard:hover,
   .categoryButton:hover,
-  .termButton:hover {
+  .termButton:hover,
+  .closeButton:hover {
     transform: none !important;
   }
 }
@@ -557,6 +705,10 @@
 @media (prefers-contrast: high) {
   .searchMenu {
     border: 3px solid var(--preto-secundario);
+  }
+  
+  .searchInputWrapper {
+    border-width: 3px;
   }
   
   .productCard {
@@ -574,40 +726,39 @@
   .suggestionsSection:not(:last-child) {
     border-bottom-width: 2px;
   }
+  
+  .searchHeader {
+    border-bottom-width: 3px;
+  }
 }
 
 /* ===========================================
-   SCROLLBAR CUSTOMIZADA
+   PERFORMANCE
    =========================================== */
 
-.leftColumn::-webkit-scrollbar,
-.rightColumn::-webkit-scrollbar {
-  width: 4px;
+.termButton,
+.categoryButton,
+.productCard,
+.closeButton {
+  will-change: transform;
 }
 
-.leftColumn::-webkit-scrollbar-track,
-.rightColumn::-webkit-scrollbar-track {
-  background: var(--cinza-claro);
+.productImage img {
+  will-change: transform;
 }
 
-.leftColumn::-webkit-scrollbar-thumb,
-.rightColumn::-webkit-scrollbar-thumb {
-  background: var(--wine-destaque);
-  border-radius: 2px;
+/* Focus states para navegação por teclado */
+.termButton:focus,
+.categoryButton:focus,
+.productCard:focus,
+.closeButton:focus {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
 }
 
-.leftColumn::-webkit-scrollbar-thumb:hover,
-.rightColumn::-webkit-scrollbar-thumb:hover {
-  background: var(--preto-secundario);
-}
-
-/* ===========================================
-   DEBUG - FORÇAR VISIBILIDADE
-   =========================================== */
-
-.searchMenu {
-  /* Forçar que o menu apareça */
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+.termButton:focus:not(:focus-visible),
+.categoryButton:focus:not(:focus-visible),
+.productCard:focus:not(:focus-visible),
+.closeButton:focus:not(:focus-visible) {
+  outline: none;
 }

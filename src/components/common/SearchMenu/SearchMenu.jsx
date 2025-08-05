@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 import { allProducts, categories } from '../../../data/products';
 import styles from './SearchMenu.module.css';
 
 const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
   const navigate = useNavigate();
-
-  // DEBUG: Log para verificar se o componente está sendo renderizado
-  console.log('🔍 SearchMenu renderizado:', { isOpen, searchQuery });
 
   // Palavras-chave para categorias
   const categoryKeywords = useMemo(() => ({
@@ -26,10 +24,8 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
     const query = searchQuery.toLowerCase().trim();
     
     return categories.filter(category => {
-      // Buscar no nome da categoria
       if (category.name.toLowerCase().includes(query)) return true;
       
-      // Buscar em palavras relacionadas
       const categoryWords = categoryKeywords[category.slug] || [];
       return categoryWords.some(word => 
         word.includes(query) || query.includes(word)
@@ -44,19 +40,10 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
     const query = searchQuery.toLowerCase().trim();
     
     const matchedProducts = allProducts.filter(product => {
-      // Buscar no nome
       if (product.name.toLowerCase().includes(query)) return true;
-      
-      // Buscar na categoria
       if (product.category.toLowerCase().includes(query)) return true;
-      
-      // Buscar na marca
       if (product.brand?.toLowerCase().includes(query)) return true;
-      
-      // Buscar no material
       if (product.material?.toLowerCase().includes(query)) return true;
-      
-      // Buscar nas cores
       if (product.colors?.some(color => 
         color.toLowerCase().includes(query)
       )) return true;
@@ -64,7 +51,6 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
       return false;
     });
 
-    // Ordenar por relevância (nome primeiro, depois outros campos)
     return matchedProducts
       .sort((a, b) => {
         const aNameMatch = a.name.toLowerCase().includes(query);
@@ -84,11 +70,9 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
     const query = searchQuery.toLowerCase().trim();
     const suggestions = [];
 
-    // Adicionar variações da busca
     if (query.length > 2) {
       suggestions.push(query);
       
-      // Adicionar combinações com palavras comuns
       const commonWords = ['feminina', 'masculina', 'infantil', 'casual', 'social', 'festa', 'verão', 'inverno'];
       commonWords.forEach(word => {
         if (!query.includes(word)) {
@@ -96,7 +80,6 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
         }
       });
 
-      // Adicionar variações específicas por categoria
       categorySuggestions.forEach(category => {
         const categoryWords = categoryKeywords[category.slug] || [];
         categoryWords.forEach(word => {
@@ -126,6 +109,14 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
     navigate(`/busca?q=${encodeURIComponent(term)}`);
     onClose();
   }, [navigate, onClose, onSearchChange]);
+
+  const handleSearchSubmit = useCallback((e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/busca?q=${encodeURIComponent(searchQuery.trim())}`);
+      onClose();
+    }
+  }, [searchQuery, navigate, onClose]);
 
   // Formatação de preço
   const formatPrice = useCallback((price) => {
@@ -157,30 +148,41 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
   const hasTermSuggestions = termSuggestions.length > 0;
   const hasAnySuggestions = hasCategorySuggestions || hasProductSuggestions || hasTermSuggestions;
 
-  // DEBUG: Log dos estados
-  console.log('🔍 SearchMenu estados:', {
-    isOpen,
-    hasQuery,
-    hasAnySuggestions,
-    categorySuggestions: categorySuggestions.length,
-    productSuggestions: productSuggestions.length,
-    termSuggestions: termSuggestions.length
-  });
-
-  if (!isOpen) {
-    console.log('❌ SearchMenu não está aberto');
-    return null;
-  }
-
-  console.log('✅ SearchMenu está renderizando');
+  if (!isOpen) return null;
 
   return (
     <>
       {/* Overlay */}
       <div className={styles.overlay} onClick={onClose} />
       
-      {/* Menu */}
+      {/* Menu com barra de pesquisa em evidência */}
       <div className={styles.searchMenu}>
+        {/* NOVO: Header com barra de pesquisa em evidência */}
+        <div className={styles.searchHeader}>
+          <form className={styles.searchForm} onSubmit={handleSearchSubmit}>
+            <div className={styles.searchInputWrapper}>
+              <FaSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Buscar por produtos, marcas ou categorias..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className={styles.searchInput}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={onClose}
+                className={styles.closeButton}
+                aria-label="Fechar busca"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Conteúdo das sugestões */}
         {hasQuery ? (
           <div className={styles.searchContent}>
             {/* Coluna da Esquerda - Termos e Categorias Sugeridas */}

@@ -8,289 +8,442 @@
 .categoryPage {
   min-height: 100vh;
   background: var(--white-principal);
+  padding: 2rem 0;
 }
 
 .container {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem;
 }
 
 /* ===========================================
-   BREADCRUMB
+   HEADER DA PÁGINA
    =========================================== */
 
-.breadcrumb {
+.pageHeader {
   margin-bottom: 2rem;
+  text-align: center;
 }
 
-/* ===========================================
-   HEADER DA CATEGORIA
-   =========================================== */
-
-.categoryHeader {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 3rem;
-  align-items: center;
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, var(--cinza-claro) 0%, var(--white-principal) 100%);
-  border-radius: var(--radius-large);
+.pageTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1rem;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
 }
 
-.categoryInfo {
+.pageTitle::before {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--wine-destaque) 0%,
+    var(--dourado-sutil) 50%,
+    var(--wine-destaque) 100%
+  );
+  border-radius: 2px;
+}
+
+.pageDescription {
+  font-size: 1.2rem;
+  color: var(--cinza-medio);
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.6;
+}
+
+.resultsInfo {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, var(--cinza-claro), #f0f0f0);
+  border-radius: var(--radius-large);
+  margin-bottom: 2rem;
+  border: 1px solid var(--cinza-claro);
+}
+
+.resultsCount {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
-.categoryTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  color: var(--wine-destaque);
-  margin: 0;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.categoryDescription {
-  font-size: 1.2rem;
-  color: var(--cinza-medio);
-  line-height: 1.6;
-  margin: 0;
-}
-
-.categoryStats {
-  display: flex;
-  gap: 2rem;
-  margin-top: 1rem;
-}
-
-.productCount {
-  font-size: 1rem;
-  color: var(--wine-destaque);
-  font-weight: 600;
-}
-
-.categoryImage {
-  display: flex;
-  justify-content: center;
+.mobileFilterToggle {
+  display: none;
   align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--white-principal);
+  border: 2px solid var(--wine-destaque);
+  color: var(--wine-destaque);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--transition-normal);
 }
 
-.headerImage {
-  width: 100%;
-  max-width: 300px;
-  height: 200px;
-  object-fit: cover;
+.mobileFilterToggle:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: translateY(-1px);
+}
+
+.sortSelect {
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--cinza-claro);
   border-radius: var(--radius-medium);
-  box-shadow: var(--shadow-medium);
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--transition-normal);
+  min-width: 180px;
+}
+
+.sortSelect:focus {
+  border-color: var(--wine-destaque);
 }
 
 /* ===========================================
-   CONTEÚDO PRINCIPAL
+   LAYOUT PRINCIPAL
    =========================================== */
 
-.categoryContent {
+.mainLayout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 2rem;
   align-items: start;
 }
 
 /* ===========================================
-   SIDEBAR
+   SIDEBAR DE FILTROS
    =========================================== */
 
-.sidebar {
+.filtersSidebar {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: 1.5rem;
   position: sticky;
   top: 2rem;
+  height: fit-content;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  box-shadow: var(--shadow-light);
 }
 
-/* ===========================================
-   ÁREA DE PRODUTOS
-   =========================================== */
-
-.productsArea {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* ===========================================
-   BARRA DE FERRAMENTAS
-   =========================================== */
-
-.toolbar {
+.filtersHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  background: var(--white-principal);
-  border-radius: var(--radius-medium);
-  box-shadow: var(--shadow-light);
-  border: 1px solid var(--cinza-claro);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--cinza-claro);
 }
 
-.toolbarLeft {
-  display: flex;
-  align-items: center;
+.filtersTitle {
+  font-size: 1.3rem;
+  color: var(--wine-destaque);
+  margin: 0;
+  font-weight: 600;
 }
 
-.resultsCount {
-  font-size: 1rem;
+.closeMobileFilters {
+  display: none;
+  background: none;
+  border: none;
   color: var(--cinza-medio);
-  font-weight: 500;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
 }
 
-.toolbarRight {
+.closeMobileFilters:hover {
+  color: var(--wine-destaque);
+  background: var(--cinza-claro);
+}
+
+.filtersContent {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.sortSelect {
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--cinza-claro);
-  border-radius: var(--radius-small);
+/* ===========================================
+   SEÇÕES DE FILTROS
+   =========================================== */
+
+.filterSection {
+  border-bottom: 1px solid var(--cinza-claro);
+  padding-bottom: 1rem;
+}
+
+.filterSection:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sectionToggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0.8rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  cursor: pointer;
+  transition: color var(--transition-normal);
+}
+
+.sectionToggle:hover {
+  color: var(--wine-destaque);
+}
+
+.sectionToggle svg {
+  font-size: 0.9rem;
+  transition: transform var(--transition-normal);
+}
+
+.filterGroup {
+  padding-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filterSelect {
+  padding: 0.8rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
   background: var(--white-principal);
   color: var(--preto-secundario);
-  font-size: 0.9rem;
   cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.sortSelect:focus {
   outline: none;
+  transition: border-color var(--transition-normal);
+  font-size: 0.95rem;
+}
+
+.filterSelect:focus {
   border-color: var(--wine-destaque);
-  box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.1);
-}
-
-.viewModeButtons {
-  display: flex;
-  border: 1px solid var(--cinza-claro);
-  border-radius: var(--radius-small);
-  overflow: hidden;
-}
-
-.viewModeBtn {
-  padding: 0.8rem 1rem;
-  border: none;
-  background: var(--white-principal);
-  color: var(--cinza-medio);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  font-size: 1rem;
-}
-
-.viewModeBtn:hover {
-  background: var(--cinza-claro);
-}
-
-.viewModeBtn.active {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
 }
 
 /* ===========================================
-   GRID DE PRODUTOS
+   FAIXA DE PREÇO CUSTOMIZADA
    =========================================== */
+
+.customPriceRange {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cinza-claro);
+}
+
+.customPriceLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+.priceInputs {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.priceInput {
+  flex: 1;
+  padding: 0.8rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  outline: none;
+  transition: border-color var(--transition-normal);
+  font-size: 0.9rem;
+}
+
+.priceInput:focus {
+  border-color: var(--wine-destaque);
+}
+
+.priceSeparator {
+  color: var(--cinza-medio);
+  font-weight: 500;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.clearFiltersBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius-medium);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-top: 1rem;
+}
+
+.clearFiltersBtn:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===========================================
+   ÁREA DE RESULTADOS
+   =========================================== */
+
+.resultsArea {
+  min-height: 400px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--cinza-claro), #f0f0f0);
+  border-radius: var(--radius-large);
+  border: 1px solid var(--cinza-claro);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.emptyState h2 {
+  font-size: 1.8rem;
+  color: var(--preto-secundario);
+  margin-bottom: 1rem;
+}
+
+.emptyState p {
+  font-size: 1.1rem;
+  color: var(--cinza-medio);
+  margin-bottom: 2rem;
+  max-width: 400px;
+  line-height: 1.6;
+}
 
 .productsGrid {
   display: grid;
-  gap: 2rem;
-}
-
-.productsGrid.grid {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 0;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.productsGrid.list {
-  grid-template-columns: 1fr;
-}
-
-/* ===========================================
-   LOADING
-   =========================================== */
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem;
-  text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--cinza-claro);
-  border-top: 4px solid var(--wine-destaque);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading p {
-  color: var(--cinza-medio);
-  font-size: 1.1rem;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ===========================================
-   SEM PRODUTOS
+   MOBILE FILTERS OVERLAY
    =========================================== */
 
-.noProducts {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem;
+.mobileFiltersOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+/* ===========================================
+   PÁGINA NÃO ENCONTRADA
+   =========================================== */
+
+.notFound {
   text-align: center;
-  background: var(--cinza-claro);
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--cinza-claro), #f0f0f0);
   border-radius: var(--radius-large);
+  margin: 2rem 0;
+  border: 1px solid var(--cinza-claro);
 }
 
-.noProductsIcon {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.5;
-}
-
-.noProducts h3 {
-  font-size: 1.5rem;
-  color: var(--preto-secundario);
+.notFound h1 {
+  font-size: 2.5rem;
+  color: var(--wine-destaque);
   margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
 }
 
-.noProducts p {
+.notFound p {
+  font-size: 1.2rem;
   color: var(--cinza-medio);
   margin-bottom: 2rem;
   line-height: 1.6;
 }
 
-.clearFiltersBtn {
-  padding: 1rem 2rem;
+.backBtn {
   background: var(--wine-destaque);
   color: var(--white-principal);
   border: none;
+  padding: 1rem 2rem;
   border-radius: var(--radius-medium);
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal);
 }
 
-.clearFiltersBtn:hover {
-  background: var(--wine-dark);
-  transform: translateY(-2px);
+.backBtn:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
 /* ===========================================
@@ -298,81 +451,315 @@
    =========================================== */
 
 @media (max-width: 1200px) {
-  .categoryContent {
-    grid-template-columns: 260px 1fr;
+  .mainLayout {
+    grid-template-columns: 280px 1fr;
     gap: 1.5rem;
   }
   
-  .productsGrid.grid {
+  .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .pageTitle {
+    font-size: 2.4rem;
   }
 }
 
-@media (max-width: 968px) {
-  .categoryHeader {
+@media (max-width: 1024px) {
+  .categoryPage {
+    padding: 1.5rem 0;
+  }
+  
+  .mainLayout {
     grid-template-columns: 1fr;
-    text-align: center;
+    gap: 0;
   }
   
-  .categoryContent {
-    grid-template-columns: 1fr;
+  .filtersSidebar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 350px;
+    height: 100vh;
+    z-index: 999;
+    border-radius: 0;
+    border-left: none;
+    max-height: 100vh;
+    overflow-y: auto;
   }
   
-  .sidebar {
-    position: static;
-    order: 2;
+  .filtersSidebar.showMobile {
+    display: block;
   }
   
-  .productsArea {
-    order: 1;
+  .mobileFilterToggle {
+    display: flex;
   }
   
-  .toolbar {
+  .closeMobileFilters {
+    display: block;
+  }
+  
+  .mobileFiltersOverlay {
+    display: block;
+  }
+  
+  .resultsInfo {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
   }
   
-  .toolbarRight {
+  .controls {
     justify-content: space-between;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+  }
+  
+  .pageTitle {
+    font-size: 2.2rem;
   }
 }
 
 @media (max-width: 768px) {
   .container {
+    padding: 0 1rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.8rem;
+  }
+  
+  .pageDescription {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .resultsInfo {
     padding: 1rem;
   }
   
-  .categoryTitle {
-    font-size: 2rem;
+  .controls {
+    flex-direction: column;
+    gap: 0.8rem;
   }
   
-  .productsGrid.grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  .mobileFilterToggle,
+  .sortSelect {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .filtersSidebar {
+    width: 100vw;
+    padding: 1rem;
+  }
+  
+  .priceInputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .priceSeparator {
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1rem;
-  }
-  
-  .toolbar {
-    padding: 1rem;
-  }
-  
-  .viewModeButtons {
-    display: none;
   }
 }
 
 @media (max-width: 480px) {
-  .categoryTitle {
+  .categoryPage {
+    padding: 1rem 0;
+  }
+  
+  .pageTitle {
     font-size: 1.6rem;
   }
   
-  .productsGrid.grid {
+  .pageDescription {
+    font-size: 0.9rem;
+  }
+  
+  .emptyState {
+    padding: 2rem 1rem;
+  }
+  
+  .emptyIcon {
+    font-size: 3rem;
+  }
+  
+  .emptyState h2 {
+    font-size: 1.4rem;
+  }
+  
+  .emptyState p {
+    font-size: 1rem;
+  }
+  
+  .productsGrid {
     grid-template-columns: 1fr 1fr;
     gap: 0.8rem;
   }
   
-  .toolbarRight {
-    flex-direction: column;
+  .filtersSidebar {
+    padding: 0.8rem;
+  }
+  
+  .filtersContent {
     gap: 0.8rem;
   }
+  
+  .filterSection {
+    padding-bottom: 0.8rem;
+  }
+  
+  .sectionToggle {
+    padding: 0.6rem 0;
+    font-size: 0.95rem;
+  }
+  
+  .filterGroup {
+    padding-top: 0.6rem;
+    gap: 0.6rem;
+  }
+  
+  .filterSelect,
+  .priceInput {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+  
+  .customPriceRange {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+  }
+  
+  .customPriceLabel {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .clearFiltersBtn {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+  }
+  
+  .notFound {
+    padding: 2rem 1rem;
+  }
+  
+  .notFound h1 {
+    font-size: 2rem;
+  }
+  
+  .notFound p {
+    font-size: 1rem;
+  }
+}
+
+/* ===========================================
+   PERFORMANCE E ACESSIBILIDADE
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .filtersSidebar,
+  .mobileFilterToggle,
+  .clearFiltersBtn,
+  .backBtn,
+  .sortSelect,
+  .sectionToggle svg,
+  .filterGroup,
+  .productsGrid {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .filtersSidebar,
+  .resultsInfo,
+  .emptyState,
+  .notFound {
+    border-width: 3px;
+  }
+  
+  .filterSelect,
+  .priceInput,
+  .sortSelect {
+    border-width: 3px;
+  }
+  
+  .pageTitle {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .filterSection {
+    border-bottom-width: 2px;
+  }
+  
+  .customPriceRange {
+    border-top-width: 2px;
+  }
+  
+  .filtersHeader {
+    border-bottom-width: 3px;
+  }
+}
+
+/* ===========================================
+   ESTADOS DE FOCO
+   =========================================== */
+
+.sectionToggle:focus,
+.filterSelect:focus,
+.priceInput:focus,
+.sortSelect:focus,
+.mobileFilterToggle:focus,
+.clearFiltersBtn:focus,
+.backBtn:focus {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+.sectionToggle:focus:not(:focus-visible),
+.filterSelect:focus:not(:focus-visible),
+.priceInput:focus:not(:focus-visible),
+.sortSelect:focus:not(:focus-visible),
+.mobileFilterToggle:focus:not(:focus-visible),
+.clearFiltersBtn:focus:not(:focus-visible),
+.backBtn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ===========================================
+   SCROLLBAR CUSTOMIZADA PARA SIDEBAR
+   =========================================== */
+
+.filtersSidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filtersSidebar::-webkit-scrollbar-track {
+  background: var(--cinza-claro);
+  border-radius: 3px;
+}
+
+.filtersSidebar::-webkit-scrollbar-thumb {
+  background: var(--wine-destaque);
+  border-radius: 3px;
+}
+
+.filtersSidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--preto-secundario);
 }

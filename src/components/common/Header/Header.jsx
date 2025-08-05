@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
 import CartDrawer from '../../cart/CartDrawer/CartDrawer';
+import SearchMenu from '../SearchMenu/SearchMenu';
 import styles from './Header.module.css';
 
 const Header = () => {
@@ -21,6 +22,9 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showPromoBar, setShowPromoBar] = useState(true);
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+  
+  // Estados para o SearchMenu
+  const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
 
   const { getTotalItems, getTotalPrice } = useCart();
 
@@ -64,7 +68,20 @@ const Header = () => {
     setShowPromoBar(false);
   }, []);
 
-  // CORRIGIR A FUNÇÃO DE BUSCA
+  // Handlers para o SearchMenu
+  const handleSearchInputFocus = useCallback(() => {
+    setIsSearchMenuOpen(true);
+  }, []);
+
+  const handleSearchMenuClose = useCallback(() => {
+    setIsSearchMenuOpen(false);
+  }, []);
+
+  const handleSearchQueryChange = useCallback((value) => {
+    setSearchQuery(value);
+  }, []);
+
+  // Função de busca que também fecha o SearchMenu
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -76,6 +93,7 @@ const Header = () => {
       
       navigate(searchUrl);
       setSearchQuery('');
+      setIsSearchMenuOpen(false);
       
       // Debug: verificar se a navegação funcionou
       setTimeout(() => {
@@ -147,14 +165,15 @@ const Header = () => {
               </Link>
             </div>
 
-            {/* Barra de Pesquisa */}
-            <div className={styles.searchSection}>
+            {/* Barra de Pesquisa com posição relativa */}
+            <div className={`${styles.searchSection} ${styles.searchContainer}`}>
               <form className={styles.searchForm} onSubmit={handleSearch}>
                 <input
                   type="text"
                   placeholder="Buscar por produtos, marcas ou categorias..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={handleSearchInputFocus}
                   className={styles.searchInput}
                 />
                 <button type="submit" className={styles.searchButton} aria-label="Pesquisar">
@@ -255,6 +274,7 @@ const Header = () => {
                   placeholder="Buscar produtos..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={handleSearchInputFocus}
                   className={styles.searchInput}
                 />
                 <button type="submit" className={styles.searchButton}>
@@ -341,6 +361,14 @@ const Header = () => {
           </div>
         </div>
       )}
+
+      {/* SearchMenu - MOVIDO PARA FORA DO HEADER para funcionar corretamente */}
+      <SearchMenu
+        isOpen={isSearchMenuOpen}
+        onClose={handleSearchMenuClose}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchQueryChange}
+      />
 
       {/* Cart Sidebar */}
       <CartDrawer 

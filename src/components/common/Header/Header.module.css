@@ -944,3 +944,15 @@
   min-width: 0;
   flex-shrink: 1;
 }
+/* ===========================================
+   CONTAINER DE BUSCA COM POSIÇÃO RELATIVA
+   =========================================== */
+
+/* ===========================================
+   CONTAINER DE BUSCA COM POSIÇÃO RELATIVA
+   =========================================== */
+
+.searchContainer {
+  position: relative;
+  z-index: 1;
+}

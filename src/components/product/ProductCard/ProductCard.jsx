@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaHeart, FaShoppingCart, FaStar } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
@@ -7,16 +7,6 @@ import styles from './ProductCard.module.css';
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  // Debug: verificar produto recebido
-  console.log('🎯 ProductCard recebeu:', {
-    id: product?.id,
-    name: product?.name,
-    image: product?.image,
-    price: product?.price,
-    hasAddToCart: typeof addToCart === 'function'
-  });
 
   // Função segura para formatar preço
   const formatPrice = useCallback((price) => {
@@ -62,8 +52,6 @@ const ProductCard = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('🛒 Adicionando ao carrinho:', product.name);
-    
     if (!addToCart) {
       console.error('❌ Função addToCart não disponível');
       return;
@@ -74,7 +62,6 @@ const ProductCard = ({ product }) => {
     
     try {
       addToCart(product, defaultSize, defaultColor, 1);
-      console.log('✅ Produto adicionado com sucesso');
     } catch (error) {
       console.error('❌ Erro ao adicionar produto:', error);
     }
@@ -87,19 +74,11 @@ const ProductCard = ({ product }) => {
   }, [product.name]);
 
   const handleImageError = useCallback(() => {
-    console.log('❌ Erro ao carregar imagem:', product.image);
     setImageError(true);
-  }, [product.image]);
-
-  const handleImageLoad = useCallback(() => {
-    console.log('✅ Imagem carregada:', product.image);
-    setImageLoaded(true);
-    setImageError(false);
-  }, [product.image]);
+  }, []);
 
   // Verificar se o produto existe
   if (!product) {
-    console.error('❌ Produto não fornecido para ProductCard');
     return (
       <div className={styles.productCard}>
         <div className={styles.errorState}>
@@ -122,23 +101,13 @@ const ProductCard = ({ product }) => {
     <div className={styles.productCard}>
       <Link to={`/produto/${product.id}`} className={styles.productLink}>
         <div className={styles.imageWrapper}>
-          {/* Loading state */}
-          {!imageLoaded && !imageError && (
-            <div className={styles.imageLoading}>
-              <div className={styles.loadingSpinner}></div>
-            </div>
-          )}
-
-          {/* Imagem principal ou fallback */}
+          {/* Imagem principal ou fallback - SEM LOADING */}
           {!imageError ? (
             <img
               src={product.image || fallbackImage}
               alt={product.name || 'Produto'}
-              className={`${styles.productImage} ${imageLoaded ? styles.loaded : ''}`}
-              loading="lazy"
+              className={styles.productImage}
               onError={handleImageError}
-              onLoad={handleImageLoad}
-              style={{ display: imageLoaded ? 'block' : 'none' }}
             />
           ) : (
             <div className={styles.imageFallback}>
@@ -215,14 +184,36 @@ const ProductCard = ({ product }) => {
                 <span className={styles.originalPrice}>
                   {formatPrice(originalPrice)}
                 </span>
-                <span className={styles.salePrice}>
-                  {formatPrice(salePrice)}
-                </span>
+                <div className={styles.priceWithCart}>
+                  <span className={styles.salePrice}>
+                    {formatPrice(salePrice)}
+                  </span>
+                  <button 
+                    className={styles.priceCartBtn}
+                    onClick={handleAddToCart}
+                    aria-label={`Adicionar ${product.name || 'produto'} ao carrinho`}
+                    type="button"
+                    title="Adicionar ao carrinho"
+                  >
+                    <FaShoppingCart />
+                  </button>
+                </div>
               </>
             ) : (
-              <span className={styles.regularPrice}>
-                {formatPrice(regularPrice)}
-              </span>
+              <div className={styles.priceWithCart}>
+                <span className={styles.regularPrice}>
+                  {formatPrice(regularPrice)}
+                </span>
+                <button 
+                  className={styles.priceCartBtn}
+                  onClick={handleAddToCart}
+                  aria-label={`Adicionar ${product.name || 'produto'} ao carrinho`}
+                  type="button"
+                  title="Adicionar ao carrinho"
+                >
+                  <FaShoppingCart />
+                </button>
+              </div>
             )}
           </div>
         </div>

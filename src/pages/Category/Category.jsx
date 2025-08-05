@@ -1,407 +1,521 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaFilter, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import Layout from '../../components/common/Layout/Layout';
 import ProductCard from '../../components/product/ProductCard/ProductCard';
-import CategoryFilters from '../../components/category/CategoryFilters/CategoryFilters';
-import CategoryBreadcrumb from '../../components/category/CategoryBreadcrumb/CategoryBreadcrumb';
-import { allProducts, getCategoryBySlug } from '../../data/products';
+import { allProducts, filterOptions, categories } from '../../data/products';
 import styles from './Category.module.css';
 
 const Category = () => {
-  const params = useParams();
-  const location = useLocation();
+  const { categoria } = useParams();
   const navigate = useNavigate();
   
-  // Debug detalhado dos parâmetros
-  console.log('🔍 Category.jsx - Todos os params:', params);
-  console.log('🔍 Category.jsx - categorySlug específico:', params.categorySlug);
-  console.log('🔍 Category.jsx - Location:', location);
-  console.log('🔍 Category.jsx - Pathname:', location.pathname);
-  
-  // Extrair categorySlug dos parâmetros
-  const categorySlug = params.categorySlug;
-  
-  // Estados
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [sortBy, setSortBy] = useState('relevance');
   const [filters, setFilters] = useState({
-    priceRange: [0, 1000],
-    sizes: [],
-    colors: [],
-    brands: [],
-    sortBy: 'relevance',
-    inStock: false,
-    onSale: false,
-    freeShipping: false,
-    isNew: false,
-    rating: 0
+    gender: 'all',
+    subcategory: 'all',
+    brand: 'all',
+    material: 'all',
+    color: 'all',
+    priceRange: 'all',
+    customPriceMin: '',
+    customPriceMax: ''
   });
-  const [currentCategory, setCurrentCategory] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('grid');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({
+    gender: true,
+    subcategory: true,
+    price: true,
+    brand: false,
+    material: false,
+    color: false
+  });
 
-  // Mapear slugs para categorias
-  const categoryMapping = {
+  // Encontrar categoria atual
+  const currentCategory = useMemo(() => {
+    return categories.find(cat => cat.slug === categoria);
+  }, [categoria]);
+
+  // Mapear categoria para filtro de produtos
+  const categoryMapping = useMemo(() => ({
     'vestidos': ['Vestidos'],
-    'blusas': ['Blusas'],
-    'calcas': ['Calças'],
+    'blusas': ['Blusas', 'Camisas'],
+    'calcas': ['Calças', 'Shorts', 'Bermudas'],
     'saias': ['Saias', 'Macacões'],
     'acessorios': ['Acessórios'],
-    'blazers': ['Blazers'],
-    'jaquetas': ['Jaquetas'],
     'calcados': ['Calçados']
-  };
+  }), []);
 
-  // Buscar categoria atual - executar sempre que categorySlug mudar
-  useEffect(() => {
-    console.log('🔄 useEffect - Category slug recebido:', categorySlug);
-    console.log('🔄 useEffect - Tipo do categorySlug:', typeof categorySlug);
-    
-    if (!categorySlug) {
-      console.log('❌ categorySlug está vazio/undefined/null');
-      
-      // Tentar extrair da URL manualmente
-      const pathParts = location.pathname.split('/');
-      console.log('🔍 Partes da URL:', pathParts);
-      
-      if (pathParts.length >= 3 && pathParts[1] === 'categoria') {
-        const extractedSlug = pathParts[2];
-        console.log('🔧 Slug extraído manualmente:', extractedSlug);
-        
-        const category = getCategoryBySlug(extractedSlug);
-        if (category) {
-          setCurrentCategory(category);
-          console.log('✅ Categoria definida via extração manual:', category.name);
-          return;
-        }
+  // Produtos da categoria
+  const categoryProducts = useMemo(() => {
+    if (!categoria || !categoryMapping[categoria]) {
+      return [];
+    }
+
+    const categoryNames = categoryMapping[categoria];
+    return allProducts.filter(product => 
+      categoryNames.includes(product.category)
+    );
+  }, [categoria, categoryMapping]);
+
+  // Aplicar filtros
+  const filteredResults = useMemo(() => {
+    let results = [...categoryProducts];
+
+    // Filtrar por gênero
+    if (filters.gender !== 'all') {
+      results = results.filter(product => 
+        product.gender?.toLowerCase() === filters.gender.toLowerCase()
+      );
+    }
+
+    // Filtrar por subcategoria
+    if (filters.subcategory !== 'all') {
+      results = results.filter(product => 
+        product.subcategory?.toLowerCase() === filters.subcategory.toLowerCase()
+      );
+    }
+
+    // Filtrar por marca
+    if (filters.brand !== 'all') {
+      results = results.filter(product => 
+        product.brand?.toLowerCase() === filters.brand.toLowerCase()
+      );
+    }
+
+    // Filtrar por material
+    if (filters.material !== 'all') {
+      results = results.filter(product => 
+        product.material?.toLowerCase() === filters.material.toLowerCase()
+      );
+    }
+
+    // Filtrar por cor
+    if (filters.color !== 'all') {
+      results = results.filter(product => 
+        product.colors?.some(color => 
+          color.toLowerCase() === filters.color.toLowerCase()
+        )
+      );
+    }
+
+    // Filtrar por faixa de preço predefinida
+    if (filters.priceRange !== 'all') {
+      const range = filterOptions.priceRanges.find(r => r.label === filters.priceRange);
+      if (range) {
+        results = results.filter(product => {
+          const price = product.salePrice || product.price;
+          return price >= range.min && price <= range.max;
+        });
       }
+    }
+
+    // Filtrar por faixa de preço customizada
+    if (filters.customPriceMin || filters.customPriceMax) {
+      const min = filters.customPriceMin ? parseFloat(filters.customPriceMin) : 0;
+      const max = filters.customPriceMax ? parseFloat(filters.customPriceMax) : Infinity;
       
-      console.log('❌ Não foi possível extrair categoria, redirecionando');
-      navigate('/', { replace: true });
-      return;
-    }
-    
-    const category = getCategoryBySlug(categorySlug);
-    console.log('🔍 Categoria encontrada:', category);
-    
-    if (category) {
-      setCurrentCategory(category);
-      console.log('✅ Categoria definida:', category.name);
-    } else {
-      console.log('❌ Categoria não encontrada, redirecionando para home');
-      navigate('/', { replace: true });
-    }
-  }, [categorySlug, navigate, location.pathname]);
-
-  // Filtrar produtos - executar sempre que categoria mudar
-  useEffect(() => {
-    if (!currentCategory) {
-      console.log('⏳ Aguardando categoria...');
-      return;
-    }
-
-    console.log('🔄 Filtrando produtos para categoria:', currentCategory.name);
-    setIsLoading(true);
-    
-    // Usar o slug da categoria atual para buscar produtos
-    const slugToUse = currentCategory.slug;
-    console.log('🔍 Usando slug para filtrar:', slugToUse);
-    
-    // Simular delay de carregamento
-    const timer = setTimeout(() => {
-      let products = allProducts.filter(product => {
-        const categoryNames = categoryMapping[slugToUse] || [];
-        const matches = categoryNames.includes(product.category);
-        if (matches) {
-          console.log('✅ Produto encontrado:', product.name, 'Categoria:', product.category);
-        }
-        return matches;
-      });
-
-      console.log('📊 Produtos encontrados antes dos filtros:', products.length);
-
-      // Aplicar filtros
-      products = products.filter(product => {
-        // Filtro de preço
+      results = results.filter(product => {
         const price = product.salePrice || product.price;
-        if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
-          return false;
-        }
-
-        // Filtro de tamanhos
-        if (filters.sizes.length > 0) {
-          const hasSize = filters.sizes.some(size => product.sizes?.includes(size));
-          if (!hasSize) return false;
-        }
-
-        // Filtro de cores
-        if (filters.colors.length > 0) {
-          const hasColor = filters.colors.some(color => product.colors?.includes(color));
-          if (!hasColor) return false;
-        }
-
-        // Filtro de marcas
-        if (filters.brands.length > 0) {
-          if (!filters.brands.includes(product.brand || 'Fina Estampa')) return false;
-        }
-
-        // Filtro de estoque
-        if (filters.inStock && !product.inStock) {
-          return false;
-        }
-
-        // Filtro de promoção
-        if (filters.onSale && !product.isPromo) {
-          return false;
-        }
-
-        // Filtro de frete grátis
-        if (filters.freeShipping && !product.freeShipping) {
-          return false;
-        }
-
-        // Filtro de novidades
-        if (filters.isNew && !product.isNew) {
-          return false;
-        }
-
-        // Filtro de avaliação
-        if (filters.rating > 0 && (product.rating || 0) < filters.rating) {
-          return false;
-        }
-
-        return true;
-      });
-
-      // Aplicar ordenação
-      switch (filters.sortBy) {
-        case 'price-low':
-          products.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
-          break;
-        case 'price-high':
-          products.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
-          break;
-        case 'name':
-          products.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case 'rating':
-          products.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-          break;
-        case 'newest':
-          products.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-          break;
-        default:
-          // Relevância - manter ordem original
-          break;
-      }
-
-      console.log('📊 Produtos encontrados após filtros:', products.length);
-      setFilteredProducts(products);
-      setIsLoading(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [currentCategory, filters]);
-
-  // Resetar filtros quando categoria mudar
-  useEffect(() => {
-    if (currentCategory) {
-      console.log('🔄 Resetando filtros para nova categoria');
-      setFilters({
-        priceRange: [0, 1000],
-        sizes: [],
-        colors: [],
-        brands: [],
-        sortBy: 'relevance',
-        inStock: false,
-        onSale: false,
-        freeShipping: false,
-        isNew: false,
-        rating: 0
+        return price >= min && price <= max;
       });
     }
-  }, [currentCategory]);
 
-  // Função para atualizar filtros
-  const handleFilterChange = (newFilters) => {
-    console.log('🔄 Atualizando filtros:', newFilters);
-    setFilters(prev => ({ ...prev, ...newFilters }));
-  };
+    return results;
+  }, [categoryProducts, filters]);
 
-  // Função para limpar filtros
-  const clearFilters = () => {
-    console.log('🧹 Limpando todos os filtros');
+  // Aplicar ordenação
+  const sortedResults = useMemo(() => {
+    if (filteredResults.length === 0) return [];
+
+    const results = [...filteredResults];
+
+    switch (sortBy) {
+      case 'price-low':
+        return results.sort((a, b) => {
+          const priceA = a.salePrice || a.price;
+          const priceB = b.salePrice || b.price;
+          return priceA - priceB;
+        });
+      case 'price-high':
+        return results.sort((a, b) => {
+          const priceA = a.salePrice || a.price;
+          const priceB = b.salePrice || b.price;
+          return priceB - priceA;
+        });
+      case 'name':
+        return results.sort((a, b) => a.name.localeCompare(b.name));
+      case 'rating':
+        return results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      case 'newest':
+        return results.sort((a, b) => b.id - a.id);
+      default: // relevance
+        return results;
+    }
+  }, [filteredResults, sortBy]);
+
+  // Handlers
+  const clearFilters = useCallback(() => {
     setFilters({
-      priceRange: [0, 1000],
-      sizes: [],
-      colors: [],
-      brands: [],
-      sortBy: 'relevance',
-      inStock: false,
-      onSale: false,
-      freeShipping: false,
-      isNew: false,
-      rating: 0
+      gender: 'all',
+      subcategory: 'all',
+      brand: 'all',
+      material: 'all',
+      color: 'all',
+      priceRange: 'all',
+      customPriceMin: '',
+      customPriceMax: ''
     });
-  };
+    setSortBy('relevance');
+  }, []);
 
-  // Loading state
+  const toggleMobileFilters = useCallback(() => {
+    setShowMobileFilters(prev => !prev);
+  }, []);
+
+  const toggleSection = useCallback((section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  }, []);
+
+  const handleFilterChange = useCallback((filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  }, []);
+
+  const handleSortChange = useCallback((e) => {
+    setSortBy(e.target.value);
+  }, []);
+
+  // Estados computados
+  const hasActiveFilters = Object.values(filters).some(value => 
+    value !== 'all' && value !== ''
+  );
+  const hasResults = sortedResults.length > 0;
+
+  // Verificar se categoria existe
   if (!currentCategory) {
     return (
       <Layout>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
-          <p>Carregando categoria...</p>
-          <div style={{ fontSize: '12px', marginTop: '10px' }}>
-            Debug: categorySlug = {categorySlug || 'undefined'} | pathname = {location.pathname}
+        <div className={styles.categoryPage}>
+          <div className={styles.container}>
+            <div className={styles.notFound}>
+              <h1>Categoria não encontrada</h1>
+              <p>A categoria "{categoria}" não existe.</p>
+              <button onClick={() => navigate('/')} className={styles.backBtn}>
+                Voltar ao Início
+              </button>
+            </div>
           </div>
         </div>
       </Layout>
     );
   }
 
-  console.log('🎨 Renderizando página da categoria:', currentCategory.name);
-
   return (
     <Layout>
       <div className={styles.categoryPage}>
         <div className={styles.container}>
-          {/* Debug Info */}
-          <div style={{ 
-            background: '#f0f0f0', 
-            padding: '10px', 
-            margin: '10px 0', 
-            borderRadius: '5px',
-            fontSize: '12px'
-          }}>
-            <strong>DEBUG:</strong> 
-            Categoria: {categorySlug || 'undefined'} | 
-            Nome: {currentCategory?.name} | 
-            Produtos: {filteredProducts.length} | 
-            Loading: {isLoading.toString()}
-          </div>
-
-          {/* Breadcrumb */}
-          <CategoryBreadcrumb 
-            category={currentCategory}
-            className={styles.breadcrumb}
-          />
-
-          {/* Header da Categoria */}
-          <div className={styles.categoryHeader}>
-            <div className={styles.categoryInfo}>
-              <h1 className={styles.categoryTitle}>{currentCategory.name}</h1>
-              <p className={styles.categoryDescription}>
-                {currentCategory.description}
-              </p>
-              <div className={styles.categoryStats}>
-                <span className={styles.productCount}>
-                  {isLoading ? 'Carregando...' : `${filteredProducts.length} produtos encontrados`}
-                </span>
+          {/* Header da Página */}
+          <div className={styles.pageHeader}>
+            <h1 className={styles.pageTitle}>
+              {currentCategory.name}
+            </h1>
+            <p className={styles.pageDescription}>
+              {currentCategory.description}
+            </p>
+            
+            <div className={styles.resultsInfo}>
+              <span className={styles.resultsCount}>
+                {sortedResults.length} produto{sortedResults.length !== 1 ? 's' : ''} encontrado{sortedResults.length !== 1 ? 's' : ''}
+              </span>
+              
+              <div className={styles.controls}>
+                <button 
+                  className={styles.mobileFilterToggle}
+                  onClick={toggleMobileFilters}
+                  type="button"
+                >
+                  <FaFilter />
+                  Filtros
+                </button>
+                
+                <select 
+                  value={sortBy} 
+                  onChange={handleSortChange}
+                  className={styles.sortSelect}
+                >
+                  <option value="relevance">Mais Relevante</option>
+                  <option value="price-low">Menor Preço</option>
+                  <option value="price-high">Maior Preço</option>
+                  <option value="name">Nome A-Z</option>
+                  <option value="rating">Melhor Avaliado</option>
+                  <option value="newest">Mais Recente</option>
+                </select>
               </div>
             </div>
-            
-            <div className={styles.categoryImage}>
-              <img 
-                src={currentCategory.image} 
-                alt={currentCategory.name}
-                className={styles.headerImage}
-              />
-            </div>
           </div>
 
-          {/* Conteúdo Principal */}
-          <div className={styles.categoryContent}>
-            {/* Sidebar com Filtros */}
-            <aside className={styles.sidebar}>
-              <CategoryFilters
-                filters={filters}
-                onFilterChange={handleFilterChange}
-                onClearFilters={clearFilters}
-                productCount={filteredProducts.length}
-                categorySlug={currentCategory.slug}
-                isLoading={isLoading}
-              />
+          {/* Layout Principal */}
+          <div className={styles.mainLayout}>
+            {/* Sidebar de Filtros */}
+            <aside className={`${styles.filtersSidebar} ${showMobileFilters ? styles.showMobile : ''}`}>
+              <div className={styles.filtersHeader}>
+                <h3 className={styles.filtersTitle}>Filtros</h3>
+                <button 
+                  className={styles.closeMobileFilters}
+                  onClick={toggleMobileFilters}
+                  type="button"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+              
+              <div className={styles.filtersContent}>
+                {/* Filtro por Gênero */}
+                <div className={styles.filterSection}>
+                  <button 
+                    className={styles.sectionToggle}
+                    onClick={() => toggleSection('gender')}
+                    type="button"
+                  >
+                    <span>Gênero</span>
+                    {expandedSections.gender ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+                  {expandedSections.gender && (
+                    <div className={styles.filterGroup}>
+                      <select 
+                        value={filters.gender} 
+                        onChange={(e) => handleFilterChange('gender', e.target.value)}
+                        className={styles.filterSelect}
+                      >
+                        <option value="all">Todos os Gêneros</option>
+                        {filterOptions.genders.map(gender => (
+                          <option key={gender} value={gender}>
+                            {gender}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Filtro por Subcategoria */}
+                <div className={styles.filterSection}>
+                  <button 
+                    className={styles.sectionToggle}
+                    onClick={() => toggleSection('subcategory')}
+                    type="button"
+                  >
+                    <span>Estilo</span>
+                    {expandedSections.subcategory ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+                  {expandedSections.subcategory && (
+                    <div className={styles.filterGroup}>
+                      <select 
+                        value={filters.subcategory} 
+                        onChange={(e) => handleFilterChange('subcategory', e.target.value)}
+                        className={styles.filterSelect}
+                      >
+                        <option value="all">Todos os Estilos</option>
+                        {filterOptions.subcategories.map(subcategory => (
+                          <option key={subcategory} value={subcategory}>
+                            {subcategory}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Filtro por Faixa de Preço */}
+                <div className={styles.filterSection}>
+                  <button 
+                    className={styles.sectionToggle}
+                    onClick={() => toggleSection('price')}
+                    type="button"
+                  >
+                    <span>Preço</span>
+                    {expandedSections.price ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+                  {expandedSections.price && (
+                    <div className={styles.filterGroup}>
+                      <select 
+                        value={filters.priceRange} 
+                        onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                        className={styles.filterSelect}
+                      >
+                        <option value="all">Todas as Faixas</option>
+                        {filterOptions.priceRanges.map(range => (
+                          <option key={range.label} value={range.label}>
+                            {range.label}
+                          </option>
+                        ))}
+                      </select>
+                      
+                      <div className={styles.customPriceRange}>
+                        <span className={styles.customPriceLabel}>Ou defina:</span>
+                        <div className={styles.priceInputs}>
+                          <input
+                            type="number"
+                            placeholder="Mín"
+                            value={filters.customPriceMin}
+                            onChange={(e) => handleFilterChange('customPriceMin', e.target.value)}
+                            className={styles.priceInput}
+                            min="0"
+                            step="0.01"
+                          />
+                          <span className={styles.priceSeparator}>até</span>
+                          <input
+                            type="number"
+                            placeholder="Máx"
+                            value={filters.customPriceMax}
+                            onChange={(e) => handleFilterChange('customPriceMax', e.target.value)}
+                            className={styles.priceInput}
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Filtro por Marca */}
+                <div className={styles.filterSection}>
+                  <button 
+                    className={styles.sectionToggle}
+                    onClick={() => toggleSection('brand')}
+                    type="button"
+                  >
+                    <span>Marca</span>
+                    {expandedSections.brand ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+                  {expandedSections.brand && (
+                    <div className={styles.filterGroup}>
+                      <select 
+                        value={filters.brand} 
+                        onChange={(e) => handleFilterChange('brand', e.target.value)}
+                        className={styles.filterSelect}
+                      >
+                        <option value="all">Todas as Marcas</option>
+                        {filterOptions.brands.map(brand => (
+                          <option key={brand} value={brand}>
+                            {brand}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Filtro por Material */}
+                <div className={styles.filterSection}>
+                  <button 
+                    className={styles.sectionToggle}
+                    onClick={() => toggleSection('material')}
+                    type="button"
+                  >
+                    <span>Material</span>
+                    {expandedSections.material ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+                  {expandedSections.material && (
+                    <div className={styles.filterGroup}>
+                      <select 
+                        value={filters.material} 
+                        onChange={(e) => handleFilterChange('material', e.target.value)}
+                        className={styles.filterSelect}
+                      >
+                        <option value="all">Todos os Materiais</option>
+                        {filterOptions.materials.map(material => (
+                          <option key={material} value={material}>
+                            {material}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Filtro por Cor */}
+                <div className={styles.filterSection}>
+                  <button 
+                    className={styles.sectionToggle}
+                    onClick={() => toggleSection('color')}
+                    type="button"
+                  >
+                    <span>Cor</span>
+                    {expandedSections.color ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+                  {expandedSections.color && (
+                    <div className={styles.filterGroup}>
+                      <select 
+                        value={filters.color} 
+                        onChange={(e) => handleFilterChange('color', e.target.value)}
+                        className={styles.filterSelect}
+                      >
+                        <option value="all">Todas as Cores</option>
+                        {filterOptions.colors.map(color => (
+                          <option key={color} value={color}>
+                            {color}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Botão Limpar Filtros */}
+                {hasActiveFilters && (
+                  <button 
+                    onClick={clearFilters} 
+                    className={styles.clearFiltersBtn}
+                    type="button"
+                  >
+                    Limpar Todos os Filtros
+                  </button>
+                )}
+              </div>
             </aside>
 
-            {/* Área de Produtos */}
-            <main className={styles.productsArea}>
-              {/* Barra de Ferramentas */}
-              <div className={styles.toolbar}>
-                <div className={styles.toolbarLeft}>
-                  <span className={styles.resultsCount}>
-                    {isLoading ? 'Carregando...' : `${filteredProducts.length} produtos`}
-                  </span>
-                </div>
-                
-                <div className={styles.toolbarRight}>
-                  {/* Ordenação */}
-                  <select 
-                    value={filters.sortBy}
-                    onChange={(e) => handleFilterChange({ sortBy: e.target.value })}
-                    className={styles.sortSelect}
-                    disabled={isLoading}
-                  >
-                    <option value="relevance">Mais Relevantes</option>
-                    <option value="price-low">Menor Preço</option>
-                    <option value="price-high">Maior Preço</option>
-                    <option value="name">Nome A-Z</option>
-                    <option value="rating">Melhor Avaliados</option>
-                    <option value="newest">Mais Novos</option>
-                  </select>
-
-                  {/* Modo de Visualização */}
-                  <div className={styles.viewModeButtons}>
-                    <button
-                      className={`${styles.viewModeBtn} ${viewMode === 'grid' ? styles.active : ''}`}
-                      onClick={() => setViewMode('grid')}
-                      aria-label="Visualização em grade"
-                      disabled={isLoading}
+            {/* Área de Resultados */}
+            <main className={styles.resultsArea}>
+              {!hasResults ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyIcon}>😔</div>
+                  <h2>Nenhum produto encontrado</h2>
+                  <p>Tente remover alguns filtros para ver mais produtos</p>
+                  {hasActiveFilters && (
+                    <button 
+                      onClick={clearFilters} 
+                      className={styles.clearFiltersBtn}
+                      type="button"
                     >
-                      ⊞
+                      Limpar Filtros
                     </button>
-                    <button
-                      className={`${styles.viewModeBtn} ${viewMode === 'list' ? styles.active : ''}`}
-                      onClick={() => setViewMode('list')}
-                      aria-label="Visualização em lista"
-                      disabled={isLoading}
-                    >
-                      ☰
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Grid de Produtos */}
-              {isLoading ? (
-                <div className={styles.loading}>
-                  <div className={styles.spinner}></div>
-                  <p>Carregando produtos...</p>
-                </div>
-              ) : filteredProducts.length > 0 ? (
-                <div className={`${styles.productsGrid} ${styles[viewMode]}`}>
-                  {filteredProducts.map(product => (
-                    <ProductCard 
-                      key={product.id} 
-                      product={product}
-                      viewMode={viewMode}
-                    />
-                  ))}
+                  )}
                 </div>
               ) : (
-                <div className={styles.noProducts}>
-                  <div className={styles.noProductsIcon}>🔍</div>
-                  <h3>Nenhum produto encontrado</h3>
-                  <p>Tente ajustar os filtros ou explore outras categorias</p>
-                  <button 
-                    onClick={clearFilters}
-                    className={styles.clearFiltersBtn}
-                  >
-                    Limpar Filtros
-                  </button>
+                <div className={styles.productsGrid}>
+                  {sortedResults.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
                 </div>
               )}
             </main>
           </div>
+
+          {/* Overlay para Mobile */}
+          {showMobileFilters && (
+            <div 
+              className={styles.mobileFiltersOverlay}
+              onClick={toggleMobileFilters}
+            />
+          )}
         </div>
       </div>
     </Layout>

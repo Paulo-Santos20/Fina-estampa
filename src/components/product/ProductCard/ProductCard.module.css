@@ -67,45 +67,11 @@
   object-fit: cover;
   transition: transform var(--transition-normal);
   will-change: transform;
-}
-
-.productImage.loaded {
-  opacity: 1;
+  display: block;
 }
 
 .productCard:hover .productImage {
   transform: scale(1.05);
-}
-
-/* ===========================================
-   LOADING STATE
-   =========================================== */
-
-.imageLoading {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cinza-claro);
-  z-index: 1;
-}
-
-.loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--cinza-claro);
-  border-top: 3px solid var(--wine-destaque);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* ===========================================
@@ -339,7 +305,7 @@
 }
 
 /* ===========================================
-   PREÇOS
+   PREÇOS COM ÍCONE DO CARRINHO
    =========================================== */
 
 .pricing {
@@ -356,11 +322,51 @@
   font-weight: 500;
 }
 
+.priceWithCart {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .salePrice,
 .regularPrice {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--wine-destaque);
+  flex: 1;
+}
+
+.priceCartBtn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
+}
+
+.priceCartBtn:hover {
+  background: var(--preto-secundario);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3);
+}
+
+.priceCartBtn:focus {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+.priceCartBtn:active {
+  transform: scale(0.95);
 }
 
 /* ===========================================
@@ -384,6 +390,12 @@
   .salePrice,
   .regularPrice {
     font-size: 1.2rem;
+  }
+  
+  .priceCartBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
   }
   
   .fallbackIcon {
@@ -423,6 +435,12 @@
   .salePrice,
   .regularPrice {
     font-size: 1.1rem;
+  }
+  
+  .priceCartBtn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
   }
   
   .fallbackIcon {
@@ -483,12 +501,22 @@
     font-size: 1rem;
   }
   
+  .priceCartBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+  
   .originalPrice {
     font-size: 0.8rem;
   }
   
   .productMeta {
     font-size: 0.8rem;
+  }
+  
+  .priceWithCart {
+    gap: 0.3rem;
   }
   
   .fallbackIcon {
@@ -517,11 +545,10 @@
   .productImage,
   .favoriteBtn,
   .cartBtn,
-  .actions,
-  .loadingSpinner {
+  .priceCartBtn,
+  .actions {
     transition: none !important;
     transform: none !important;
-    animation: none !important;
   }
   
   .productCard:hover {
@@ -533,7 +560,8 @@
   }
   
   .favoriteBtn:hover,
-  .cartBtn:hover {
+  .cartBtn:hover,
+  .priceCartBtn:hover {
     transform: none !important;
   }
 }
@@ -544,7 +572,8 @@
   }
   
   .favoriteBtn,
-  .cartBtn {
+  .cartBtn,
+  .priceCartBtn {
     border: 2px solid var(--wine-destaque);
   }
   

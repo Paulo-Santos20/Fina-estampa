@@ -4,7 +4,6 @@ import Hero from '../../components/home/HeroSection';
 import Categories from '../../components/home/Categories';
 import ProductCarousel from '../../components/product/ProductCarousel/ProductCarousel';
 import Newsletter from '../../components/home/Newsletter';
-import FeaturedProducts from '../../components/sections/FeaturedProducts/FeaturedProducts';
 
 import { featuredProducts, newArrivals, saleProducts } from '../../data/products';
 
@@ -13,7 +12,6 @@ const Home = () => {
     <Layout>
       {/* Hero Section - APENAS UMA */}
       <Hero />
-               <FeaturedProducts />
        
       {/* Produtos em Destaque */}
       <ProductCarousel 

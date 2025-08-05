@@ -967,3 +967,104 @@
   min-width: 0;
   flex-shrink: 1;
 }
+/* ===========================================
+   ESTILOS PARA BOTÕES DE CATEGORIA
+   =========================================== */
+
+.categoryLink {
+  background: none;
+  border: none;
+  color: var(--preto-secundario);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+  display: block;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.categoryLink:hover {
+  color: var(--wine-destaque);
+  background-color: var(--white-principal);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-wine);
+}
+
+.categoryLink.active {
+  color: var(--wine-destaque);
+  background-color: var(--white-principal);
+  font-weight: 600;
+  box-shadow: var(--shadow-wine);
+}
+
+/* ===========================================
+   ESTILOS PARA BOTÕES MOBILE
+   =========================================== */
+
+.mobileCategoryLink {
+  display: block;
+  padding: 1rem;
+  color: var(--preto-secundario);
+  text-decoration: none;
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  background: var(--white-principal);
+  border: 1px solid var(--cinza-claro);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.mobileCategoryLink:hover {
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.mobileCategoryLink.active {
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+  font-weight: 600;
+}
+
+/* ===========================================
+   MELHORIAS DE ACESSIBILIDADE
+   =========================================== */
+
+.categoryLink:focus,
+.mobileCategoryLink:focus {
+  outline: 2px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+.categoryLink:focus:not(:focus-visible),
+.mobileCategoryLink:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ===========================================
+   RESPONSIVIDADE ADICIONAL
+   =========================================== */
+
+@media (max-width: 768px) {
+  .categoryLink {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobileCategoryLink {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+}

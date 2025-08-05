@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   FaHeart, 
   FaEye,
@@ -21,6 +21,7 @@ const ProductCarousel = ({ products, title, subtitle }) => {
   const autoPlayRef = useRef(null);
   
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   // Auto-play functionality
   useEffect(() => {
@@ -135,6 +136,11 @@ const ProductCarousel = ({ products, title, subtitle }) => {
     console.log(`${product.name} adicionado ao carrinho!`);
   };
 
+  // Função para navegar para o produto
+  const handleProductClick = (productId) => {
+    navigate(`/produto/${productId}`);
+  };
+
   // Verificar se há produtos
   if (!products || products.length === 0) {
     return (
@@ -195,7 +201,11 @@ const ProductCarousel = ({ products, title, subtitle }) => {
           >
             {/* Renderizar produtos */}
             {products.map((product, index) => (
-              <div key={product.id || index} className={styles.productCard}>
+              <div 
+                key={product.id || index} 
+                className={styles.productCard}
+                onClick={() => handleProductClick(product.id)}
+              >
                 <div className={styles.productCardInner}>
                   <div className={styles.productImageWrapper}>
                     <img
@@ -226,7 +236,7 @@ const ProductCarousel = ({ products, title, subtitle }) => {
                       <div className={styles.newBadge}>Novo</div>
                     )}
 
-                    {/* Ações do produto - ÍCONES DOBRADOS */}
+                    {/* Ações do produto */}
                     <div className={styles.productActions}>
                       <button 
                         className={styles.actionButton} 
@@ -239,7 +249,7 @@ const ProductCarousel = ({ products, title, subtitle }) => {
                       >
                         <FaHeart 
                           style={{ 
-                            fontSize: '48px', // DOBRADO de 24px
+                            fontSize: '16px',
                             color: '#722F37',
                             display: 'block'
                           }} 
@@ -256,7 +266,7 @@ const ProductCarousel = ({ products, title, subtitle }) => {
                       >
                         <FaEye 
                           style={{ 
-                            fontSize: '48px', // DOBRADO de 24px
+                            fontSize: '16px',
                             color: '#722F37',
                             display: 'block'
                           }} 
@@ -266,9 +276,9 @@ const ProductCarousel = ({ products, title, subtitle }) => {
                   </div>
 
                   <div className={styles.productInfo}>
-                    <Link to={`/produto/${product.id}`} className={styles.productLink}>
+                    <div className={styles.productLink}>
                       <h3 className={styles.productName}>{product.name || 'Produto sem nome'}</h3>
-                    </Link>
+                    </div>
                     
                     <div className={styles.productRating}>
                       <div className={styles.stars}>
@@ -295,7 +305,7 @@ const ProductCarousel = ({ products, title, subtitle }) => {
                             >
                               <FaShoppingCart 
                                 style={{ 
-                                  fontSize: '56px', // DOBRADO de 28px
+                                  fontSize: '20px',
                                   color: 'white',
                                   display: 'block'
                                 }} 
@@ -315,7 +325,7 @@ const ProductCarousel = ({ products, title, subtitle }) => {
                           >
                             <FaShoppingCart 
                               style={{ 
-                                fontSize: '56px', // DOBRADO de 28px
+                                fontSize: '20px',
                                 color: 'white',
                                 display: 'block'
                               }} 

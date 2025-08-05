@@ -6,45 +6,17 @@
    =========================================== */
 
 .footer {
-  background: var(--preto-secundario);
+  background: linear-gradient(135deg, var(--preto-secundario) 0%, #1a1a1a 100%);
   color: var(--white-principal);
+  padding: 4rem 0 2rem;
   margin-top: auto;
-  width: 100%;
-  overflow-x: hidden; /* Prevenir overflow horizontal */
 }
-
-/* ===========================================
-   CONTAINER RESPONSIVO
-   =========================================== */
 
 .container {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
-  box-sizing: border-box;
-}
-
-/* Para telas muito grandes */
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1600px;
-    padding: 0 3rem;
-  }
-}
-
-@media (min-width: 1600px) {
-  .container {
-    max-width: 1800px;
-    padding: 0 4rem;
-  }
-}
-
-@media (min-width: 1920px) {
-  .container {
-    max-width: 90%;
-    padding: 0 5rem;
-  }
 }
 
 /* ===========================================
@@ -52,155 +24,149 @@
    =========================================== */
 
 .footerMain {
-  padding: 3rem 0;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.footerGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2.5rem;
-  width: 100%;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@media (min-width: 1200px) {
-  .footerGrid {
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
-    gap: 3rem;
-  }
-}
-
-@media (min-width: 1600px) {
-  .footerGrid {
-    gap: 4rem;
-  }
-}
-
-.footerSection {
+.footerColumn {
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Permitir shrink */
-  overflow: hidden; /* Prevenir overflow */
+  gap: 1.5rem;
 }
 
 /* ===========================================
-   LOGO DO FOOTER
+   MARCA E DESCRIÇÃO
    =========================================== */
 
-.footerLogo {
-  display: flex;
-  gap: 0.3rem;
+.brand {
   margin-bottom: 1rem;
-  flex-wrap: wrap; /* Permitir quebra se necessário */
 }
 
-.logoText {
+.brandName {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 600;
   color: var(--wine-destaque);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
 }
 
-.logoAccent {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-weight: 400;
+.brandTagline {
+  font-size: 1rem;
   color: var(--dourado-sutil);
+  margin: 0;
   font-style: italic;
 }
 
-.footerDescription {
-  color: var(--cinza-claro);
+.brandDescription {
+  font-size: 1rem;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
 }
 
 /* ===========================================
-   LINKS SOCIAIS
+   REDES SOCIAIS
    =========================================== */
+
+.socialMedia h4 {
+  font-size: 1.1rem;
+  color: var(--white-principal);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
 
 .socialLinks {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap; /* Permitir quebra */
 }
 
 .socialLink {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white-principal);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  border-radius: 50%;
-  text-decoration: none;
-  transition: all 0.3s ease;
   font-size: 1.2rem;
-  flex-shrink: 0;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  border: 2px solid transparent;
 }
 
 .socialLink:hover {
-  background: var(--dourado-sutil);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  background: var(--wine-destaque);
+  border-color: var(--wine-destaque);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.4);
 }
 
 /* ===========================================
-   TÍTULOS DAS SEÇÕES
+   COLUNAS DE LINKS
    =========================================== */
 
-.footerTitle {
-  color: var(--wine-destaque);
+.columnTitle {
   font-size: 1.2rem;
-  font-weight: 600;
+  color: var(--white-principal);
   margin-bottom: 1.5rem;
+  font-weight: 600;
   position: relative;
-  padding-bottom: 0.5rem;
-  word-wrap: break-word;
 }
 
-.footerTitle::after {
+.columnTitle::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -8px;
   left: 0;
   width: 30px;
   height: 2px;
-  background: var(--dourado-sutil);
+  background: var(--wine-destaque);
+  border-radius: 1px;
 }
 
-/* ===========================================
-   LINKS DO FOOTER
-   =========================================== */
-
-.footerLinks {
+.linksList {
   list-style: none;
   padding: 0;
   margin: 0;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
-.footerLinks li {
-  margin-bottom: 0.8rem;
-}
-
-.footerLinks a {
-  color: var(--cinza-claro);
+.footerLink {
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  transition: all 0.3s ease;
   font-size: 0.95rem;
-  word-wrap: break-word;
-  display: block;
+  transition: all var(--transition-normal);
+  padding: 0.3rem 0;
+  position: relative;
 }
 
-.footerLinks a:hover {
-  color: var(--dourado-sutil);
-  padding-left: 5px;
+.footerLink:hover {
+  color: var(--wine-destaque);
+  padding-left: 10px;
+}
+
+.footerLink::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--wine-destaque);
+  transition: width var(--transition-normal);
+}
+
+.footerLink:hover::before {
+  width: 6px;
 }
 
 /* ===========================================
@@ -208,146 +174,75 @@
    =========================================== */
 
 .contactInfo {
-  margin-bottom: 2rem;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .contactItem {
   display: flex;
+  gap: 1rem;
   align-items: flex-start;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-  color: var(--cinza-claro);
-  font-size: 0.95rem;
-  word-wrap: break-word;
 }
 
 .contactIcon {
   color: var(--wine-destaque);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin-top: 0.2rem;
   flex-shrink: 0;
 }
 
-/* ===========================================
-   NEWSLETTER
-   =========================================== */
-
-.newsletter {
-  background: rgba(114, 47, 55, 0.1);
-  padding: 1.5rem;
-  border-radius: 10px;
-  border: 1px solid var(--wine-destaque);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.newsletterTitle {
-  color: var(--wine-destaque);
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  word-wrap: break-word;
-}
-
-.newsletterText {
-  color: var(--cinza-claro);
+.contactItem div p {
+  margin: 0;
   font-size: 0.9rem;
-  margin-bottom: 1rem;
-  word-wrap: break-word;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
 }
 
-.newsletterForm {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.newsletterInput {
-  flex: 1;
-  padding: 0.8rem;
-  border: 1px solid var(--cinza-medio);
-  border-radius: 5px;
-  background: var(--white-principal);
-  color: var(--preto-secundario);
-  font-size: 0.9rem;
-  min-width: 0; /* Permitir shrink */
-  box-sizing: border-box;
-}
-
-.newsletterInput:focus {
-  outline: none;
-  border-color: var(--wine-destaque);
-}
-
-.newsletterButton {
-  background: var(--wine-destaque);
+.contactItem div p:first-child {
   color: var(--white-principal);
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.newsletterButton:hover {
-  background: var(--dourado-sutil);
+  font-weight: 500;
 }
 
 /* ===========================================
-   SEÇÃO DE BENEFÍCIOS
+   SEÇÃO DE GARANTIAS
    =========================================== */
 
-.benefitsSection {
-  background: rgba(114, 47, 55, 0.1);
-  padding: 2rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.benefitsGrid {
+.guarantees {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
-  width: 100%;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-large);
+  backdrop-filter: blur(10px);
 }
 
-.benefitItem {
+.guarantee {
   display: flex;
   align-items: center;
   gap: 1rem;
   text-align: left;
-  min-width: 0; /* Permitir shrink */
 }
 
-.benefitIcon {
+.guaranteeIcon {
   color: var(--dourado-sutil);
   font-size: 2rem;
   flex-shrink: 0;
 }
 
-.benefitContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.benefitTitle {
-  color: var(--wine-destaque);
+.guarantee h5 {
   font-size: 1rem;
+  color: var(--white-principal);
+  margin: 0 0 0.3rem 0;
   font-weight: 600;
-  margin-bottom: 0.3rem;
-  word-wrap: break-word;
 }
 
-.benefitText {
-  color: var(--cinza-claro);
-  font-size: 0.9rem;
-  word-wrap: break-word;
+.guarantee p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
 }
 
 /* ===========================================
@@ -355,184 +250,149 @@
    =========================================== */
 
 .footerBottom {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 1.5rem 0;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.footerBottomContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  width: 100%;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .copyright {
-  color: var(--cinza-claro);
-  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.copyright p {
   margin: 0;
-  word-wrap: break-word;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.heartIcon {
+  color: var(--wine-destaque);
+  font-size: 0.8rem;
+  margin: 0 0.2rem;
 }
 
 .paymentMethods {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.paymentText {
-  color: var(--cinza-claro);
   font-size: 0.9rem;
-  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .paymentIcons {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 0.8rem;
 }
 
-.paymentIcon {
-  height: 30px;
-  width: auto;
-  max-width: 50px; /* Limitar largura máxima */
-  border-radius: 4px;
-  background: var(--white-principal);
-  padding: 0.2rem;
-  object-fit: contain;
+.paymentMethod {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: var(--white-principal);
+  font-weight: 500;
 }
 
 /* ===========================================
    RESPONSIVIDADE
    =========================================== */
 
+@media (max-width: 1200px) {
+  .footerMain {
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 2rem;
+  }
+  
+  .guarantees {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .footerMain {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .guarantees {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .footerBottom {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+}
+
 @media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 1.5rem;
+  }
+  
   .container {
     padding: 0 1rem;
   }
   
-  .footerGrid {
+  .footerMain {
     grid-template-columns: 1fr;
     gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
   }
   
-  .benefitsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .benefitItem {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem;
-  }
-  
-  .footerBottomContent {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .paymentMethods {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .newsletterForm {
-    flex-direction: column;
-  }
-  
-  .newsletterButton {
-    padding: 1rem;
-  }
-  
-  .logoText,
-  .logoAccent {
-    font-size: 1.6rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .footerMain {
-    padding: 2rem 0;
-  }
-  
-  .benefitsSection {
-    padding: 1.5rem 0;
-  }
-  
-  .benefitsGrid {
+  .guarantees {
     grid-template-columns: 1fr;
     gap: 1rem;
+    padding: 1.5rem;
   }
   
-  .benefitItem {
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    width: 100%;
-    box-sizing: border-box;
+  .guarantee {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .brandName {
+    font-size: 1.6rem;
   }
   
   .socialLinks {
     justify-content: center;
   }
   
-  .paymentIcons {
-    justify-content: center;
+  .paymentMethods {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerMain {
+    gap: 1.5rem;
   }
   
-  .container {
-    padding: 0 0.8rem;
-  }
-  
-  .newsletter {
+  .guarantees {
     padding: 1rem;
   }
   
-  .logoText,
-  .logoAccent {
-    font-size: 1.4rem;
+  .guarantee {
+    flex-direction: column;
+    gap: 0.5rem;
   }
-}
-
-/* ===========================================
-   PERFORMANCE E ACESSIBILIDADE
-   =========================================== */
-
-/* Melhorar performance */
-.socialLink,
-.newsletterButton,
-.footerLinks a {
-  will-change: transform;
-}
-
-/* Modo escuro (se implementado futuramente) */
-@media (prefers-color-scheme: dark) {
-  .footer {
-    background: var(--preto-secundario, #0a0a0a);
+  
+  .guaranteeIcon {
+    font-size: 1.5rem;
   }
-}
-
-/* Reduzir animações para usuários que preferem */
-@media (prefers-reduced-motion: reduce) {
-  .socialLink,
-  .newsletterButton,
-  .footerLinks a,
-  * {
-    transition-duration: 0.01ms !important;
-    transform: none !important;
-  }
-}
-
-/* Melhorar contraste para acessibilidade */
-@media (prefers-contrast: high) {
-  .footerDescription,
-  .contactItem,
-  .newsletterText {
-    color: var(--white-principal);
+  
+  .socialLink {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
   }
 }

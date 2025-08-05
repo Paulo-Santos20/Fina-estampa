@@ -1,0 +1,157 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER DO FORMULÁRIO
+   =========================================== */
+
+.formContainer {
+  width: 100%;
+}
+
+.formTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--wine-destaque);
+  margin: 0 0 2rem 0;
+  font-weight: 600;
+}
+
+.formContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ===========================================
+   GRID DE CAMPOS
+   =========================================== */
+
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+/* ===========================================
+   GRUPO DE CAMPO
+   =========================================== */
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fieldGroup:nth-child(1),
+.fieldGroup:nth-child(2) {
+  grid-column: span 1;
+}
+
+/* Campos que ocupam largura total */
+.fieldGroup:has(.fieldLabel:contains("Nome")),
+.fieldGroup:has(.fieldLabel:contains("Email")),
+.fieldGroup:has(.fieldLabel:contains("Endereço")) {
+  grid-column: span 2;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin-bottom: 0.5rem;
+}
+
+.fieldLabel svg {
+  color: var(--wine-destaque);
+  font-size: 1rem;
+}
+
+/* ===========================================
+   INPUTS
+   =========================================== */
+
+.fieldInput {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  transition: all var(--transition-normal);
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+.fieldInput::placeholder {
+  color: var(--cinza-medio);
+}
+
+.fieldInput.error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* ===========================================
+   MENSAGENS DE ERRO
+   =========================================== */
+
+.errorMessage {
+  font-size: 0.8rem;
+  color: var(--error);
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.errorMessage::before {
+  content: "⚠️";
+  font-size: 0.7rem;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .fieldsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .fieldGroup {
+    grid-column: span 1 !important;
+  }
+  
+  .formTitle {
+    font-size: 1.5rem;
+  }
+  
+  .fieldInput {
+    padding: 0.8rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .formTitle {
+    font-size: 1.3rem;
+  }
+  
+  .fieldLabel {
+    font-size: 0.9rem;
+  }
+  
+  .fieldInput {
+    padding: 0.7rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}

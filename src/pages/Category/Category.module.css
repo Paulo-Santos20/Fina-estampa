@@ -1,0 +1,378 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+/* ===========================================
+   PÁGINA DE CATEGORIA
+   =========================================== */
+
+.categoryPage {
+  min-height: 100vh;
+  background: var(--white-principal);
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* ===========================================
+   BREADCRUMB
+   =========================================== */
+
+.breadcrumb {
+  margin-bottom: 2rem;
+}
+
+/* ===========================================
+   HEADER DA CATEGORIA
+   =========================================== */
+
+.categoryHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--cinza-claro) 0%, var(--white-principal) 100%);
+  border-radius: var(--radius-large);
+}
+
+.categoryInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.categoryTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--wine-destaque);
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.categoryDescription {
+  font-size: 1.2rem;
+  color: var(--cinza-medio);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.categoryStats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.productCount {
+  font-size: 1rem;
+  color: var(--wine-destaque);
+  font-weight: 600;
+}
+
+.categoryImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.headerImage {
+  width: 100%;
+  max-width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===========================================
+   CONTEÚDO PRINCIPAL
+   =========================================== */
+
+.categoryContent {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ===========================================
+   SIDEBAR
+   =========================================== */
+
+.sidebar {
+  position: sticky;
+  top: 2rem;
+}
+
+/* ===========================================
+   ÁREA DE PRODUTOS
+   =========================================== */
+
+.productsArea {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ===========================================
+   BARRA DE FERRAMENTAS
+   =========================================== */
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--white-principal);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--cinza-claro);
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+}
+
+.resultsCount {
+  font-size: 1rem;
+  color: var(--cinza-medio);
+  font-weight: 500;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sortSelect {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--cinza-claro);
+  border-radius: var(--radius-small);
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.1);
+}
+
+.viewModeButtons {
+  display: flex;
+  border: 1px solid var(--cinza-claro);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+}
+
+.viewModeBtn {
+  padding: 0.8rem 1rem;
+  border: none;
+  background: var(--white-principal);
+  color: var(--cinza-medio);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 1rem;
+}
+
+.viewModeBtn:hover {
+  background: var(--cinza-claro);
+}
+
+.viewModeBtn.active {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+/* ===========================================
+   GRID DE PRODUTOS
+   =========================================== */
+
+.productsGrid {
+  display: grid;
+  gap: 2rem;
+}
+
+.productsGrid.grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.productsGrid.list {
+  grid-template-columns: 1fr;
+}
+
+/* ===========================================
+   LOADING
+   =========================================== */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--cinza-claro);
+  border-top: 4px solid var(--wine-destaque);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: var(--cinza-medio);
+  font-size: 1.1rem;
+}
+
+/* ===========================================
+   SEM PRODUTOS
+   =========================================== */
+
+.noProducts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  text-align: center;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-large);
+}
+
+.noProductsIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.noProducts h3 {
+  font-size: 1.5rem;
+  color: var(--preto-secundario);
+  margin-bottom: 1rem;
+}
+
+.noProducts p {
+  color: var(--cinza-medio);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.clearFiltersBtn {
+  padding: 1rem 2rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.clearFiltersBtn:hover {
+  background: var(--wine-dark);
+  transform: translateY(-2px);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1200px) {
+  .categoryContent {
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+  }
+  
+  .productsGrid.grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 968px) {
+  .categoryHeader {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .categoryContent {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+    order: 2;
+  }
+  
+  .productsArea {
+    order: 1;
+  }
+  
+  .toolbar {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .toolbarRight {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .categoryTitle {
+    font-size: 2rem;
+  }
+  
+  .productsGrid.grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .toolbar {
+    padding: 1rem;
+  }
+  
+  .viewModeButtons {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .categoryTitle {
+    font-size: 1.6rem;
+  }
+  
+  .productsGrid.grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  
+  .toolbarRight {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}

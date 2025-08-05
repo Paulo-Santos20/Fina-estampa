@@ -1,0 +1,99 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   BREADCRUMB
+   =========================================== */
+
+.breadcrumb {
+  background: var(--white-principal);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--cinza-claro);
+}
+
+.breadcrumbList {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.5rem;
+}
+
+.breadcrumbItem {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--cinza-medio);
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-normal);
+}
+
+.breadcrumbLink:hover {
+  color: var(--wine-destaque);
+  background: var(--cinza-claro);
+}
+
+.breadcrumbSeparator {
+  color: var(--cinza-medio);
+  font-size: 0.8rem;
+  margin: 0 0.2rem;
+}
+
+.breadcrumbCurrent {
+  color: var(--wine-destaque);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.current {
+  pointer-events: none;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .breadcrumb {
+    padding: 0.8rem 1rem;
+  }
+  
+  .breadcrumbLink {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.3rem;
+  }
+  
+  .breadcrumbSeparator {
+    font-size: 0.7rem;
+  }
+  
+  .breadcrumbCurrent {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .breadcrumbList {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  
+  .breadcrumbLink span:last-child {
+    display: none;
+  }
+  
+  .breadcrumbLink svg {
+    margin-right: 0;
+  }
+}

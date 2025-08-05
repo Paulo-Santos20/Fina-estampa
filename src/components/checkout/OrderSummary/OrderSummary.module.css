@@ -1,0 +1,310 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER DO RESUMO
+   =========================================== */
+
+.summaryContainer {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+  border: 1px solid var(--cinza-claro);
+}
+
+.summaryTitle {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 1.5rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* ===========================================
+   LISTA DE ITENS
+   =========================================== */
+
+.itemsList {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--cinza-claro);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.summaryItem {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.summaryItem:last-child {
+  border-bottom: none;
+}
+
+.itemImage {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: var(--radius-small);
+  overflow: hidden;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.itemName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.itemSpecs {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+}
+
+.itemSpecs span {
+  background: var(--cinza-claro);
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+}
+
+.itemPrice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.originalPrice {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  text-decoration: line-through;
+}
+
+.salePrice {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--wine-destaque);
+}
+
+.regularPrice {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+/* ===========================================
+   SEÇÃO DE TOTAIS
+   =========================================== */
+
+.totalsSection {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.shippingLabel,
+.discountLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--preto-secundario);
+}
+
+.freeShipping {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+}
+
+.discountValue {
+  color: var(--wine-destaque);
+  font-weight: 600;
+}
+
+.totalDivider {
+  height: 2px;
+  background: var(--wine-destaque);
+  margin: 1rem 0;
+  border-radius: 1px;
+}
+
+.finalTotal {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+  padding: 0.8rem 0;
+}
+
+.installmentInfo {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.installmentInfo small {
+  color: var(--cinza-medio);
+  font-size: 0.8rem;
+}
+
+/* ===========================================
+   INFORMAÇÕES DE ENTREGA
+   =========================================== */
+
+.deliveryInfo {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.deliveryTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--wine-destaque);
+  margin: 0 0 1rem 0;
+}
+
+.deliveryDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.deliveryItem {
+  font-size: 0.9rem;
+  color: var(--preto-secundario);
+  line-height: 1.4;
+}
+
+.deliveryItem strong {
+  color: var(--wine-destaque);
+}
+
+/* ===========================================
+   GARANTIAS
+   =========================================== */
+
+.guarantees {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.guarantee {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--preto-secundario);
+}
+
+.guaranteeIcon {
+  font-size: 1.2rem;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .summaryTitle {
+    font-size: 1.1rem;
+    padding: 1rem;
+  }
+  
+  .itemsList {
+    padding: 1rem;
+  }
+  
+  .summaryItem {
+    padding: 0.8rem 0;
+  }
+  
+  .itemImage {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .itemSpecs {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .totalsSection {
+    padding: 1rem;
+  }
+  
+  .deliveryInfo {
+    padding: 1rem;
+  }
+  
+  .guarantees {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .summaryItem {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .itemImage {
+    align-self: center;
+  }
+  
+  .itemSpecs {
+    justify-content: center;
+  }
+  
+  .totalRow {
+    font-size: 0.8rem;
+  }
+  
+  .finalTotal {
+    font-size: 1rem;
+  }
+  
+  .deliveryItem {
+    font-size: 0.8rem;
+  }
+  
+  .guarantee {
+    font-size: 0.8rem;
+  }
+}

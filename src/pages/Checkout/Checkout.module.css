@@ -1,0 +1,298 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+/* ===========================================
+   PÁGINA DE CHECKOUT
+   =========================================== */
+
+.checkoutPage {
+  min-height: 100vh;
+  background: var(--cinza-claro);
+  padding: 2rem 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ===========================================
+   HEADER DO CHECKOUT
+   =========================================== */
+
+.checkoutHeader {
+  background: var(--white-principal);
+  padding: 2rem;
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-light);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.pageTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: var(--wine-destaque);
+  margin: 0 0 2rem 0;
+  font-weight: 600;
+}
+
+/* ===========================================
+   CONTEÚDO DO CHECKOUT
+   =========================================== */
+
+.checkoutContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ===========================================
+   FORMULÁRIO DO CHECKOUT
+   =========================================== */
+
+.checkoutForm {
+  background: var(--white-principal);
+  padding: 2rem;
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-light);
+}
+
+.sectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--wine-destaque);
+  margin: 0 0 2rem 0;
+  font-weight: 600;
+}
+
+/* ===========================================
+   REVISÃO DO PEDIDO
+   =========================================== */
+
+.reviewOrder {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.reviewSection {
+  padding: 1.5rem;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  border-left: 4px solid var(--wine-destaque);
+}
+
+.reviewSection h3 {
+  font-size: 1.2rem;
+  color: var(--wine-destaque);
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.reviewData {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reviewData p {
+  margin: 0;
+  color: var(--preto-secundario);
+  line-height: 1.4;
+}
+
+.reviewData strong {
+  color: var(--wine-destaque);
+}
+
+/* ===========================================
+   BOTÕES DE NAVEGAÇÃO
+   =========================================== */
+
+.navigationButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--cinza-claro);
+}
+
+.prevButton,
+.nextButton,
+.finishButton {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.prevButton {
+  background: var(--cinza-claro);
+  color: var(--cinza-medio);
+  border: 2px solid var(--cinza-medio);
+}
+
+.prevButton:hover:not(:disabled) {
+  background: var(--cinza-medio);
+  color: var(--white-principal);
+}
+
+.nextButton,
+.finishButton {
+  background: linear-gradient(135deg, var(--wine-destaque), var(--wine-dark));
+  color: var(--white-principal);
+  box-shadow: var(--shadow-wine);
+}
+
+.nextButton:hover:not(:disabled),
+.finishButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(114, 47, 55, 0.4);
+}
+
+.prevButton:disabled,
+.nextButton:disabled,
+.finishButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===========================================
+   LOADING
+   =========================================== */
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid var(--white-principal);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===========================================
+   CONTAINER DO RESUMO
+   =========================================== */
+
+.orderSummaryContainer {
+  position: sticky;
+  top: 2rem;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1200px) {
+  .checkoutContent {
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .checkoutContent {
+    grid-template-columns: 1fr;
+  }
+  
+  .orderSummaryContainer {
+    position: static;
+    order: -1;
+  }
+  
+  .pageTitle {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkoutPage {
+    padding: 1rem 0;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .checkoutHeader {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .checkoutForm {
+    padding: 1.5rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.8rem;
+  }
+  
+  .navigationButtons {
+    flex-direction: column;
+  }
+  
+  .prevButton,
+  .nextButton,
+  .finishButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkoutHeader {
+    padding: 1rem;
+  }
+  
+  .checkoutForm {
+    padding: 1rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.4rem;
+  }
+  
+  .reviewSection {
+    padding: 1rem;
+  }
+  
+  .navigationButtons {
+    gap: 0.8rem;
+  }
+  
+  .prevButton,
+  .nextButton,
+  .finishButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: auto;
+  }
+}

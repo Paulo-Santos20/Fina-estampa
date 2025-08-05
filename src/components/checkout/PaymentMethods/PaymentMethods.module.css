@@ -1,0 +1,358 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER DE PAGAMENTO
+   =========================================== */
+
+.paymentContainer {
+  width: 100%;
+}
+
+.paymentTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--wine-destaque);
+  margin: 0 0 2rem 0;
+  font-weight: 600;
+}
+
+/* ===========================================
+   MÉTODOS DE PAGAMENTO
+   =========================================== */
+
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.paymentMethod {
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  background: var(--white-principal);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.paymentMethod:hover {
+  border-color: var(--wine-destaque);
+  box-shadow: var(--shadow-light);
+}
+
+.paymentMethod.selected {
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+/* ===========================================
+   HEADER DO MÉTODO
+   =========================================== */
+
+.methodHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.methodIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--cinza-claro);
+  color: var(--wine-destaque);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.paymentMethod.selected .methodIcon {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.methodInfo {
+  flex: 1;
+}
+
+.methodName {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin-bottom: 0.3rem;
+}
+
+.popularBadge {
+  background: var(--dourado-sutil);
+  color: var(--preto-secundario);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.methodDescription {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+}
+
+.methodRadio {
+  flex-shrink: 0;
+}
+
+.radioInput {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--wine-destaque);
+}
+
+/* ===========================================
+   DETALHES DO MÉTODO
+   =========================================== */
+
+.methodDetails {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid var(--cinza-claro);
+  margin-top: 1rem;
+}
+
+/* ===========================================
+   INFORMAÇÕES DE DESCONTO
+   =========================================== */
+
+.discountInfo {
+  background: var(--rosa-suave);
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  margin-bottom: 1rem;
+}
+
+.discountBadge {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.discountCalculation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.8rem;
+}
+
+.originalPrice {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  text-decoration: line-through;
+}
+
+.discountedPrice {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--wine-destaque);
+}
+
+/* ===========================================
+   SEÇÃO DE PARCELAS
+   =========================================== */
+
+.installmentsSection {
+  margin-bottom: 1rem;
+}
+
+.installmentsLabel {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin-bottom: 0.8rem;
+}
+
+.installmentsSelect {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: 0.9rem;
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  cursor: pointer;
+}
+
+.installmentsSelect:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+}
+
+/* ===========================================
+   INFORMAÇÕES PIX
+   =========================================== */
+
+.pixInfo {
+  background: var(--cinza-claro);
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+}
+
+.pixSteps h4 {
+  font-size: 1rem;
+  color: var(--wine-destaque);
+  margin: 0 0 0.8rem 0;
+}
+
+.pixSteps ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.pixSteps li {
+  font-size: 0.9rem;
+  color: var(--preto-secundario);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   INFORMAÇÕES BOLETO
+   =========================================== */
+
+.boletoInfo {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+}
+
+.boletoWarning {
+  font-size: 0.9rem;
+  color: #856404;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   RESUMO DO PAGAMENTO
+   =========================================== */
+
+.paymentSummary {
+  background: var(--cinza-claro);
+  padding: 1.5rem;
+  border-radius: var(--radius-large);
+  border: 2px solid var(--wine-destaque);
+}
+
+.summaryTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--wine-destaque);
+  margin: 0 0 1rem 0;
+}
+
+.summaryDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.summaryValue {
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+.summaryDiscount {
+  font-weight: 600;
+  color: var(--wine-destaque);
+}
+
+.totalRow {
+  padding-top: 0.8rem;
+  border-top: 2px solid var(--wine-destaque);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.totalValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--wine-destaque);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .paymentTitle {
+    font-size: 1.5rem;
+  }
+  
+  .methodHeader {
+    padding: 1rem;
+  }
+  
+  .methodIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  .methodDetails {
+    padding: 0 1rem 1rem;
+  }
+  
+  .paymentSummary {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .paymentTitle {
+    font-size: 1.3rem;
+  }
+  
+  .methodHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.8rem;
+  }
+  
+  .methodInfo {
+    text-align: center;
+  }
+  
+  .discountCalculation {
+    text-align: center;
+  }
+  
+  .summaryRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  
+  .totalRow {
+    flex-direction: row;
+    align-items: center;
+  }
+}

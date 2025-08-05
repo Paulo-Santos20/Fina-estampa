@@ -1,0 +1,693 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER DE FILTROS
+   =========================================== */
+
+.filtersContainer {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--cinza-claro);
+  overflow: hidden;
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===========================================
+   HEADER DOS FILTROS
+   =========================================== */
+
+.filtersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.filtersTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.activeCount {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white-principal);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  margin-left: 0.5rem;
+}
+
+.clearAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white-principal);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-small);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.clearAllBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.clearAllBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   CONTADOR DE RESULTADOS
+   =========================================== */
+
+.resultsCounter {
+  padding: 1rem 1.5rem;
+  background: var(--cinza-claro);
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.counterText {
+  font-size: 0.9rem;
+  color: var(--wine-destaque);
+  font-weight: 600;
+  text-align: center;
+  display: block;
+}
+
+/* ===========================================
+   CONTEÚDO DOS FILTROS
+   =========================================== */
+
+.filtersContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+}
+
+/* ===========================================
+   SEÇÕES DE FILTROS
+   =========================================== */
+
+.filterSection {
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.sectionHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+}
+
+.sectionHeader:hover {
+  background: var(--cinza-claro);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+.sectionTitle svg {
+  color: var(--wine-destaque);
+  font-size: 1rem;
+}
+
+.sectionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.sectionContent.expanded {
+  max-height: 500px;
+  padding: 0 1.5rem 1.5rem;
+}
+
+/* ===========================================
+   FILTRO DE PREÇO
+   =========================================== */
+
+.priceFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pricePresets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pricePreset {
+  padding: 0.8rem 1rem;
+  background: var(--cinza-claro);
+  border: 2px solid transparent;
+  border-radius: var(--radius-small);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+}
+
+.pricePreset:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+}
+
+.pricePreset.active {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.priceInputs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.priceInputGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.priceInputGroup label {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  font-weight: 500;
+}
+
+.priceInput {
+  padding: 0.8rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-small);
+  font-size: 0.9rem;
+  text-align: center;
+  width: 100%;
+}
+
+.priceInput:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.1);
+}
+
+.priceSeparator {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  margin-top: 1.2rem;
+}
+
+.priceSlider {
+  position: relative;
+  height: 6px;
+  background: var(--cinza-claro);
+  border-radius: 3px;
+}
+
+.rangeSlider {
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: transparent;
+  outline: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--wine-destaque);
+  cursor: pointer;
+  pointer-events: all;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.rangeSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--wine-destaque);
+  cursor: pointer;
+  border: none;
+  pointer-events: all;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ===========================================
+   FILTRO DE TAMANHOS
+   =========================================== */
+
+.sizeFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sizeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+  gap: 0.8rem;
+}
+
+.sizeBtn {
+  width: 45px;
+  height: 45px;
+  border: 2px solid var(--cinza-claro);
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.sizeBtn:hover {
+  border-color: var(--wine-destaque);
+  color: var(--wine-destaque);
+  transform: translateY(-2px);
+}
+
+.sizeBtn.active {
+  background: var(--wine-destaque);
+  border-color: var(--wine-destaque);
+  color: var(--white-principal);
+  transform: translateY(-2px);
+}
+
+.selectedInfo {
+  font-size: 0.8rem;
+  color: var(--wine-destaque);
+  font-weight: 500;
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--rosa-suave);
+  border-radius: var(--radius-small);
+}
+
+/* ===========================================
+   FILTRO DE CORES
+   =========================================== */
+
+.colorFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.colorGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.colorOption {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-normal);
+}
+
+.colorOption:hover {
+  background: var(--cinza-claro);
+}
+
+.colorCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wine-destaque);
+}
+
+.colorSwatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--cinza-claro);
+  flex-shrink: 0;
+}
+
+.colorLabel {
+  font-size: 0.9rem;
+  color: var(--preto-secundario);
+  user-select: none;
+  flex: 1;
+}
+
+/* ===========================================
+   FILTRO DE AVALIAÇÃO
+   =========================================== */
+
+.ratingFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ratingOption {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-normal);
+}
+
+.ratingOption:hover {
+  background: var(--cinza-claro);
+}
+
+.ratingRadio {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wine-destaque);
+}
+
+.ratingStars {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.starFilled {
+  color: var(--dourado-sutil);
+  font-size: 0.9rem;
+}
+
+.starEmpty {
+  color: var(--cinza-claro);
+  font-size: 0.9rem;
+}
+
+.clearRating {
+  background: none;
+  border: none;
+  color: var(--wine-destaque);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.5rem;
+}
+
+/* ===========================================
+   FILTROS RÁPIDOS
+   =========================================== */
+
+.quickFilters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.quickOption {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  border: 2px solid var(--cinza-claro);
+  transition: all var(--transition-normal);
+}
+
+.quickOption:hover {
+  background: var(--cinza-claro);
+  border-color: var(--wine-destaque);
+}
+
+.quickCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wine-destaque);
+  flex-shrink: 0;
+}
+
+.quickContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.quickIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.quickLabel {
+  font-size: 0.95rem;
+  color: var(--preto-secundario);
+  font-weight: 600;
+  display: block;
+}
+
+.quickDescription {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  display: block;
+  margin-top: 0.2rem;
+}
+
+/* ===========================================
+   FILTRO DE MARCAS
+   =========================================== */
+
+.brandFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.brandOption {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-normal);
+}
+
+.brandOption:hover {
+  background: var(--cinza-claro);
+}
+
+.brandCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wine-destaque);
+}
+
+.brandLabel {
+  font-size: 0.9rem;
+  color: var(--preto-secundario);
+  user-select: none;
+}
+
+/* ===========================================
+   AÇÕES MOBILE
+   =========================================== */
+
+.mobileActions {
+  display: none;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--cinza-claro);
+  background: var(--white-principal);
+}
+
+.applyFiltersBtn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.applyFiltersBtn:hover {
+  background: var(--wine-dark);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 968px) {
+  .filtersContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    max-height: 100vh;
+    border-radius: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-out;
+  }
+
+  .filtersContainer.open {
+    transform: translateX(0);
+  }
+
+  .mobileActions {
+    display: block;
+  }
+
+  .filtersContent {
+    max-height: calc(100vh - 200px);
+  }
+}
+
+@media (max-width: 768px) {
+  .filtersHeader {
+    padding: 1rem;
+  }
+
+  .resultsCounter {
+    padding: 0.8rem 1rem;
+  }
+
+  .sectionHeader {
+    padding: 1rem;
+  }
+
+  .sectionContent.expanded {
+    padding: 0 1rem 1rem;
+  }
+
+  .sizeGrid {
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .sizeBtn {
+    width: 40px;
+    height: 40px;
+    font-size: 0.8rem;
+  }
+
+  .quickOption {
+    padding: 0.8rem;
+  }
+
+  .quickIcon {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .priceInputs {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .priceSeparator {
+    margin: 0;
+    text-align: center;
+  }
+
+  .colorOption {
+    padding: 0.6rem;
+  }
+
+  .quickContent {
+    gap: 0.8rem;
+  }
+
+  .quickLabel {
+    font-size: 0.9rem;
+  }
+
+  .quickDescription {
+    font-size: 0.75rem;
+  }
+}
+
+/* ===========================================
+   ANIMAÇÕES
+   =========================================== */
+
+.filterSection {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================================
+   SCROLLBAR CUSTOMIZADA
+   =========================================== */
+
+.filtersContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filtersContent::-webkit-scrollbar-track {
+  background: var(--cinza-claro);
+}
+
+.filtersContent::-webkit-scrollbar-thumb {
+  background: var(--wine-destaque);
+  border-radius: 3px;
+}
+
+.filtersContent::-webkit-scrollbar-thumb:hover {
+  background: var(--wine-dark);
+}

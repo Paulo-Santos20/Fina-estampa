@@ -1,0 +1,187 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER DOS STEPS
+   =========================================== */
+
+.stepsContainer {
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.stepsWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ===========================================
+   ITEM DO STEP
+   =========================================== */
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===========================================
+   LINHA CONECTORA
+   =========================================== */
+
+.stepLine {
+  position: absolute;
+  top: 30px;
+  left: -50%;
+  right: 50%;
+  height: 3px;
+  background: var(--cinza-claro);
+  z-index: 1;
+  transition: all var(--transition-normal);
+}
+
+.stepLine.completed {
+  background: var(--wine-destaque);
+}
+
+/* ===========================================
+   CÍRCULO DO STEP
+   =========================================== */
+
+.stepCircle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--cinza-claro);
+  color: var(--cinza-medio);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all var(--transition-normal);
+  border: 3px solid var(--cinza-claro);
+  position: relative;
+  z-index: 3;
+}
+
+.stepCircle.active {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 4px rgba(114, 47, 55, 0.2);
+  transform: scale(1.1);
+}
+
+.stepCircle.completed {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.stepIcon {
+  font-size: 1.2rem;
+}
+
+/* ===========================================
+   INFORMAÇÕES DO STEP
+   =========================================== */
+
+.stepInfo {
+  max-width: 120px;
+}
+
+.stepTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.stepDescription {
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.stepItem:has(.stepCircle.active) .stepTitle {
+  color: var(--wine-destaque);
+  font-weight: 700;
+}
+
+.stepItem:has(.stepCircle.completed) .stepTitle {
+  color: var(--wine-destaque);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .stepsWrapper {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .stepItem {
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .stepLine {
+    display: none;
+  }
+  
+  .stepCircle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  
+  .stepInfo {
+    max-width: none;
+    flex: 1;
+  }
+  
+  .stepTitle {
+    font-size: 1.1rem;
+  }
+  
+  .stepDescription {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stepsContainer {
+    padding: 1rem 0;
+  }
+  
+  .stepCircle {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .stepTitle {
+    font-size: 1rem;
+  }
+  
+  .stepDescription {
+    font-size: 0.8rem;
+  }
+}

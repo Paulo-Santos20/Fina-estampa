@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FaSearch, 
   FaHeart, 
@@ -15,6 +15,8 @@ import CartSidebar from '../../cart/CartSideBar/CartSideBar';
 import styles from './Header.module.css';
 
 const Header = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showPromoBar, setShowPromoBar] = useState(true);
@@ -38,7 +40,8 @@ const Header = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      console.log('Buscando por:', searchQuery);
+      navigate(`/busca?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery('');
     }
   };
 
@@ -46,13 +49,44 @@ const Header = () => {
     setShowPromoBar(false);
   };
 
+  // Função para navegar para categoria com debug
+  const navigateToCategory = (categorySlug, event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    console.log('🔍 Navegando para categoria:', categorySlug);
+    console.log('📍 URL atual:', location.pathname);
+    
+    const targetPath = `/categoria/${categorySlug}`;
+    console.log('🎯 URL destino:', targetPath);
+    
+    setIsMobileMenuOpen(false); // Fechar menu mobile se estiver aberto
+    
+    // Forçar navegação
+    navigate(targetPath, { replace: false });
+    
+    // Verificar se a navegação funcionou
+    setTimeout(() => {
+      console.log('✅ URL após navegação:', window.location.pathname);
+    }, 100);
+  };
+
+  // Verificar se link está ativo
+  const isActiveCategory = (categorySlug) => {
+    const isActive = location.pathname === `/categoria/${categorySlug}`;
+    console.log(`🔍 Categoria ${categorySlug} ativa:`, isActive);
+    return isActive;
+  };
+
   const categories = [
-    { name: 'Vestidos', path: '/categoria/vestidos' },
-    { name: 'Blusas & Camisas', path: '/categoria/blusas' },
-    { name: 'Calças & Shorts', path: '/categoria/calcas' },
-    { name: 'Saias & Macacões', path: '/categoria/saias' },
-    { name: 'Acessórios', path: '/categoria/acessorios' },
-    { name: 'Coleções Especiais', path: '/categoria/colecoes' }
+    { name: 'Vestidos', slug: 'vestidos' },
+    { name: 'Blusas & Camisas', slug: 'blusas' },
+    { name: 'Calças & Shorts', slug: 'calcas' },
+    { name: 'Saias & Macacões', slug: 'saias' },
+    { name: 'Acessórios', slug: 'acessorios' },
+    { name: 'Calçados', slug: 'calcados' }
   ];
 
   const formatPrice = (price) => {
@@ -64,6 +98,9 @@ const Header = () => {
 
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
+
+  // Debug: Log da localização atual
+  console.log('📍 Header - Localização atual:', location.pathname);
 
   return (
     <>
@@ -164,9 +201,15 @@ const Header = () => {
             <ul className={styles.categoryList}>
               {categories.map((category, index) => (
                 <li key={index} className={styles.categoryItem}>
-                  <Link to={category.path} className={styles.categoryLink}>
+                  <button
+                    type="button"
+                    onClick={(e) => navigateToCategory(category.slug, e)}
+                    className={`${styles.categoryLink} ${
+                      isActiveCategory(category.slug) ? styles.active : ''
+                    }`}
+                  >
                     {category.name}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -210,10 +253,18 @@ const Header = () => {
 
             {/* Ações do Usuário Mobile */}
             <div className={styles.mobileUserActions}>
-              <Link to="/login" className={styles.mobileActionLink} onClick={toggleMobileMenu}>
+              <Link 
+                to="/login" 
+                className={styles.mobileActionLink} 
+                onClick={toggleMobileMenu}
+              >
                 <FaUser /> Minha Conta
               </Link>
-              <Link to="/favoritos" className={styles.mobileActionLink} onClick={toggleMobileMenu}>
+              <Link 
+                to="/favoritos" 
+                className={styles.mobileActionLink} 
+                onClick={toggleMobileMenu}
+              >
                 <FaHeart /> Meus Favoritos
               </Link>
               <button 
@@ -244,13 +295,15 @@ const Header = () => {
               <ul className={styles.mobileCategoryList}>
                 {categories.map((category, index) => (
                   <li key={index} className={styles.mobileCategoryItem}>
-                    <Link 
-                      to={category.path} 
-                      className={styles.mobileCategoryLink}
-                      onClick={toggleMobileMenu}
+                    <button 
+                      type="button"
+                      onClick={(e) => navigateToCategory(category.slug, e)}
+                      className={`${styles.mobileCategoryLink} ${
+                        isActiveCategory(category.slug) ? styles.active : ''
+                      }`}
                     >
                       {category.name}
-                    </Link>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -258,10 +311,18 @@ const Header = () => {
 
             {/* Links Adicionais Mobile */}
             <div className={styles.mobileExtraLinks}>
-              <Link to="/sobre" className={styles.mobileExtraLink} onClick={toggleMobileMenu}>
+              <Link 
+                to="/sobre" 
+                className={styles.mobileExtraLink} 
+                onClick={toggleMobileMenu}
+              >
                 Sobre Nós
               </Link>
-              <Link to="/contato" className={styles.mobileExtraLink} onClick={toggleMobileMenu}>
+              <Link 
+                to="/contato" 
+                className={styles.mobileExtraLink} 
+                onClick={toggleMobileMenu}
+              >
                 Contato
               </Link>
             </div>

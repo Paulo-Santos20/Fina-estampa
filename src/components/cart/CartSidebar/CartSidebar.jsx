@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaTimes, FaPlus, FaMinus, FaShoppingBag, FaChevronLeft } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
-import styles from './CartSidebar.module.css';
+import styles from './CartSideBar.module.css';
 
 const CartSidebar = ({ isOpen, onClose }) => {
   const { 

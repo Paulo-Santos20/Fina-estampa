@@ -34,15 +34,15 @@ const OrderSummary = ({
                 {item.salePrice ? (
                   <>
                     <span className={styles.originalPrice}>
-                      R\$ {(item.price * item.quantity).toFixed(2)}
+                      R$ {(item.price * item.quantity).toFixed(2)}
                     </span>
                     <span className={styles.salePrice}>
-                      R\$ {(item.salePrice * item.quantity).toFixed(2)}
+                      R$ {(item.salePrice * item.quantity).toFixed(2)}
                     </span>
                   </>
                 ) : (
                   <span className={styles.regularPrice}>
-                    R\$ {(item.price * item.quantity).toFixed(2)}
+                    R$ {(item.price * item.quantity).toFixed(2)}
                   </span>
                 )}
               </div>
@@ -55,7 +55,7 @@ const OrderSummary = ({
       <div className={styles.totalsSection}>
         <div className={styles.totalRow}>
           <span>Subtotal ({items.length} {items.length === 1 ? 'item' : 'itens'})</span>
-          <span>R\$ {subtotal.toFixed(2)}</span>
+          <span>R$ {subtotal.toFixed(2)}</span>
         </div>
 
         <div className={styles.totalRow}>
@@ -70,7 +70,7 @@ const OrderSummary = ({
             )}
           </span>
           <span>
-            {shipping === 0 ? 'Grátis' : `R\$ ${shipping.toFixed(2)}`}
+            {shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}
           </span>
         </div>
 
@@ -81,7 +81,7 @@ const OrderSummary = ({
               Desconto PIX (5%)
             </span>
             <span className={styles.discountValue}>
-              - R\$ {discount.toFixed(2)}
+              - R$ {discount.toFixed(2)}
             </span>
           </div>
         )}
@@ -90,12 +90,12 @@ const OrderSummary = ({
 
         <div className={`${styles.totalRow} ${styles.finalTotal}`}>
           <span>Total</span>
-          <span>R\$ {total.toFixed(2)}</span>
+          <span>R$ {total.toFixed(2)}</span>
         </div>
 
         {paymentMethod === 'credit' && (
           <div className={styles.installmentInfo}>
-            <small>ou 12x de R\$ {(total / 12).toFixed(2)} sem juros</small>
+            <small>ou 12x de R$ {(total / 12).toFixed(2)} sem juros</small>
           </div>
         )}
       </div>
@@ -111,7 +111,7 @@ const OrderSummary = ({
             <strong>Prazo:</strong> 5 a 10 dias úteis
           </div>
           <div className={styles.deliveryItem}>
-            <strong>Frete grátis:</strong> Acima de R\$ 199,00
+            <strong>Frete grátis:</strong> Acima de R$ 199,00
           </div>
           <div className={styles.deliveryItem}>
             <strong>Rastreamento:</strong> Código enviado por WhatsApp

@@ -1,0 +1,596 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+/* ===========================================
+   CATALOG LAYOUT
+   =========================================== */
+
+.catalog {
+  min-height: 100vh;
+  background: var(--cinza-claro);
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.header {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.titleSection {
+  flex: 1;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--preto-secundario);
+  margin: 0 0 0.5rem 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--cinza-medio);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* ===========================================
+   SORT CONTROLS
+   =========================================== */
+
+.sortContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.sortLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  font-size: 0.9rem;
+}
+
+.sortIcon {
+  color: var(--wine-destaque);
+}
+
+.sortSelect {
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  background: var(--white-principal);
+  color: var(--preto-secundario);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  min-width: 150px;
+}
+
+.sortSelect:focus {
+  border-color: var(--wine-destaque);
+  outline: none;
+}
+
+/* ===========================================
+   VIEW MODE CONTROLS
+   =========================================== */
+
+.viewModeContainer {
+  display: flex;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  padding: 0.2rem;
+}
+
+.viewModeButton {
+  padding: 0.8rem;
+  background: transparent;
+  border: none;
+  color: var(--cinza-medio);
+  cursor: pointer;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-normal);
+  font-size: 1rem;
+}
+
+.viewModeButton:hover {
+  color: var(--wine-destaque);
+}
+
+.viewModeButton.active {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+/* ===========================================
+   MOBILE FILTERS BUTTON
+   =========================================== */
+
+.mobileFiltersButton {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.mobileFiltersButton:hover {
+  background: var(--preto-secundario);
+}
+
+/* ===========================================
+   ACTIVE FILTERS
+   =========================================== */
+
+.activeFilters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cinza-claro);
+}
+
+.filterTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  flex: 1;
+}
+
+.filterTag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--rosa-suave);
+  color: var(--wine-destaque);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid var(--wine-destaque);
+}
+
+.filterTag button {
+  background: none;
+  border: none;
+  color: var(--wine-destaque);
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-normal);
+  font-size: 0.7rem;
+}
+
+.filterTag button:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.clearFiltersButton {
+  background: var(--cinza-claro);
+  color: var(--preto-secundario);
+  border: 2px solid var(--cinza-claro);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+}
+
+.clearFiltersButton:hover {
+  background: var(--cinza-medio);
+  color: var(--white-principal);
+  border-color: var(--cinza-medio);
+}
+
+/* ===========================================
+   CONTENT LAYOUT
+   =========================================== */
+
+.content {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  position: relative;
+}
+
+/* ===========================================
+   SIDEBAR
+   =========================================== */
+
+.sidebar {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 2rem;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+}
+
+.filtersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--cinza-claro);
+}
+
+.filtersTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+  margin: 0;
+}
+
+.closeMobileFilters {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--cinza-medio);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* ===========================================
+   MAIN CONTENT
+   =========================================== */
+
+.main {
+  min-height: 400px;
+}
+
+/* ===========================================
+   LOADING
+   =========================================== */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--cinza-medio);
+}
+
+.loadingSpinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid var(--cinza-claro);
+  border-top: 3px solid var(--wine-destaque);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===========================================
+   NO RESULTS
+   =========================================== */
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+}
+
+.noResultsIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.noResults h3 {
+  font-size: 1.8rem;
+  color: var(--preto-secundario);
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.noResults p {
+  font-size: 1.1rem;
+  color: var(--cinza-medio);
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+.noResultsActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.clearFiltersBtn,
+.viewAllBtn {
+  padding: 1rem 2rem;
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 2px solid;
+}
+
+.clearFiltersBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.clearFiltersBtn:hover {
+  background: var(--preto-secundario);
+  border-color: var(--preto-secundario);
+}
+
+.viewAllBtn {
+  background: transparent;
+  color: var(--wine-destaque);
+  border-color: var(--wine-destaque);
+}
+
+.viewAllBtn:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+/* ===========================================
+   MOBILE RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+    overflow-y: auto;
+    border-radius: 0;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .mobileFiltersOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .mobileFiltersButton {
+    display: flex;
+  }
+
+  .closeMobileFilters {
+    display: block;
+  }
+
+  .headerControls {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .viewModeContainer {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog {
+    padding: 1rem 0;
+  }
+
+  .container {
+    padding: 0 0.8rem;
+  }
+
+  .header {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .headerControls {
+    justify-content: space-between;
+  }
+
+  .sortContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .sortSelect {
+    min-width: auto;
+  }
+
+  .activeFilters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .filterTags {
+    justify-content: center;
+  }
+
+  .sidebar {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .headerControls {
+    gap: 0.8rem;
+  }
+
+  .mobileFiltersButton {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .viewModeButton {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .filterTag {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .noResults {
+    padding: 3rem 1rem;
+  }
+
+  .noResults h3 {
+    font-size: 1.5rem;
+  }
+
+  .noResults p {
+    font-size: 1rem;
+  }
+
+  .noResultsActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clearFiltersBtn,
+  .viewAllBtn {
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+/* ===========================================
+   ACESSIBILIDADE
+   =========================================== */
+
+.sortSelect:focus,
+.viewModeButton:focus,
+.mobileFiltersButton:focus,
+.clearFiltersButton:focus,
+.closeMobileFilters:focus {
+  outline: 3px solid var(--wine-destaque);
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   ANIMAÇÕES
+   =========================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.filterTag {
+  animation: fadeIn 0.2s ease-out;
+}

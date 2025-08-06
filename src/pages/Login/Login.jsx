@@ -1,10 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUser, FaLock, FaGoogle, FaFacebook, FaCrown, FaUserTie } from 'react-icons/fa';
-import styles from './Login.module.css';
+import styles from './Login.module.css'; // Importa o módulo CSS
+import { useAuth } from '../../contexts/AuthContext.jsx'; // 💥 ESTA LINHA TEM QUE ESTAR ASSIM! 💥
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, isLoading: authLoading } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -26,8 +29,8 @@ const Login = () => {
     {
       type: 'customer',
       name: 'Cliente',
-      email: 'cliente@email.com',
-      password: 'cliente123',
+      email: 'maria@email.com',
+      password: '123456',
       icon: <FaUserTie />,
       description: 'Experiência do cliente'
     }
@@ -77,29 +80,21 @@ const Login = () => {
   // Login com conta de demonstração
   const handleDemoLogin = useCallback(async (account) => {
     setIsLoading(true);
-    setFormData({
-      email: account.email,
-      password: account.password
-    });
+    setErrors({});
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simular login e salvar dados do usuário
-      const userData = {
-        id: account.type === 'admin' ? 1 : 2,
-        name: account.name,
+      const result = await login({
         email: account.email,
-        type: account.type,
-        loginTime: new Date().toISOString()
-      };
-      
-      localStorage.setItem('user', JSON.stringify(userData));
-      console.log('Login realizado:', userData);
-      
-      // Redirecionar para dashboard
-      navigate('/dashboard', { replace: true });
-      
+        password: account.password
+      });
+
+      if (result.success) {
+        navigate('/dashboard', { replace: true });
+      } else {
+        setErrors({
+          general: result.error || 'Erro ao fazer login'
+        });
+      }
     } catch (error) {
       console.error('Erro no login:', error);
       setErrors({
@@ -108,7 +103,7 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [navigate]);
+  }, [login, navigate]);
 
   // Submit do formulário
   const handleSubmit = useCallback(async (e) => {
@@ -119,47 +114,37 @@ const Login = () => {
     }
 
     setIsLoading(true);
+    setErrors({});
 
     try {
-      // Verificar se é uma conta de demonstração
-      const demoAccount = demoAccounts.find(
-        account => account.email === formData.email && account.password === formData.password
-      );
+      const result = await login(formData);
 
-      if (demoAccount) {
-        await handleDemoLogin(demoAccount);
-        return;
+      if (result.success) {
+        navigate('/dashboard', { replace: true });
+      } else {
+        setErrors({
+          general: result.error || 'Email ou senha incorretos'
+        });
       }
-
-      // Simular login para outras contas
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const userData = {
-        id: 999,
-        name: 'Usuário Teste',
-        email: formData.email,
-        type: 'customer',
-        loginTime: new Date().toISOString()
-      };
-      
-      localStorage.setItem('user', JSON.stringify(userData));
-      navigate('/dashboard', { replace: true });
-      
     } catch (error) {
       console.error('Erro no login:', error);
       setErrors({
-        general: 'Email ou senha incorretos.'
+        general: 'Erro interno. Tente novamente.'
       });
     } finally {
       setIsLoading(false);
     }
-  }, [formData, validateForm, handleDemoLogin, demoAccounts, navigate]);
+  }, [formData, validateForm, login, navigate]);
 
   // Login com redes sociais
   const handleSocialLogin = useCallback((provider) => {
-    console.log(`Login com ${provider}`);
-    // Implementar login social
+    console.log(`Login com ${provider} - Em desenvolvimento`);
+    setErrors({
+      general: `Login com ${provider} será implementado em breve!`
+    });
   }, []);
+
+  const isFormLoading = isLoading || authLoading;
 
   return (
     <div className={styles.loginPage}>
@@ -186,7 +171,7 @@ const Login = () => {
                   key={account.type}
                   onClick={() => handleDemoLogin(account)}
                   className={styles.demoButton}
-                  disabled={isLoading}
+                  disabled={isFormLoading}
                 >
                   <div className={styles.demoIcon}>
                     {account.icon}
@@ -232,7 +217,7 @@ const Login = () => {
                   onChange={handleInputChange}
                   placeholder="seu@email.com"
                   className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
-                  disabled={isLoading}
+                  disabled={isFormLoading}
                 />
               </div>
               {errors.email && (
@@ -255,13 +240,13 @@ const Login = () => {
                   onChange={handleInputChange}
                   placeholder="Sua senha"
                   className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-                  disabled={isLoading}
+                  disabled={isFormLoading}
                 />
                 <button
                   type="button"
                   onClick={toggleShowPassword}
                   className={styles.passwordToggle}
-                  disabled={isLoading}
+                  disabled={isFormLoading}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -286,9 +271,9 @@ const Login = () => {
             <button
               type="submit"
               className={styles.submitButton}
-              disabled={isLoading}
+              disabled={isFormLoading}
             >
-              {isLoading ? (
+              {isFormLoading ? (
                 <span className={styles.loading}>Entrando...</span>
               ) : (
                 'Entrar'
@@ -301,13 +286,13 @@ const Login = () => {
             <span className={styles.dividerText}>ou continue com</span>
           </div>
 
-          {/* Login Social */}
+          {/* Social Login */}
           <div className={styles.socialLogin}>
             <button
               type="button"
               onClick={() => handleSocialLogin('Google')}
               className={`${styles.socialButton} ${styles.googleButton}`}
-              disabled={isLoading}
+              disabled={isFormLoading}
             >
               <FaGoogle />
               <span>Google</span>
@@ -316,7 +301,7 @@ const Login = () => {
               type="button"
               onClick={() => handleSocialLogin('Facebook')}
               className={`${styles.socialButton} ${styles.facebookButton}`}
-              disabled={isLoading}
+              disabled={isFormLoading}
             >
               <FaFacebook />
               <span>Facebook</span>
@@ -327,8 +312,13 @@ const Login = () => {
           <div className={styles.loginFooter}>
             <p className={styles.signupText}>
               Não tem uma conta?{' '}
-              <Link to="/cadastro" className={styles.signupLink}>
+              <Link to="/register" className={styles.signupLink}>
                 Criar conta
+              </Link>
+            </p>
+            <p className={styles.backHome}>
+              <Link to="/" className={styles.backHomeLink}>
+                ← Voltar à página inicial
               </Link>
             </p>
           </div>

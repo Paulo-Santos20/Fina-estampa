@@ -1,201 +1,111 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-// Ações do reducer
-const CART_ACTIONS = {
-  ADD_ITEM: 'ADD_ITEM',
-  REMOVE_ITEM: 'REMOVE_ITEM',
-  UPDATE_QUANTITY: 'UPDATE_QUANTITY',
-  CLEAR_CART: 'CLEAR_CART',
-  LOAD_CART: 'LOAD_CART'
-};
+// Crie o Contexto
+const CartContext = createContext(null);
 
-// Estado inicial
-const initialState = {
-  items: []
-};
-
-// Reducer do carrinho
-const cartReducer = (state, action) => {
-  switch (action.type) {
-    case CART_ACTIONS.ADD_ITEM: {
-      const { product, size, color, quantity } = action.payload;
-      const existingItemIndex = state.items.findIndex(
-        item => item.id === product.id && item.size === size && item.color === color
-      );
-
-      if (existingItemIndex > -1) {
-        // Item já existe, atualizar quantidade
-        const updatedItems = [...state.items];
-        updatedItems[existingItemIndex].quantity += quantity;
-        return { ...state, items: updatedItems };
-      } else {
-        // Novo item
-        const newItem = {
-          id: product.id,
-          name: product.name,
-          price: product.isPromo ? product.salePrice : product.price,
-          image: product.image,
-          size,
-          color,
-          quantity
-        };
-        return { ...state, items: [...state.items, newItem] };
-      }
-    }
-
-    case CART_ACTIONS.REMOVE_ITEM: {
-      const { productId, size, color } = action.payload;
-      const filteredItems = state.items.filter(
-        item => !(item.id === productId && item.size === size && item.color === color)
-      );
-      return { ...state, items: filteredItems };
-    }
-
-    case CART_ACTIONS.UPDATE_QUANTITY: {
-      const { productId, size, color, quantity } = action.payload;
-      const updatedItems = state.items.map(item => {
-        if (item.id === productId && item.size === size && item.color === color) {
-          return { ...item, quantity: Math.max(0, quantity) };
-        }
-        return item;
-      }).filter(item => item.quantity > 0);
-      
-      return { ...state, items: updatedItems };
-    }
-
-    case CART_ACTIONS.CLEAR_CART:
-      return { ...state, items: [] };
-
-    case CART_ACTIONS.LOAD_CART:
-      return { ...state, items: action.payload || [] };
-
-    default:
-      return state;
-  }
-};
-
-// Criar contexto
-const CartContext = createContext();
-
-// Provider do contexto
+// Crie um provedor para o Contexto do Carrinho
 export const CartProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [cartItems, setCartItems] = useState(() => {
+    // Tenta carregar os itens do carrinho do localStorage ao inicializar
+    try {
+      const storedItems = localStorage.getItem('cartItems');
+      return storedItems ? JSON.parse(storedItems) : [];
+    } catch (error) {
+      console.error("Failed to load cart items from localStorage", error);
+      return [];
+    }
+  });
 
-  // Carregar carrinho do localStorage na inicialização
+  // Salva os itens do carrinho no localStorage sempre que cartItems muda
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem('finaEstampaCart');
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        dispatch({ type: CART_ACTIONS.LOAD_CART, payload: parsedCart });
-      }
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
     } catch (error) {
-      console.warn('Erro ao carregar carrinho do localStorage:', error);
+      console.error("Failed to save cart items to localStorage", error);
     }
+  }, [cartItems]);
+
+  // Função para adicionar item ao carrinho
+  const addItem = useCallback((product, quantity = 1) => {
+    setCartItems(prevItems => {
+      const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
+      if (existingItemIndex > -1) {
+        // Item já existe, atualiza a quantidade
+        const newItems = [...prevItems];
+        newItems[existingItemIndex].quantity += quantity;
+        return newItems;
+      } else {
+        // Adiciona novo item
+        return [...prevItems, { ...product, quantity }];
+      }
+    });
   }, []);
 
-  // Salvar carrinho no localStorage sempre que mudar
-  useEffect(() => {
-    try {
-      localStorage.setItem('finaEstampaCart', JSON.stringify(state.items));
-    } catch (error) {
-      console.warn('Erro ao salvar carrinho no localStorage:', error);
-    }
-  }, [state.items]);
+  // Função para remover item do carrinho
+  const removeItem = useCallback((productId) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+  }, []);
 
-  // Funções do carrinho
-  const addToCart = (product, size, color, quantity = 1) => {
-    if (!product || !product.id) {
-      console.warn('Produto inválido para adicionar ao carrinho');
+  // Função para atualizar a quantidade de um item
+  const updateItemQuantity = useCallback((productId, quantity) => {
+    if (quantity <= 0) {
+      removeItem(productId);
       return;
     }
-    
-    dispatch({
-      type: CART_ACTIONS.ADD_ITEM,
-      payload: { product, size, color, quantity }
-    });
-  };
-
-  const removeFromCart = (productId, size, color) => {
-    dispatch({
-      type: CART_ACTIONS.REMOVE_ITEM,
-      payload: { productId, size, color }
-    });
-  };
-
-  const updateQuantity = (productId, size, color, quantity) => {
-    dispatch({
-      type: CART_ACTIONS.UPDATE_QUANTITY,
-      payload: { productId, size, color, quantity }
-    });
-  };
-
-  const clearCart = () => {
-    dispatch({ type: CART_ACTIONS.CLEAR_CART });
-  };
-
-  const getTotalItems = () => {
-    return state.items.reduce((total, item) => total + (item.quantity || 0), 0);
-  };
-
-  const getTotalPrice = () => {
-    return state.items.reduce((total, item) => {
-      const price = item.price || 0;
-      const quantity = item.quantity || 0;
-      return total + (price * quantity);
-    }, 0);
-  };
-
-  const getItemCount = (productId, size, color) => {
-    const item = state.items.find(
-      item => item.id === productId && item.size === size && item.color === color
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === productId ? { ...item, quantity } : item
+      )
     );
+  }, [removeItem]);
+
+  // Função para limpar o carrinho
+  const clearCart = useCallback(() => {
+    setCartItems([]);
+  }, []);
+
+  // ******* FUNÇÕES QUE ESTAVAM FALTANDO/INCORRETAS *******
+  
+  // Função para obter o número total de itens únicos no carrinho
+  const getTotalItems = useCallback(() => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  }, [cartItems]);
+
+  // Função para obter o preço total dos itens no carrinho
+  const getTotalPrice = useCallback(() => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  }, [cartItems]);
+
+  // Função para obter a contagem de um item específico (se precisar, como em botões de "adicionar ao carrinho")
+  const getItemCount = useCallback((productId) => {
+    const item = cartItems.find(i => i.id === productId);
     return item ? item.quantity : 0;
-  };
+  }, [cartItems]);
 
-  const isInCart = (productId, size, color) => {
-    return state.items.some(
-      item => item.id === productId && item.size === size && item.color === color
-    );
-  };
-
-  const value = {
-    cartItems: state.items,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
+  // O valor que será fornecido pelo contexto
+  const contextValue = {
+    cartItems,
+    addItem,
+    removeItem,
+    updateItemQuantity,
     clearCart,
-    getTotalItems,
-    getTotalPrice,
-    getItemCount,
-    isInCart
+    getTotalItems,      // EXPOSTO
+    getTotalPrice,      // EXPOSTO
+    getItemCount,       // EXPOSTO (opcional, mas útil)
   };
 
   return (
-    <CartContext.Provider value={value}>
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );
 };
 
-// Hook para usar o contexto
+// Hook personalizado para consumir o contexto do carrinho
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    console.error('useCart deve ser usado dentro de um CartProvider');
-    return {
-      cartItems: [],
-      addToCart: () => {},
-      removeFromCart: () => {},
-      updateQuantity: () => {},
-      clearCart: () => {},
-      getTotalItems: () => 0,
-      getTotalPrice: () => 0,
-      getItemCount: () => 0,
-      isInCart: () => false
-    };
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 };
-
-export default CartContext;

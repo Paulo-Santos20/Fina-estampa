@@ -1128,3 +1128,63 @@
 .dashboardContent::-webkit-scrollbar-thumb:hover {
   background: var(--preto-secundario);
 }
+
+/* Adicionar ao final do arquivo Dashboard.module.css */
+
+/* ===========================================
+   PLACEHOLDER PAGES
+   =========================================== */
+
+.placeholderPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: var(--cinza-medio);
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 3rem;
+  margin: 2rem 0;
+  border: 2px dashed var(--cinza-claro);
+}
+
+.placeholderIcon {
+  font-size: 4rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.placeholderPage h2 {
+  margin: 0 0 1rem 0;
+  color: var(--preto-secundario);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.placeholderPage p {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* ===========================================
+   LOADING SPINNER
+   =========================================== */
+
+.loadingSpinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid var(--cinza-claro);
+  border-top: 3px solid var(--wine-destaque);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -63,7 +63,7 @@ const OrderSuccess = () => {
                 </div>
                 <div className={styles.orderRow}>
                   <span>Total:</span>
-                  <span className={styles.orderTotal}>R\$ {orderDetails.totals.total.toFixed(2)}</span>
+                  <span className={styles.orderTotal}>R$ {orderDetails.totals.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>

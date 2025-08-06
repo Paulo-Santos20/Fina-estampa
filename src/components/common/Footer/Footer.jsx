@@ -185,7 +185,7 @@ const Footer = () => {
             <FaTruck className={styles.guaranteeIcon} />
             <div>
               <h5>Frete Grátis</h5>
-              <p>Acima de R\$ 199</p>
+              <p>Acima de R$ 199</p>
             </div>
           </div>
           

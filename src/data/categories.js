@@ -1,54 +1,92 @@
-export const categories = [
+export const defaultCategories = [
   {
     id: 1,
     name: 'Vestidos',
     slug: 'vestidos',
-    image: '/assets/categories/vestidos.jpg',
-    description: 'Elegância e sofisticação para todas as ocasiões',
-    subcategories: ['Casuais', 'Festa', 'Trabalho', 'Longos', 'Midi']
+    description: 'Vestidos para todas as ocasiões',
+    showInHeader: true,
+    order: 1,
+    isActive: true
   },
   {
     id: 2,
-    name: 'Blusas & Camisas',
+    name: 'Blusas',
     slug: 'blusas',
-    image: '/assets/categories/blusas.jpg',
-    description: 'Estilo e conforto para o dia a dia',
-    subcategories: ['Blusas Casuais', 'Camisas Sociais', 'Regatas', 'Cropped']
+    description: 'Blusas e camisas femininas',
+    showInHeader: true,
+    order: 2,
+    isActive: true
   },
   {
     id: 3,
-    name: 'Calças & Shorts',
+    name: 'Calças',
     slug: 'calcas',
-    image: '/assets/categories/calcas.jpg',
-    description: 'Versatilidade e modernidade',
-    subcategories: ['Calças Sociais', 'Jeans', 'Leggings', 'Shorts']
+    description: 'Calças e leggings',
+    showInHeader: true,
+    order: 3,
+    isActive: true
   },
   {
     id: 4,
-    name: 'Saias & Macacões',
+    name: 'Saias',
     slug: 'saias',
-    image: '/assets/categories/saias.jpg',
-    description: 'Feminilidade e estilo únicos',
-    subcategories: ['Saias Midi', 'Saias Longas', 'Macacões', 'Jardineiras']
+    description: 'Saias de diversos modelos',
+    showInHeader: true,
+    order: 4,
+    isActive: true
   },
   {
     id: 5,
-    name: 'Acessórios',
-    slug: 'acessorios',
-    image: '/assets/categories/acessorios.jpg',
-    description: 'Detalhes que fazem toda a diferença',
-    subcategories: ['Bolsas', 'Joias', 'Sapatos', 'Cintos', 'Lenços']
+    name: 'Macacões',
+    slug: 'macacoes',
+    description: 'Macacões e jardineiras',
+    showInHeader: false,
+    order: 5,
+    isActive: true
   },
   {
     id: 6,
-    name: 'Coleções Especiais',
-    slug: 'colecoes',
-    image: '/assets/categories/colecoes.jpg',
-    description: 'Peças exclusivas e limitadas',
-    subcategories: ['Primavera/Verão', 'Outono/Inverno', 'Festa', 'Executiva']
+    name: 'Blazers',
+    slug: 'blazers',
+    description: 'Blazers e casacos',
+    showInHeader: false,
+    order: 6,
+    isActive: true
+  },
+  {
+    id: 7,
+    name: 'Conjuntos',
+    slug: 'conjuntos',
+    description: 'Conjuntos coordenados',
+    showInHeader: false,
+    order: 7,
+    isActive: true
+  },
+  {
+    id: 8,
+    name: 'Shorts',
+    slug: 'shorts',
+    description: 'Shorts e bermudas',
+    showInHeader: false,
+    order: 8,
+    isActive: true
+  },
+  {
+    id: 9,
+    name: 'Jaquetas',
+    slug: 'jaquetas',
+    description: 'Jaquetas e casacos',
+    showInHeader: false,
+    order: 9,
+    isActive: true
+  },
+  {
+    id: 10,
+    name: 'Acessórios',
+    slug: 'acessorios',
+    description: 'Bolsas, joias e acessórios',
+    showInHeader: false,
+    order: 10,
+    isActive: true
   }
 ];
-
-export const getCategoryBySlug = (slug) => {
-  return categories.find(category => category.slug === slug);
-};

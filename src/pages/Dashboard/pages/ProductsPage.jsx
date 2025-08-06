@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { FaBox, FaPlus, FaEdit, FaTrash, FaEye, FaSearch, FaFilter, FaSave, FaTimes, FaImage } from 'react-icons/fa';
 import { allProducts } from '../../../data/products';
+import { useCategories } from '../../../hooks/useCategories';
 import styles from '../Dashboard.module.css';
 
 const ProductsPage = ({ user, timeRange }) => {
@@ -10,6 +11,8 @@ const ProductsPage = ({ user, timeRange }) => {
   const [sortBy, setSortBy] = useState('name');
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -23,13 +26,14 @@ const ProductsPage = ({ user, timeRange }) => {
     isPromo: false
   });
 
+  const { categories, addCategory, getActiveCategories } = useCategories();
+
   // Carregar produtos do localStorage ou usar dados padrão
   useEffect(() => {
     const savedProducts = localStorage.getItem('finaEstampaProducts');
     if (savedProducts) {
       setProducts(JSON.parse(savedProducts));
     } else {
-      // Inicializar com produtos padrão e salvar no localStorage
       setProducts(allProducts);
       localStorage.setItem('finaEstampaProducts', JSON.stringify(allProducts));
     }
@@ -42,7 +46,9 @@ const ProductsPage = ({ user, timeRange }) => {
     }
   }, [products]);
 
-  const categories = useMemo(() => {
+  const activeCategories = getActiveCategories();
+
+  const filterCategories = useMemo(() => {
     const cats = [...new Set(products.map(p => p.category))];
     return ['all', ...cats];
   }, [products]);
@@ -107,6 +113,21 @@ const ProductsPage = ({ user, timeRange }) => {
     }));
   };
 
+  const handleAddNewCategory = () => {
+    if (newCategoryName.trim()) {
+      const newCategory = addCategory({
+        name: newCategoryName.trim(),
+        description: `Categoria ${newCategoryName}`,
+        showInHeader: false,
+        isActive: true
+      });
+      setFormData(prev => ({ ...prev, category: newCategory.name }));
+      setNewCategoryName('');
+      setShowNewCategoryInput(false);
+      alert('Nova categoria criada com sucesso!');
+    }
+  };
+
   const openModal = (product = null) => {
     if (product) {
       setEditingProduct(product);
@@ -138,11 +159,15 @@ const ProductsPage = ({ user, timeRange }) => {
       });
     }
     setShowModal(true);
+    setShowNewCategoryInput(false);
+    setNewCategoryName('');
   };
 
   const closeModal = () => {
     setShowModal(false);
     setEditingProduct(null);
+    setShowNewCategoryInput(false);
+    setNewCategoryName('');
     setFormData({
       name: '',
       category: '',
@@ -180,11 +205,9 @@ const ProductsPage = ({ user, timeRange }) => {
     };
 
     if (editingProduct) {
-      // Editar produto existente
       setProducts(prev => prev.map(p => p.id === editingProduct.id ? productData : p));
       alert('Produto atualizado com sucesso!');
     } else {
-      // Adicionar novo produto
       setProducts(prev => [...prev, productData]);
       alert('Produto adicionado com sucesso!');
     }
@@ -245,7 +268,7 @@ const ProductsPage = ({ user, timeRange }) => {
               minWidth: '150px'
             }}
           >
-            {categories.map(cat => (
+            {filterCategories.map(cat => (
               <option key={cat} value={cat}>
                 {cat === 'all' ? 'Todas Categorias' : cat}
               </option>
@@ -405,7 +428,7 @@ const ProductsPage = ({ user, timeRange }) => {
         )}
       </section>
 
-      {/* Modal de Produto - CSS CORRIGIDO */}
+      {/* Modal de Produto */}
       {showModal && (
         <div style={{
           position: 'fixed',
@@ -506,7 +529,7 @@ const ProductsPage = ({ user, timeRange }) => {
                   />
                 </div>
 
-                {/* Categoria */}
+                {/* Categoria - ATUALIZADA */}
                 <div>
                   <label style={{ 
                     display: 'block', 
@@ -517,28 +540,115 @@ const ProductsPage = ({ user, timeRange }) => {
                   }}>
                     🏷️ Categoria *
                   </label>
-                  <input
-                    type="text"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Ex: Vestidos, Blusas, Calças..."
-                    style={{
-                      width: '100%',
-                      padding: '0.8rem',
-                      border: '2px solid var(--cinza-claro)',
-                      borderRadius: 'var(--radius-medium)',
-                      fontSize: '0.9rem',
-                      color: 'var(--preto-secundario)',
-                      background: 'var(--white-principal)',
-                      transition: 'border-color var(--transition-normal)'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--wine-destaque)'}
-                    onBlur={(e) => e.target.style.borderColor = 'var(--cinza-claro)'}
-                  />
+                  
+                  {!showNewCategoryInput ? (
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                        style={{
+                          flex: 1,
+                          padding: '0.8rem',
+                          border: '2px solid var(--cinza-claro)',
+                          borderRadius: 'var(--radius-medium)',
+                          fontSize: '0.9rem',
+                          color: 'var(--preto-secundario)',
+                          background: 'var(--white-principal)',
+                          transition: 'border-color var(--transition-normal)'
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = 'var(--wine-destaque)'}
+                        onBlur={(e) => e.target.style.borderColor = 'var(--cinza-claro)'}
+                      >
+                        <option value="">Selecione uma categoria</option>
+                        {activeCategories.map(cat => (
+                          <option key={cat.id} value={cat.name}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewCategoryInput(true)}
+                        style={{
+                          padding: '0.8rem',
+                          background: 'var(--wine-destaque)',
+                          border: 'none',
+                          color: 'var(--white-principal)',
+                          borderRadius: 'var(--radius-medium)',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem',
+                          whiteSpace: 'nowrap'
+                        }}
+                        title="Adicionar nova categoria"
+                      >
+                        <FaPlus />
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        type="text"
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        placeholder="Nome da nova categoria"
+                        style={{
+                          flex: 1,
+                          padding: '0.8rem',
+                          border: '2px solid var(--wine-destaque)',
+                          borderRadius: 'var(--radius-medium)',
+                          fontSize: '0.9rem',
+                          color: 'var(--preto-secundario)',
+                          background: 'var(--white-principal)'
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddNewCategory();
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddNewCategory}
+                        style={{
+                          padding: '0.8rem',
+                          background: '#10B981',
+                          border: 'none',
+                          color: 'white',
+                          borderRadius: 'var(--radius-medium)',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem'
+                        }}
+                        title="Salvar categoria"
+                      >
+                        <FaSave />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowNewCategoryInput(false);
+                          setNewCategoryName('');
+                        }}
+                        style={{
+                          padding: '0.8rem',
+                          background: '#EF4444',
+                          border: 'none',
+                          color: 'white',
+                          borderRadius: 'var(--radius-medium)',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem'
+                        }}
+                        title="Cancelar"
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
+                {/* Resto do formulário permanece igual... */}
                 {/* Preços */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
@@ -846,7 +956,7 @@ const ProductsPage = ({ user, timeRange }) => {
                       background: 'var(--wine-destaque)',
                       border: '2px solid var(--wine-destaque)',
                       color: 'var(--white-principal)',
-                      borderRadius: 'var(--radius-medium)',
+                                      borderRadius: 'var(--radius-medium)',
                       cursor: 'pointer',
                       fontWeight: '600',
                       fontSize: '0.9rem',

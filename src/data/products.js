@@ -526,11 +526,11 @@ export const filterOptions = {
   materials: ["Algodão", "Jeans", "Seda", "Lycra", "Poliéster", "Linho", "Viscose", "Sintético", "Couro Sintético", "Metal"],
   colors: ["Branco", "Preto", "Azul", "Rosa", "Verde", "Cinza", "Amarelo", "Marrom", "Bege", "Dourado", "Prateado"],
   priceRanges: [
-    { label: "Até R\$ 50", min: 0, max: 50 },
-    { label: "R\$ 51 - R\$ 100", min: 51, max: 100 },
-    { label: "R\$ 101 - R\$ 150", min: 101, max: 150 },
-    { label: "R\$ 151 - R\$ 200", min: 151, max: 200 },
-    { label: "Acima de R\$ 200", min: 201, max: Infinity }
+    { label: "Até R$ 50", min: 0, max: 50 },
+    { label: "R$ 51 - R$ 100", min: 51, max: 100 },
+    { label: "R$ 101 - R$ 150", min: 101, max: 150 },
+    { label: "R$ 151 - R$ 200", min: 151, max: 200 },
+    { label: "Acima de R$ 200", min: 201, max: Infinity }
   ]
 };
 

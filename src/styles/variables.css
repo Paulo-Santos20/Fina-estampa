@@ -599,6 +599,13 @@
   --z-modal: 999;
   --z-popover: 1000;
   --z-tooltip: 1001;
-  --z-search-menu: 1999; /* NOVO: Para o SearchMenu */
+  --z-search-menu: 1999; 
+
+
+  --z-sticky: 900;           /* Para o header fixo */
+  --z-dropdown-base: 1000;   /* Para o contêiner do dropdown (.dropdown) */
+  --z-dropdown-menu: 1005;   /* Para o conteúdo do menu dropdown (.dropdownContent) */
+  --z-overlay: 1100;         /* Para SearchMenu e CartDrawer (overlays em nível de tela) */
+  --z-modal: 1200;           /* Para o menu mobile overlay (e outros modais de tela cheia, o mais alto) */
 
 }

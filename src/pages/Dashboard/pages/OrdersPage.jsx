@@ -73,7 +73,7 @@ const OrdersPage = ({ user, timeRange }) => {
             </div>
             <div className={styles.statContent}>
               <h3 className={styles.statValue}>
-                R\$ {totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </h3>
               <p className={styles.statTitle}>Valor Total</p>
             </div>
@@ -166,7 +166,7 @@ const OrdersPage = ({ user, timeRange }) => {
               </div>
               <div className={styles.orderDetails}>
                 <span className={styles.orderValue}>
-                  R\$ {order.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  R$ {order.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
                 <span className={`${styles.orderStatus} ${styles[order.status.toLowerCase().replace(/\s+/g, '')]}`}>
                   {order.status}

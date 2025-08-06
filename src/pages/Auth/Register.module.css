@@ -1,0 +1,221 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+/* ===========================================
+   REGISTER PAGE LAYOUT
+   =========================================== */
+
+.registerPage {
+  min-height: 80vh; /* Ajustado para caber no Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--cinza-claro);
+}
+
+.registerContainer {
+  width: 100%;
+  max-width: 400px;
+}
+
+.registerCard {
+  background: var(--white-principal);
+  padding: 3rem;
+  border-radius: var(--radius-large);
+  box-shadow: 0 10px 30px rgba(114, 47, 55, 0.1);
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.registerHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.registerTitle {
+  color: var(--wine-destaque);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.registerSubtitle {
+  color: var(--cinza-medio);
+  margin: 0;
+}
+
+/* ===========================================
+   FORM ELEMENTS
+   =========================================== */
+
+.errorMessage {
+  background: #FEE2E2;
+  color: #DC2626;
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  margin-bottom: 1.5rem;
+  border: 1px solid #FECACA;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.inputLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: 0.9rem;
+  transition: border-color var(--transition-normal);
+  background: var(--white-principal);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+}
+
+.input[disabled] {
+  background: var(--cinza-claro);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.inputError {
+  border-color: #DC2626 !important;
+}
+
+.fieldError {
+  display: block;
+  color: #DC2626;
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.inputWithIcon {
+  position: relative;
+}
+
+.inputWithIcon .input {
+  padding-right: 3rem; /* Espaço para o botão do olho */
+}
+
+.passwordToggleButton {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--cinza-medio);
+  cursor: pointer;
+  transition: color var(--transition-normal);
+  padding: 0.2rem;
+}
+
+.passwordToggleButton:hover:not(:disabled) {
+  color: var(--wine-destaque);
+}
+
+.passwordToggleButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   SUBMIT BUTTON
+   =========================================== */
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #5a252a;
+}
+
+.submitButton:disabled {
+  background: var(--cinza-medio);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   FOOTER
+   =========================================== */
+
+.registerFooter {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cinza-claro);
+}
+
+.loginPrompt {
+  color: var(--cinza-medio);
+  margin: 0 0 1rem 0;
+}
+
+.loginLink {
+  color: var(--wine-destaque);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+@media (max-width: 768px) {
+  .registerCard {
+    padding: 2rem;
+  }
+
+  .registerTitle {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .registerCard {
+    padding: 1.5rem;
+  }
+
+  .registerTitle {
+    font-size: 1.5rem;
+  }
+
+  .submitButton {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+}

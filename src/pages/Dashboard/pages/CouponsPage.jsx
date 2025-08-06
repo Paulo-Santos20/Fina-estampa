@@ -7,7 +7,7 @@ const CouponsPage = ({ user, timeRange }) => {
     {
       id: 1,
       title: 'FRETE GRÁTIS',
-      description: 'Frete grátis em compras acima de R\$ 199,90',
+      description: 'Frete grátis em compras acima de R$ 199,90',
       code: 'FINAFRETE',
       discount: 'Frete Grátis',
       expiry: '2024-12-31',

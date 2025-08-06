@@ -11,13 +11,13 @@ const ProductCard = ({ product }) => {
   // Função segura para formatar preço
   const formatPrice = useCallback((price) => {
     if (price === undefined || price === null || isNaN(price)) {
-      return 'R\$ 0,00';
+      return 'R$ 0,00';
     }
     
     const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
     
     if (isNaN(numericPrice)) {
-      return 'R\$ 0,00';
+      return 'R$ 0,00';
     }
     
     return numericPrice.toLocaleString('pt-BR', {

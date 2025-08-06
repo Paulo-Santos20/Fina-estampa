@@ -1,4 +1,4 @@
-/* Importar variáveis CSS globais */
+/* Importar variáveis CSS globais - certifique-se que seu variables.css está atualizado! */
 @import '../../../styles/variables.css';
 
 /* ===========================================
@@ -6,14 +6,15 @@
    =========================================== */
 
 .promoBar {
-  background: linear-gradient(135deg, var(--wine-destaque), var(--wine-light));
-  color: var(--white-principal);
-  padding: 0.8rem 0;
+  background: var(--gradient-wine); /* Usando variável de gradiente */
+  color: var(--white-principal); /* Usando --white-principal */
+  padding: var(--space-md) 0; /* Usando variáveis de espaçamento */
   text-align: center;
   position: relative;
-  animation: slideDown 0.5s ease-out;
+  animation: slideDown var(--transition-normal) var(--ease-out-cubic); /* Usando --transition-normal e --ease-out-cubic */
   width: 100%;
   overflow: hidden;
+  z-index: var(--z-sticky); /* Usando --z-sticky */
 }
 
 @keyframes slideDown {
@@ -31,17 +32,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   width: 100%;
-  max-width: var(--container-max-width);
+  max-width: var(--container-max-width); /* Usando --container-max-width */
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--space-xl);
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .promoIcon {
-  font-size: 1rem;
+  font-size: var(--text-base); /* Usando --text-base */
   animation: pulse 2s infinite;
   flex-shrink: 0;
 }
@@ -52,8 +53,8 @@
 }
 
 .promoText {
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: var(--text-sm); /* Usando --text-sm */
+  font-weight: var(--font-medium); /* Usando --font-medium */
   letter-spacing: 0.5px;
   text-align: center;
   word-wrap: break-word;
@@ -62,17 +63,17 @@
 
 .closePromo {
   position: absolute;
-  right: 1rem;
+  right: var(--space-md);
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--white-principal);
-  font-size: 1.2rem;
+  color: var(--white-principal); /* Usando --white-principal */
+  font-size: var(--text-lg); /* Usando --text-lg */
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: var(--radius-full);
-  transition: background-color var(--transition-normal);
+  padding: var(--space-sm);
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
+  transition: background-color var(--transition-normal); /* Usando --transition-normal */
   flex-shrink: 0;
 }
 
@@ -85,36 +86,36 @@
    =========================================== */
 
 .header {
-  background-color: var(--white-principal);
-  box-shadow: var(--shadow-medium);
+  background-color: var(--white-principal); /* Usando --white-principal */
+  box-shadow: var(--shadow-medium); /* Usando --shadow-medium */
   position: sticky;
   top: 0;
-  z-index: var(--z-sticky);
+  z-index: var(--z-sticky); /* Usando --z-sticky */
   width: 100%;
   overflow-x: hidden;
 }
 
 .container {
   width: 100%;
-  max-width: 1400px;
+  max-width: var(--container-max-width); /* Usando --container-max-width */
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--space-xl);
   box-sizing: border-box;
   overflow-x: hidden;
 }
 
 .mainHeader {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--cinza-claro);
+  padding: var(--space-lg) 0; /* Usando --space-lg */
+  border-bottom: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
   width: 100%;
   overflow-x: hidden;
 }
 
 .mainHeader .container {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto; /* Logo | Search | Actions */
   align-items: center;
-  gap: 2rem;
+  gap: var(--space-xl);
   width: 100%;
   min-width: 0;
 }
@@ -132,23 +133,23 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  transition: transform var(--transition-normal);
+  transition: transform var(--transition-normal); /* Usando --transition-normal */
 }
 
 .logoText {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--wine-destaque);
+  font-family: var(--font-heading); /* Usando --font-heading */
+  font-size: var(--text-3xl); /* Usando --text-3xl */
+  font-weight: var(--font-bold); /* Usando --font-bold */
+  color: var(--wine-destaque); /* Usando --wine-destaque */
   letter-spacing: 0.05em;
   white-space: nowrap;
 }
 
 .logoAccent {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  font-weight: 400;
-  color: var(--dourado-sutil);
+  font-family: var(--font-heading); /* Usando --font-heading */
+  font-size: var(--text-3xl); /* Usando --text-3xl */
+  font-weight: var(--font-normal); /* Usando --font-normal */
+  color: var(--dourado-sutil); /* Usando --dourado-sutil */
   font-style: italic;
   white-space: nowrap;
 }
@@ -158,7 +159,7 @@
 }
 
 /* ===========================================
-   BARRA DE PESQUISA
+   BARRA DE PESQUISA (Desktop)
    =========================================== */
 
 .searchSection {
@@ -166,6 +167,11 @@
   width: 100%;
   min-width: 0;
   flex: 1;
+}
+
+.searchContainer {
+  position: relative;
+  z-index: 1; /* --z-base não existe, usando 1 */
 }
 
 .searchForm {
@@ -177,47 +183,47 @@
 
 .searchInput {
   width: 100%;
-  padding: 1rem 1.2rem;
-  padding-right: 3.5rem;
-  border: 2px solid var(--cinza-claro);
-  border-radius: 50px;
-  font-size: 0.95rem;
+  padding: var(--space-md) var(--space-lg);
+  padding-right: var(--space-3xl);
+  border: 2px solid var(--cinza-claro); /* Usando --cinza-claro */
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
+  font-size: var(--text-base); /* Usando --text-base */
   outline: none;
-  transition: all var(--transition-normal);
-  background-color: var(--cinza-claro);
-  color: var(--preto-secundario);
+  transition: all var(--transition-normal); /* Usando --transition-normal */
+  background-color: var(--cinza-claro); /* Usando --cinza-claro */
+  color: var(--preto-secundario); /* Usando --preto-secundario */
   box-sizing: border-box;
   min-width: 0;
 }
 
 .searchInput:focus {
-  border-color: var(--wine-destaque);
-  background-color: var(--white-principal);
+  border-color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--white-principal); /* Usando --white-principal */
   box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
 }
 
 .searchInput::placeholder {
-  color: var(--cinza-medio);
+  color: var(--cinza-medio); /* Usando --cinza-medio */
 }
 
 .searchButton {
   position: absolute;
-  right: 8px;
-  background: var(--wine-destaque);
+  right: var(--space-sm);
+  background: var(--wine-destaque); /* Usando --wine-destaque */
   border: none;
-  color: var(--white-principal);
-  padding: 0.8rem;
-  border-radius: var(--radius-full);
+  color: var(--white-principal); /* Usando --white-principal */
+  padding: var(--space-md);
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-normal);
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   flex-shrink: 0;
 }
 
 .searchButton:hover {
-  background: var(--preto-secundario);
+  background: var(--preto-secundario); /* Usando --preto-secundario */
   transform: scale(1.05);
 }
 
@@ -228,63 +234,62 @@
 .userActions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
   flex-shrink: 0;
-  overflow: visible;
 }
 
 .actionButton {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.3rem; /* Manter 0.3rem para um espaçamento pequeno específico */
   text-decoration: none;
-  color: var(--preto-secundario);
-  background: var(--white-principal);
+  color: var(--preto-secundario); /* Usando --preto-secundario */
+  background: var(--white-principal); /* Usando --white-principal */
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: var(--radius-medium);
-  transition: all var(--transition-normal);
-  position: relative;
+  padding: var(--space-sm);
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
+  transition: all var(--transition-normal); /* Usando --transition-normal */
+  position: relative; /* Mantido para conter seu próprio ícone e texto */
   min-width: 0;
   white-space: nowrap;
 }
 
 .actionButton:hover {
-  color: var(--wine-destaque);
-  background-color: var(--rosa-suave);
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--rosa-suave); /* Usando --rosa-suave */
   transform: translateY(-2px);
 }
 
 .actionButton svg {
-  font-size: 1.4rem;
+  font-size: var(--text-xl); /* Usando --text-xl */
   flex-shrink: 0;
 }
 
 .actionText {
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: var(--text-sm); /* Usando --text-sm */
+  font-weight: var(--font-medium); /* Usando --font-medium */
   white-space: nowrap;
   color: inherit;
 }
 
 /* ===========================================
-   CARRINHO - LAYOUT CORRIGIDO
+   CARRINHO
    =========================================== */
 
 .cartButton {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: var(--space-sm);
   text-decoration: none;
-  color: var(--preto-secundario);
-  background: var(--white-principal);
+  color: var(--preto-secundario); /* Usando --preto-secundario */
+  background: var(--white-principal); /* Usando --white-principal */
   border: none;
   cursor: pointer;
-  padding: 0.8rem;
-  border-radius: var(--radius-medium);
-  transition: all var(--transition-normal);
+  padding: var(--space-sm);
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   position: relative;
   min-width: auto;
   white-space: nowrap;
@@ -292,8 +297,8 @@
 }
 
 .cartButton:hover {
-  color: var(--wine-destaque);
-  background-color: var(--rosa-suave);
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--rosa-suave); /* Usando --rosa-suave */
   transform: translateY(-2px);
 }
 
@@ -306,25 +311,25 @@
 }
 
 .cartIcon {
-  font-size: 1.4rem;
+  font-size: var(--text-xl); /* Usando --text-xl */
   color: inherit;
 }
 
 .cartCount {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  font-size: 0.7rem;
-  font-weight: bold;
-  border-radius: var(--radius-full);
-  padding: 0.2rem 0.5rem;
-  min-width: 18px;
+  top: -8px; /* Mantendo pixels específicos para ajuste fino */
+  right: -8px; /* Mantendo pixels específicos para ajuste fino */
+  background: var(--wine-destaque); /* Usando --wine-destaque */
+  color: var(--white-principal); /* Usando --white-principal */
+  font-size: var(--text-xs); /* Usando --text-xs */
+  font-weight: var(--font-bold); /* Usando --font-bold */
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
+  padding: 0.2rem var(--space-sm);
+  min-width: 18px; /* Mantendo pixels específicos para ajuste fino */
   text-align: center;
   line-height: 1;
-  animation: bounceIn var(--transition-normal) ease-out;
-  z-index: 10;
+  animation: bounceIn var(--transition-normal) var(--ease-out-cubic); /* Usando --transition-normal e --ease-out-cubic */
+  z-index: 10; /* --z-content-over-base não existe, usando 10 */
   white-space: nowrap;
 }
 
@@ -338,64 +343,143 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.2rem;
+  gap: 0.2rem; /* Mantendo 0.2rem para ajuste fino */
   flex-shrink: 0;
   min-width: 0;
 }
 
 .cartLabel {
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: var(--text-sm); /* Usando --text-sm */
+  font-weight: var(--font-medium); /* Usando --font-medium */
   white-space: nowrap;
   color: inherit;
 }
 
 .cartTotal {
-  font-size: 0.75rem;
-  color: var(--wine-destaque);
-  font-weight: 600;
+  font-size: var(--text-xs); /* Usando --text-xs */
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  font-weight: var(--font-semibold); /* Usando --font-semibold */
   white-space: nowrap;
 }
 
 /* ===========================================
-   MENU MOBILE
+   DROPDOWN (para o usuário logado) - AGORA UM PORTAL
+   =========================================== */
+.dropdown {
+  position: relative; /* Mantido para manter o fluxo do layout e para o actionButton se precisar */
+  z-index: 1; /* --z-base não existe, usando 1 */
+}
+
+/* Estilização para o conteúdo do dropdown que é renderizado via PORTAL */
+.dropdownContentPortal {
+  background-color: var(--white-principal); /* Usando --white-principal */
+  min-width: 180px; /* Mantendo pixels para largura específica */
+  box-shadow: var(--shadow-medium); /* Usando --shadow-medium */
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
+  overflow: hidden; /* Mantém conteúdo dentro dos limites do dropdown */
+  border: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
+  padding: var(--space-sm) 0; /* Usando --space-sm */
+
+  /* As propriedades position, top, left, transform, z-index são definidas via style no JSX */
+  visibility: hidden; /* Hidden por padrão */
+  opacity: 0; /* Totalmente transparente por padrão */
+  transition: opacity var(--transition-normal) var(--ease-out-cubic), /* Usando --transition-normal e --ease-out-cubic */
+              visibility var(--transition-normal) var(--ease-out-cubic);
+}
+
+/* Adicionada esta classe para garantir a transição de visibilidade */
+/* Esta classe será adicionada dinamicamente pelo React quando isUserDropdownOpen for true */
+.dropdownContentPortal[style*="visibility: visible"] {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+/* Estilos para links e botões DENTRO do dropdownContentPortal */
+.dropdownContentPortal a,
+.dropdownContentPortal button {
+  color: var(--preto-secundario); /* Usando --preto-secundario */
+  padding: var(--space-md) var(--space-md); /* Usando --space-md */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm); /* Usando --text-sm */
+  transition: all var(--transition-normal); /* Usando --transition-normal */
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.dropdownContentPortal a:hover,
+.dropdownContentPortal button:hover {
+  background-color: var(--rosa-suave); /* Usando --rosa-suave */
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+}
+
+.dropdownContentPortal svg {
+  font-size: var(--text-base); /* Usando --text-base */
+  color: var(--cinza-medio); /* Usando --cinza-medio */
+}
+
+.dropdownContentPortal a:hover svg,
+.dropdownContentPortal button:hover svg {
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+}
+
+.dropdownArrow {
+  font-size: var(--text-sm); /* Usando --text-sm */
+  color: var(--cinza-medio); /* Usando --cinza-medio */
+  transition: transform var(--transition-normal) var(--ease-out-cubic); /* Usando --transition-normal e --ease-out-cubic */
+}
+
+.dropdownArrow.arrowOpen {
+  transform: rotate(180deg);
+}
+
+/* ===========================================
+   MENU MOBILE BUTTON
    =========================================== */
 
 .mobileMenuButton {
   display: none;
   flex-direction: column;
   align-items: center;
-  background: var(--white-principal);
+  background: var(--white-principal); /* Usando --white-principal */
   border: none;
-  color: var(--preto-secundario);
+  color: var(--preto-secundario); /* Usando --preto-secundario */
   cursor: pointer;
-  padding: 0.5rem;
-  font-size: 1.4rem;
-  transition: color var(--transition-normal);
-  border-radius: var(--radius-medium);
+  padding: var(--space-sm);
+  font-size: var(--text-xl); /* Usando --text-xl */
+  transition: color var(--transition-normal); /* Usando --transition-normal */
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
 }
 
 .mobileMenuButton:hover {
-  color: var(--wine-destaque);
-  background-color: var(--rosa-suave);
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--rosa-suave); /* Usando --rosa-suave */
 }
 
 /* ===========================================
-   NAVEGAÇÃO DE CATEGORIAS
+   NAVEGAÇÃO DE CATEGORIAS (BOTTOM BAR)
    =========================================== */
 
 .categoryNav {
-  background-color: var(--cinza-claro);
-  padding: 1rem 0;
+  background-color: var(--cinza-claro); /* Usando --cinza-claro */
+  padding: var(--space-md) 0;
   width: 100%;
   overflow-x: hidden;
+  /* overflow-y: visible; Removido, já que o dropdown flutua fora do Header */
+  z-index: var(--z-sticky); /* Usando --z-sticky */
 }
 
 .categoryList {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2.5rem;
+  gap: var(--space-2xl);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -411,13 +495,13 @@
 .categoryLink {
   background: none;
   border: none;
-  color: var(--preto-secundario);
+  color: var(--preto-secundario); /* Usando --preto-secundario */
   text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  transition: all var(--transition-normal);
+  font-size: var(--text-base); /* Usando --text-base */
+  font-weight: var(--font-medium); /* Usando --font-medium */
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   white-space: nowrap;
   display: block;
   cursor: pointer;
@@ -425,17 +509,17 @@
 }
 
 .categoryLink:hover {
-  color: var(--wine-destaque);
-  background-color: var(--white-principal);
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--white-principal); /* Usando --white-principal */
   transform: translateY(-2px);
-  box-shadow: var(--shadow-wine);
+  box-shadow: var(--shadow-wine); /* Usando --shadow-wine */
 }
 
 .categoryLink.active {
-  color: var(--wine-destaque);
-  background-color: var(--white-principal);
-  font-weight: 600;
-  box-shadow: var(--shadow-wine);
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--white-principal); /* Usando --white-principal */
+  font-weight: var(--font-semibold); /* Usando --font-semibold */
+  box-shadow: var(--shadow-wine); /* Usando --shadow-wine */
 }
 
 /* ===========================================
@@ -448,10 +532,10 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: var(--white-principal);
-  z-index: var(--z-modal);
+  background-color: var(--white-principal); /* Usando --white-principal */
+  z-index: var(--z-modal); /* Usando --z-modal */
   transform: translateX(-100%);
-  transition: transform 0.4s ease-in-out;
+  transition: transform var(--transition-normal) var(--ease-in-out-cubic); /* Usando --transition-normal e --ease-in-out-cubic */
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -464,11 +548,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--cinza-claro);
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--white-principal);
+  background-color: var(--white-principal); /* Usando --white-principal */
 }
 
 .mobileMenuLogo {
@@ -478,69 +562,108 @@
 }
 
 .closeMobileMenu {
-  background: var(--white-principal);
-  border: 1px solid var(--cinza-claro);
-  font-size: 1.8rem;
-  color: var(--wine-destaque);
+  background: var(--white-principal); /* Usando --white-principal */
+  border: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
+  font-size: var(--text-2xl); /* Usando --text-2xl */
+  color: var(--wine-destaque); /* Usando --wine-destaque */
   cursor: pointer;
-  padding: 0.5rem;
-  transition: all var(--transition-normal);
+  padding: var(--space-sm);
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   flex-shrink: 0;
-  border-radius: var(--radius-medium);
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
 }
 
 .closeMobileMenu:hover {
-  color: var(--white-principal);
-  background-color: var(--wine-destaque);
-  border-color: var(--wine-destaque);
+  color: var(--white-principal); /* Usando --white-principal */
+  background-color: var(--wine-destaque); /* Usando --wine-destaque */
+  border-color: var(--wine-destaque); /* Usando --wine-destaque */
 }
 
 .mobileMenuContent {
-  padding: 1.5rem;
+  padding: var(--space-lg);
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--white-principal);
+  background-color: var(--white-principal); /* Usando --white-principal */
 }
 
 .mobileSearch {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-xl);
   width: 100%;
 }
 
+.mobileSearch .searchInput {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  padding-right: var(--space-2xl);
+  border: 2px solid var(--cinza-claro); /* Usando --cinza-claro */
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
+  font-size: var(--text-base); /* Usando --text-base */
+  outline: none;
+  transition: all var(--transition-normal); /* Usando --transition-normal */
+  background-color: var(--cinza-claro); /* Usando --cinza-claro */
+  color: var(--preto-secundario); /* Usando --preto-secundario */
+  box-sizing: border-box;
+}
+
+.mobileSearch .searchInput:focus {
+  border-color: var(--wine-destaque); /* Usando --wine-destaque */
+  background-color: var(--white-principal); /* Usando --white-principal */
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+.mobileSearch .searchButton {
+  position: absolute;
+  right: var(--space-sm);
+  background: var(--wine-destaque); /* Usando --wine-destaque */
+  border: none;
+  color: var(--white-principal); /* Usando --white-principal */
+  padding: var(--space-md);
+  border-radius: var(--radius-pill); /* Usando --radius-pill */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal); /* Usando --transition-normal */
+}
+
+.mobileSearch .searchButton:hover {
+  background: var(--preto-secundario); /* Usando --preto-secundario */
+}
+
 .mobileUserActions {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-xl);
   width: 100%;
 }
 
 .mobileActionLink {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  color: var(--preto-secundario);
+  gap: var(--space-md);
+  padding: var(--space-md);
+  color: var(--preto-secundario); /* Usando --preto-secundario */
   text-decoration: none;
-  border-radius: var(--radius-medium);
-  margin-bottom: 0.5rem;
-  transition: all var(--transition-normal);
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
+  margin-bottom: var(--space-sm);
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   width: 100%;
   box-sizing: border-box;
-  background: var(--white-principal);
-  border: 1px solid var(--cinza-claro);
+  background: var(--white-principal); /* Usando --white-principal */
+  border: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
   cursor: pointer;
-  font-size: 1rem;
+  font-size: var(--text-base); /* Usando --text-base */
   text-align: left;
 }
 
 .mobileActionLink:hover {
-  background-color: var(--wine-destaque);
-  color: var(--white-principal);
-  border-color: var(--wine-destaque);
+  background-color: var(--wine-destaque); /* Usando --wine-destaque */
+  color: var(--white-principal); /* Usando --white-principal */
+  border-color: var(--wine-destaque); /* Usando --wine-destaque */
 }
 
 .mobileCartInfo {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
   width: 100%;
   min-width: 0;
 }
@@ -554,38 +677,38 @@
 }
 
 .mobileCartCount {
-  font-size: 0.8rem;
+  font-size: var(--text-sm); /* Usando --text-sm */
   color: inherit;
   white-space: nowrap;
 }
 
 .mobileCartTotal {
-  font-size: 0.9rem;
-  color: var(--wine-destaque);
-  font-weight: 600;
+  font-size: var(--text-base); /* Usando --text-base */
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  font-weight: var(--font-semibold); /* Usando --font-semibold */
   white-space: nowrap;
 }
 
 .mobileActionLink:hover .mobileCartCount {
-  color: var(--white-principal);
+  color: var(--white-principal); /* Usando --white-principal */
 }
 
 .mobileActionLink:hover .mobileCartTotal {
-  color: var(--dourado-sutil);
+  color: var(--dourado-light); /* Usando --dourado-light */
 }
 
 .mobileCategoryNav {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-xl);
   width: 100%;
 }
 
 .mobileNavTitle {
-  color: var(--wine-destaque);
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--wine-destaque);
+  color: var(--wine-destaque); /* Usando --wine-destaque */
+  font-size: var(--text-lg); /* Usando --text-lg */
+  font-weight: var(--font-semibold); /* Usando --font-semibold */
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--wine-destaque); /* Usando --wine-destaque */
 }
 
 .mobileCategoryList {
@@ -596,66 +719,66 @@
 }
 
 .mobileCategoryItem {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-sm);
   width: 100%;
 }
 
 .mobileCategoryLink {
   display: block;
-  padding: 1rem;
-  color: var(--preto-secundario);
+  padding: var(--space-md);
+  color: var(--preto-secundario); /* Usando --preto-secundario */
   text-decoration: none;
-  border-radius: var(--radius-medium);
-  transition: all var(--transition-normal);
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   width: 100%;
   box-sizing: border-box;
   word-wrap: break-word;
-  background: var(--white-principal);
-  border: 1px solid var(--cinza-claro);
+  background: var(--white-principal); /* Usando --white-principal */
+  border: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
   cursor: pointer;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: var(--text-base); /* Usando --text-base */
   text-align: left;
 }
 
 .mobileCategoryLink:hover {
-  background-color: var(--wine-destaque);
-  color: var(--white-principal);
-  border-color: var(--wine-destaque);
+  background-color: var(--wine-destaque); /* Usando --wine-destaque */
+  color: var(--white-principal); /* Usando --white-principal */
+  border-color: var(--wine-destaque); /* Usando --wine-destaque */
 }
 
 .mobileCategoryLink.active {
-  background-color: var(--wine-destaque);
-  color: var(--white-principal);
-  border-color: var(--wine-destaque);
-  font-weight: 600;
+  background-color: var(--wine-destaque); /* Usando --wine-destaque */
+  color: var(--white-principal); /* Usando --white-principal */
+  border-color: var(--wine-destaque); /* Usando --wine-destaque */
+  font-weight: var(--font-semibold); /* Usando --font-semibold */
 }
 
 .mobileExtraLinks {
-  border-top: 1px solid var(--cinza-claro);
-  padding-top: 1.5rem;
+  border-top: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
+  padding-top: var(--space-lg);
   width: 100%;
 }
 
 .mobileExtraLink {
   display: block;
-  padding: 1rem;
-  color: var(--cinza-medio);
+  padding: var(--space-md);
+  color: var(--cinza-medio); /* Usando --cinza-medio */
   text-decoration: none;
-  border-radius: var(--radius-medium);
-  margin-bottom: 0.5rem;
-  transition: all var(--transition-normal);
+  border-radius: var(--radius-medium); /* Usando --radius-medium */
+  margin-bottom: var(--space-sm);
+  transition: all var(--transition-normal); /* Usando --transition-normal */
   width: 100%;
   box-sizing: border-box;
   word-wrap: break-word;
-  background: var(--white-principal);
-  border: 1px solid var(--cinza-claro);
+  background: var(--white-principal); /* Usando --white-principal */
+  border: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
 }
 
 .mobileExtraLink:hover {
-  background-color: var(--cinza-claro);
-  color: var(--preto-secundario);
-  border-color: var(--cinza-medio);
+  background-color: var(--cinza-claro); /* Usando --cinza-claro */
+  color: var(--preto-secundario); /* Usando --preto-secundario */
+  border-color: var(--cinza-medio); /* Usando --cinza-medio */
 }
 
 /* ===========================================
@@ -665,120 +788,120 @@
 @media (min-width: 1400px) {
   .container,
   .promoContent {
-    max-width: 1600px;
-    padding: 0 3rem;
+    max-width: var(--container-3xl); /* Usando --container-3xl (do provided variables.css) */
+    padding: 0 var(--space-2xl);
   }
-  
+
   .userActions {
-    gap: 1.5rem;
+    gap: var(--space-lg);
   }
-  
+
   .categoryList {
-    gap: 3rem;
+    gap: var(--space-3xl);
   }
 }
 
 @media (max-width: 1024px) {
   .mainHeader .container {
-    gap: 1.5rem;
+    gap: var(--space-lg);
   }
-  
+
   .searchSection {
-    max-width: 400px;
+    max-width: 400px; /* Mantendo pixels para ajuste de largura */
   }
-  
+
   .categoryList {
-    gap: 1.5rem;
+    gap: var(--space-lg);
   }
-  
+
   .userActions {
-    gap: 0.8rem;
+    gap: var(--space-md);
   }
-  
+
   .logoText,
   .logoAccent {
-    font-size: 2rem;
+    font-size: var(--text-2xl); /* Usando --text-2xl */
   }
 }
 
 @media (max-width: 768px) {
   .container,
   .promoContent {
-    padding: 0 1rem;
+    padding: 0 var(--space-md);
   }
-  
+
   .promoText {
-    font-size: 0.8rem;
+    font-size: var(--text-sm); /* Usando --text-sm */
   }
-  
+
   .closePromo {
-    right: 0.5rem;
-    font-size: 1rem;
-    padding: 0.3rem;
+    right: var(--space-sm);
+    font-size: var(--text-base); /* Usando --text-base */
+    padding: 0.3rem; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .mainHeader {
-    padding: 1rem 0;
+    padding: var(--space-md) 0;
   }
-  
+
   .mainHeader .container {
     grid-template-columns: auto 1fr auto;
-    gap: 1rem;
+    gap: var(--space-md);
   }
-  
+
   .logoText,
   .logoAccent {
-    font-size: 1.8rem;
+    font-size: var(--text-xl); /* Usando --text-xl */
   }
-  
+
   .searchSection {
-    max-width: 300px;
+    max-width: 300px; /* Mantendo pixels para ajuste de largura */
   }
-  
+
   .searchInput {
-    padding: 0.8rem 1rem;
-    padding-right: 3rem;
-    font-size: 0.9rem;
+    padding: var(--space-md) var(--space-lg);
+    padding-right: var(--space-2xl);
+    font-size: var(--text-sm); /* Usando --text-sm */
   }
-  
+
   .searchButton {
-    padding: 0.6rem;
-    right: 6px;
+    padding: 0.6rem; /* Mantendo pixels para ajuste fino */
+    right: 6px; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .actionText {
     display: none;
   }
-  
+
   .cartTextWrapper {
     display: none;
   }
-  
+
   .userActions {
-    gap: 0.5rem;
+    gap: var(--space-sm);
   }
-  
+
   .actionButton {
-    padding: 0.3rem;
+    padding: 0.3rem; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .actionButton svg {
-    font-size: 1.2rem;
+    font-size: var(--text-lg); /* Usando --text-lg */
   }
-  
+
   .cartButton {
-    gap: 0.5rem;
-    padding: 0.5rem;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
   }
-  
+
   .cartIcon {
-    font-size: 1.3rem;
+    font-size: var(--text-lg); /* Usando --text-lg */
   }
-  
+
   .mobileMenuButton {
     display: flex;
   }
-  
+
   .categoryNav {
     display: none;
   }
@@ -787,71 +910,71 @@
 @media (max-width: 480px) {
   .container,
   .promoContent {
-    padding: 0 0.8rem;
+    padding: 0 var(--space-sm);
   }
-  
+
   .promoText {
-    font-size: 0.75rem;
+    font-size: var(--text-xs); /* Usando --text-xs */
     line-height: 1.4;
   }
-  
+
   .closePromo {
-    right: 0.3rem;
-    font-size: 0.9rem;
+    right: 0.3rem; /* Mantendo pixels para ajuste fino */
+    font-size: 0.9rem; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .mainHeader .container {
-    gap: 0.8rem;
+    gap: var(--space-sm);
   }
-  
+
   .logoText,
   .logoAccent {
-    font-size: 1.5rem;
+    font-size: var(--text-base); /* Usando --text-base */
   }
-  
+
   .searchInput {
-    padding: 0.7rem 0.8rem;
-    padding-right: 2.8rem;
-    font-size: 0.85rem;
+    padding: 0.7rem 0.8rem; /* Mantendo pixels para ajuste fino */
+    padding-right: 2.8rem; /* Mantendo pixels para ajuste fino */
+    font-size: var(--text-sm); /* Usando --text-sm */
   }
-  
+
   .searchButton {
-    padding: 0.5rem;
-    right: 4px;
+    padding: 0.5rem; /* Mantendo pixels para ajuste fino */
+    right: 4px; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .userActions {
-    gap: 0.3rem;
+    gap: 0.3rem; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .actionButton {
-    padding: 0.2rem;
+    padding: 0.2rem; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .actionButton svg {
-    font-size: 1.1rem;
+    font-size: var(--text-base); /* Usando --text-base */
   }
-  
+
   .cartButton {
-    padding: 0.3rem;
+    padding: 0.3rem; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .cartIcon {
-    font-size: 1.2rem;
+    font-size: var(--text-lg); /* Usando --text-lg */
   }
-  
+
   .cartCount {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.3rem;
-    min-width: 16px;
+    font-size: var(--text-xs); /* Usando --text-xs */
+    padding: 0.1rem 0.3rem; /* Mantendo pixels para ajuste fino */
+    min-width: 16px; /* Mantendo pixels para ajuste fino */
   }
-  
+
   .mobileMenuContent {
-    padding: 1rem;
+    padding: var(--space-md);
   }
-  
+
   .mobileMenuHeader {
-    padding: 1rem;
+    padding: var(--space-md);
   }
 }
 
@@ -868,7 +991,7 @@
 
 .categoryLink:focus,
 .mobileCategoryLink:focus {
-  outline: 2px solid var(--wine-destaque);
+  outline: 2px solid var(--wine-destaque); /* Usando --wine-destaque */
   outline-offset: 2px;
 }
 
@@ -894,17 +1017,17 @@
 
 @media (prefers-contrast: high) {
   .header {
-    border-bottom: 2px solid var(--preto-secundario);
+    border-bottom: 2px solid var(--preto-secundario); /* Usando --preto-secundario */
   }
-  
+
   .searchInput {
     border-width: 3px;
   }
-  
+
   .categoryLink:hover {
-    border: 2px solid var(--wine-destaque);
+    border: 2px solid var(--wine-destaque); /* Usando --wine-destaque */
   }
-  
+
   .mobileActionLink,
   .mobileCategoryLink,
   .mobileExtraLink {
@@ -944,330 +1067,9 @@
   min-width: 0;
   flex-shrink: 1;
 }
-/* ===========================================
-   CONTAINER DE BUSCA COM POSIÇÃO RELATIVA
-   =========================================== */
 
-/* ===========================================
-   CONTAINER DE BUSCA COM POSIÇÃO RELATIVA
-   =========================================== */
-
+/* CONTAINER DE BUSCA COM POSIÇÃO RELATIVA */
 .searchContainer {
   position: relative;
-  z-index: 1;
-}
-
-/* ===========================================
-   MOBILE LAYOUT CORRIGIDO
-   =========================================== */
-
-/* Esconder elementos no mobile */
-.desktopOnly {
-  display: flex;
-}
-
-/* Botão de busca mobile */
-.mobileSearchButton {
-  display: none;
-  background: var(--white-principal);
-  border: none;
-  color: var(--preto-secundario);
-  cursor: pointer;
-  padding: 0.5rem;
-  font-size: 1.4rem;
-  transition: all var(--transition-normal);
-  border-radius: var(--radius-medium);
-}
-
-.mobileSearchButton:hover {
-  color: var(--wine-destaque);
-  background-color: var(--rosa-suave);
-}
-
-/* Menu mobile corrigido */
-.mobileMenuButton {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  background: var(--white-principal);
-  border: none;
-  color: var(--preto-secundario);
-  cursor: pointer;
-  padding: 0.5rem;
-  font-size: 1.4rem;
-  transition: all var(--transition-normal);
-  border-radius: var(--radius-medium);
-  order: -1; /* Primeiro elemento */
-}
-
-.mobileMenuButton:hover {
-  color: var(--wine-destaque);
-  background-color: var(--rosa-suave);
-}
-
-/* Overlay mobile corrigido */
-.mobileMenuOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--white-principal);
-  z-index: 1500;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.mobileMenuOverlay.mobileMenuOpen {
-  transform: translateX(0);
-}
-
-/* ===========================================
-   RESPONSIVIDADE MOBILE
-   =========================================== */
-
-@media (max-width: 768px) {
-  /* Esconder elementos desktop */
-  .desktopOnly {
-    display: none !important;
-  }
-  
-  /* Mostrar elementos mobile */
-  .mobileMenuButton,
-  .mobileSearchButton {
-    display: flex;
-  }
-  
-  /* Layout mobile do header */
-  .mainHeader .container {
-    grid-template-columns: auto 1fr auto auto;
-    gap: 1rem;
-    align-items: center;
-  }
-  
-  /* Logo centralizado no mobile */
-  .logo {
-    justify-self: center;
-    text-align: center;
-  }
-  
-  /* Ações do usuário mobile */
-  .userActions {
-    gap: 0.5rem;
-    justify-self: end;
-  }
-  
-  /* Carrinho mobile simplificado */
-  .cartButton {
-    padding: 0.5rem;
-    gap: 0;
-  }
-  
-  .cartIcon {
-    font-size: 1.3rem;
-  }
-  
-  /* Menu mobile content */
-  .mobileMenuContent {
-    padding: 1rem;
-  }
-  
-  .mobileUserActions {
-    margin-bottom: 1.5rem;
-  }
-  
-  .mobileCategoryNav {
-    margin-bottom: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .mainHeader {
-    padding: 0.8rem 0;
-  }
-  
-  .container {
-    padding: 0 1rem;
-  }
-  
-  .logoText,
-  .logoAccent {
-    font-size: 1.6rem;
-  }
-  
-  .mobileMenuButton,
-  .mobileSearchButton {
-    padding: 0.4rem;
-    font-size: 1.2rem;
-  }
-  
-  .cartIcon {
-    font-size: 1.2rem;
-  }
-  
-  .cartCount {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.3rem;
-    min-width: 16px;
-  }
-}
-
-/* ===========================================
-   LOGO COM IMAGEM
-   =========================================== */
-
-.logoImage {
-  height: 40px;
-  width: auto;
-  max-width: 150px;
-  object-fit: contain;
-  transition: transform var(--transition-normal);
-}
-
-.logoImageMobile {
-  height: 35px;
-  width: auto;
-  max-width: 120px;
-  object-fit: contain;
-}
-
-.logoText {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.logoTextPrimary {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--wine-destaque);
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.logoTextAccent {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  font-weight: 400;
-  color: var(--dourado-sutil);
-  font-style: italic;
-  white-space: nowrap;
-}
-
-.logo:hover .logoImage {
-  transform: scale(1.05);
-}
-
-/* ===========================================
-   BARRA DE PESQUISA MOBILE
-   =========================================== */
-
-.mobileSearchSection {
-  display: none;
-  background-color: var(--white-principal);
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--cinza-claro);
-}
-
-.mobileOnly {
-  display: none;
-}
-
-/* ===========================================
-   RESPONSIVIDADE ATUALIZADA
-   =========================================== */
-
-@media (max-width: 768px) {
-  /* Mostrar elementos mobile */
-  .mobileOnly {
-    display: block !important;
-  }
-  
-  .mobileSearchSection {
-    display: block;
-  }
-  
-  /* Esconder elementos desktop */
-  .desktopOnly {
-    display: none !important;
-  }
-  
-  /* Layout mobile do header principal */
-  .mainHeader .container {
-    grid-template-columns: auto 1fr auto;
-    gap: 1rem;
-    align-items: center;
-  }
-  
-  /* Logo mobile */
-  .logoImage {
-    height: 35px;
-    max-width: 120px;
-  }
-  
-  .logoTextPrimary,
-  .logoTextAccent {
-    font-size: 1.8rem;
-  }
-  
-  /* Menu mobile button */
-  .mobileMenuButton {
-    display: flex;
-    order: -1;
-  }
-  
-  /* Ações do usuário mobile simplificadas */
-  .userActions {
-    gap: 0.5rem;
-    justify-self: end;
-  }
-  
-  /* Carrinho mobile */
-  .cartButton {
-    padding: 0.5rem;
-    gap: 0;
-  }
-  
-  .cartIcon {
-    font-size: 1.3rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .logoImage {
-    height: 30px;
-    max-width: 100px;
-  }
-  
-  .logoImageMobile {
-    height: 30px;
-    max-width: 100px;
-  }
-  
-  .logoTextPrimary,
-  .logoTextAccent {
-    font-size: 1.6rem;
-  }
-  
-  .mobileSearchSection {
-    padding: 0.8rem 0;
-  }
-  
-  .mobileMenuButton {
-    padding: 0.4rem;
-    font-size: 1.2rem;
-  }
-  
-  .cartIcon {
-    font-size: 1.2rem;
-  }
-  
-  .cartCount {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.3rem;
-    min-width: 16px;
-  }
+  z-index: 1; /* --z-base não existe, usando 1 */
 }

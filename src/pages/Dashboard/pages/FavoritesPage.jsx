@@ -64,14 +64,14 @@ const FavoritesPage = ({ user, timeRange }) => {
                     fontSize: '0.9rem',
                     marginRight: '0.5rem'
                   }}>
-                    R\$ {product.price.toFixed(2).replace('.', ',')}
+                    R$ {product.price.toFixed(2).replace('.', ',')}
                   </span>
                   <span style={{ 
                     color: 'var(--wine-destaque)', 
                     fontWeight: '700', 
                     fontSize: '1.1rem' 
                   }}>
-                    R\$ {product.salePrice.toFixed(2).replace('.', ',')}
+                    R$ {product.salePrice.toFixed(2).replace('.', ',')}
                   </span>
                 </div>
               ) : (
@@ -80,7 +80,7 @@ const FavoritesPage = ({ user, timeRange }) => {
                   fontWeight: '700', 
                   fontSize: '1.1rem' 
                 }}>
-                  R\$ {product.price.toFixed(2).replace('.', ',')}
+                  R$ {product.price.toFixed(2).replace('.', ',')}
                 </span>
               )}
             </div>

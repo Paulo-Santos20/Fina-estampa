@@ -2,7 +2,7 @@
 @import '../../styles/variables.css';
 
 /* ===========================================
-   PÁGINA DE CHECKOUT
+   CHECKOUT PAGE LAYOUT
    =========================================== */
 
 .checkoutPage {
@@ -12,105 +12,247 @@
 }
 
 .container {
-  width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
 /* ===========================================
-   HEADER DO CHECKOUT
+   HEADER
    =========================================== */
 
 .checkoutHeader {
-  background: var(--white-principal);
-  padding: 2rem;
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-light);
-  margin-bottom: 2rem;
-  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .pageTitle {
-  font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   color: var(--wine-destaque);
+  text-align: center;
   margin: 0 0 2rem 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.checkoutSteps {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.5;
+  transition: opacity var(--transition-normal);
+}
+
+.step.active {
+  opacity: 1;
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  background: var(--cinza-claro);
+  color: var(--cinza-medio);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
+  transition: all var(--transition-normal);
+}
+
+.step.active .stepNumber {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.stepLabel {
+  font-size: 0.9rem;
+  color: var(--cinza-medio);
+  text-align: center;
+}
+
+.step.active .stepLabel {
+  color: var(--preto-secundario);
+  font-weight: 500;
 }
 
 /* ===========================================
-   CONTEÚDO DO CHECKOUT
+   CONTENT
    =========================================== */
 
 .checkoutContent {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  gap: 3rem;
   align-items: start;
 }
 
-/* ===========================================
-   FORMULÁRIO DO CHECKOUT
-   =========================================== */
-
 .checkoutForm {
   background: var(--white-principal);
-  padding: 2rem;
   border-radius: var(--radius-large);
-  box-shadow: var(--shadow-light);
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+}
+
+.formSection {
+  margin-bottom: 2rem;
 }
 
 .sectionTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  color: var(--wine-destaque);
-  margin: 0 0 2rem 0;
+  font-size: 1.5rem;
+  color: var(--preto-secundario);
+  margin: 0 0 1.5rem 0;
   font-weight: 600;
 }
 
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--preto-secundario);
+  font-weight: 500;
+}
+
+.inputGroup input,
+.inputGroup select {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: 1rem;
+  transition: border-color var(--transition-normal);
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus {
+  outline: none;
+  border-color: var(--wine-destaque);
+}
+
+.inputRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.inputRow .inputGroup {
+  flex: 1;
+}
+
 /* ===========================================
-   REVISÃO DO PEDIDO
+   PAYMENT METHODS
+   =========================================== */
+
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paymentMethod {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.paymentMethod:hover {
+  border-color: var(--wine-destaque);
+}
+
+.paymentMethod.selected {
+  border-color: var(--wine-destaque);
+  background: var(--rosa-suave);
+}
+
+.paymentIcon {
+  font-size: 2rem;
+  width: 60px;
+  text-align: center;
+}
+
+.paymentInfo {
+  flex: 1;
+}
+
+.paymentInfo h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--preto-secundario);
+}
+
+.paymentInfo p {
+  margin: 0;
+  color: var(--cinza-medio);
+  font-size: 0.9rem;
+}
+
+.paymentPrice {
+  font-weight: 600;
+  color: var(--wine-destaque);
+  font-size: 1.1rem;
+}
+
+.installments {
+  margin-top: 1rem;
+}
+
+.installments label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--preto-secundario);
+  font-weight: 500;
+}
+
+.installments select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+}
+
+/* ===========================================
+   REVIEW
    =========================================== */
 
 .reviewOrder {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .reviewSection {
-  padding: 1.5rem;
-  background: var(--cinza-claro);
-  border-radius: var(--radius-medium);
-  border-left: 4px solid var(--wine-destaque);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.reviewSection:last-child {
+  border-bottom: none;
 }
 
 .reviewSection h3 {
-  font-size: 1.2rem;
   color: var(--wine-destaque);
   margin: 0 0 1rem 0;
-  font-weight: 600;
-}
-
-.reviewData {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  font-size: 1.1rem;
 }
 
 .reviewData p {
-  margin: 0;
+  margin: 0.5rem 0;
   color: var(--preto-secundario);
-  line-height: 1.4;
-}
-
-.reviewData strong {
-  color: var(--wine-destaque);
 }
 
 /* ===========================================
-   BOTÕES DE NAVEGAÇÃO
+   NAVIGATION BUTTONS
    =========================================== */
 
 .navigationButtons {
@@ -118,8 +260,6 @@
   justify-content: space-between;
   gap: 1rem;
   margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--cinza-claro);
 }
 
 .prevButton,
@@ -128,21 +268,15 @@
   padding: 1rem 2rem;
   border: none;
   border-radius: var(--radius-medium);
-  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-width: 150px;
+  font-size: 1rem;
 }
 
 .prevButton {
   background: var(--cinza-claro);
-  color: var(--cinza-medio);
-  border: 2px solid var(--cinza-medio);
+  color: var(--preto-secundario);
 }
 
 .prevButton:hover:not(:disabled) {
@@ -152,40 +286,37 @@
 
 .nextButton,
 .finishButton {
-  background: linear-gradient(135deg, var(--wine-destaque), var(--wine-dark));
+  background: var(--wine-destaque);
   color: var(--white-principal);
-  box-shadow: var(--shadow-wine);
+  flex: 1;
+  max-width: 300px;
+  margin-left: auto;
 }
 
 .nextButton:hover:not(:disabled),
 .finishButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(114, 47, 55, 0.4);
+  background: #5a252a;
 }
 
 .prevButton:disabled,
 .nextButton:disabled,
 .finishButton:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
-
-/* ===========================================
-   LOADING
-   =========================================== */
 
 .loading {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid var(--white-principal);
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -196,7 +327,7 @@
 }
 
 /* ===========================================
-   CONTAINER DO RESUMO
+   ORDER SUMMARY
    =========================================== */
 
 .orderSummaryContainer {
@@ -204,95 +335,162 @@
   top: 2rem;
 }
 
+.orderSummary {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
+}
+
+.orderSummary h3 {
+  color: var(--preto-secundario);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.3rem;
+}
+
+.orderItems {
+  margin-bottom: 1.5rem;
+}
+
+.orderItem {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.orderItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.itemImage {
+  width: 60px;
+  height: 75px;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemImage span {
+  font-size: 1.5rem;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemInfo h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--preto-secundario);
+  font-size: 0.9rem;
+}
+
+.itemInfo p {
+  margin: 0.2rem 0;
+  color: var(--cinza-medio);
+  font-size: 0.8rem;
+}
+
+.itemPrice {
+  color: var(--wine-destaque);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.orderTotals {
+  border-top: 1px solid var(--cinza-claro);
+  padding-top: 1rem;
+}
+
+.totalLine {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: var(--preto-secundario);
+}
+
 /* ===========================================
    RESPONSIVIDADE
    =========================================== */
 
-@media (max-width: 1200px) {
-  .checkoutContent {
-    grid-template-columns: 1.5fr 1fr;
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 968px) {
+@media (max-width: 1024px) {
   .checkoutContent {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  
+
   .orderSummaryContainer {
     position: static;
-    order: -1;
-  }
-  
-  .pageTitle {
-    font-size: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .checkoutPage {
-    padding: 1rem 0;
-  }
-  
   .container {
     padding: 0 1rem;
   }
-  
-  .checkoutHeader {
+
+  .checkoutSteps {
+    gap: 1rem;
+  }
+
+  .stepLabel {
+    font-size: 0.8rem;
+  }
+
+  .checkoutForm,
+  .orderSummary {
     padding: 1.5rem;
-    margin-bottom: 1rem;
   }
-  
-  .checkoutForm {
-    padding: 1.5rem;
+
+  .inputRow {
+    flex-direction: column;
+    gap: 0;
   }
-  
-  .pageTitle {
-    font-size: 1.8rem;
-  }
-  
+
   .navigationButtons {
     flex-direction: column;
   }
-  
-  .prevButton,
+
   .nextButton,
   .finishButton {
-    width: 100%;
+    max-width: none;
+    margin-left: 0;
   }
 }
 
 @media (max-width: 480px) {
-  .checkoutHeader {
-    padding: 1rem;
-  }
-  
-  .checkoutForm {
-    padding: 1rem;
-  }
-  
   .pageTitle {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
-  
-  .sectionTitle {
-    font-size: 1.4rem;
+
+  .checkoutSteps {
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
-  
-  .reviewSection {
-    padding: 1rem;
+
+  .step {
+    flex: 1;
+    min-width: 80px;
   }
-  
-  .navigationButtons {
-    gap: 0.8rem;
+
+  .stepNumber {
+    width: 35px;
+    height: 35px;
   }
-  
-  .prevButton,
-  .nextButton,
-  .finishButton {
-    padding: 0.8rem 1.5rem;
-    font-size: 0.9rem;
-    min-width: auto;
+
+  .stepLabel {
+    font-size: 0.7rem;
   }
 }

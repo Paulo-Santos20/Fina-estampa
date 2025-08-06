@@ -47,7 +47,7 @@ const DashboardHome = ({ user, timeRange }) => {
           },
           {
             title: 'Vendas do Mês',
-            value: 'R\$ 45.280',
+            value: 'R$ 45.280',
             icon: <FaDollarSign />,
             color: 'success',
             change: '+8.5%',
@@ -153,10 +153,10 @@ const DashboardHome = ({ user, timeRange }) => {
           },
           {
             title: 'Total Gasto',
-            value: 'R\$ 1.247,80',
+            value: 'R$ 1.247,80',
             icon: <FaDollarSign />,
             color: 'success',
-            change: '+R\$ 189,90',
+            change: '+R$ 189,90',
             trend: 'up',
             description: 'valor total investido'
           },
@@ -603,7 +603,7 @@ const DashboardHome = ({ user, timeRange }) => {
                   
                   <div className={styles.orderDetails}>
                     <span className={styles.orderValue}>
-                      R\$ {order.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      R$ {order.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                     <span className={`${styles.orderStatus} ${styles[order.status.toLowerCase().replace(/\s+/g, '')]}`}>
                       {order.status}
@@ -699,7 +699,7 @@ const DashboardHome = ({ user, timeRange }) => {
               <div className={styles.couponsGrid}>
                 <div className={styles.couponCard}>
                   <h4>🚚 FRETE GRÁTIS</h4>
-                  <p>Frete grátis em compras acima de R\$ 199,90</p>
+                  <p>Frete grátis em compras acima de R$ 199,90</p>
                   <span className={styles.couponCode}>FINAFRETE</span>
                 </div>
                 <div className={styles.couponCard}>
@@ -761,7 +761,7 @@ const DashboardHome = ({ user, timeRange }) => {
                       <div className={styles.productDetails}>
                         <span className={styles.productName}>{product.name}</span>
                         <span className={styles.productStats}>
-                          {product.sales} vendas • R\$ {product.revenue.toLocaleString('pt-BR')}
+                          {product.sales} vendas • R$ {product.revenue.toLocaleString('pt-BR')}
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
                           <FaArrowUp style={{ color: '#10B981', fontSize: '0.8rem' }} />
@@ -790,15 +790,15 @@ const DashboardHome = ({ user, timeRange }) => {
                         {product.salePrice ? (
                           <>
                             <span className={styles.originalPrice}>
-                              R\$ {product.price.toFixed(2).replace('.', ',')}
+                              R$ {product.price.toFixed(2).replace('.', ',')}
                             </span>
                             <span className={styles.salePrice}>
-                              R\$ {product.salePrice.toFixed(2).replace('.', ',')}
+                              R$ {product.salePrice.toFixed(2).replace('.', ',')}
                             </span>
                           </>
                         ) : (
                           <span className={styles.regularPrice}>
-                            R\$ {product.price.toFixed(2).replace('.', ',')}
+                            R$ {product.price.toFixed(2).replace('.', ',')}
                           </span>
                         )}
                       </span>
@@ -926,14 +926,14 @@ const DashboardHome = ({ user, timeRange }) => {
                               color: 'var(--cinza-medio)', 
                               fontSize: '0.8rem' 
                             }}>
-                              R\$ {product.price.toFixed(2).replace('.', ',')}
+                              R$ {product.price.toFixed(2).replace('.', ',')}
                             </span>
                             <span style={{ 
                               color: 'var(--wine-destaque)', 
                               fontWeight: '700', 
                               fontSize: '0.95rem' 
                             }}>
-                              R\$ {product.salePrice.toFixed(2).replace('.', ',')}
+                              R$ {product.salePrice.toFixed(2).replace('.', ',')}
                             </span>
                           </>
                         ) : (
@@ -942,7 +942,7 @@ const DashboardHome = ({ user, timeRange }) => {
                             fontWeight: '700', 
                             fontSize: '0.95rem' 
                           }}>
-                            R\$ {product.price.toFixed(2).replace('.', ',')}
+                            R$ {product.price.toFixed(2).replace('.', ',')}
                           </span>
                         )}
                         {product.isNew && (

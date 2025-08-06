@@ -120,7 +120,7 @@ const SearchMenu = ({ isOpen, onClose, searchQuery, onSearchChange }) => {
 
   // Formatação de preço
   const formatPrice = useCallback((price) => {
-    if (!price) return 'R\$ 0,00';
+    if (!price) return 'R$ 0,00';
     return price.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL'

@@ -22,17 +22,17 @@ export const generateWhatsAppMessage = (orderDetails) => {
     const price = item.salePrice || item.price;
     message += `• ${item.name}\n`;
     message += `  Tam: ${item.selectedSize} | Cor: ${item.selectedColor} | Qtd: ${item.quantity}\n`;
-    message += `  R\$ ${(price * item.quantity).toFixed(2)}\n\n`;
+    message += `  R$ ${(price * item.quantity).toFixed(2)}\n\n`;
   });
   
   // Totais
   message += `💰 *RESUMO FINANCEIRO:*\n`;
-  message += `• Subtotal: R\$ ${totals.subtotal.toFixed(2)}\n`;
-  message += `• Frete: ${totals.shipping === 0 ? 'Grátis' : `R\$ ${totals.shipping.toFixed(2)}`}\n`;
+  message += `• Subtotal: R$ ${totals.subtotal.toFixed(2)}\n`;
+  message += `• Frete: ${totals.shipping === 0 ? 'Grátis' : `R$ ${totals.shipping.toFixed(2)}`}\n`;
   if (totals.discount > 0) {
-    message += `• Desconto PIX: -R\$ ${totals.discount.toFixed(2)}\n`;
+    message += `• Desconto PIX: -R$ ${totals.discount.toFixed(2)}\n`;
   }
-  message += `• *TOTAL: R\$ ${totals.total.toFixed(2)}*\n\n`;
+  message += `• *TOTAL: R$ ${totals.total.toFixed(2)}*\n\n`;
   
   // Forma de pagamento
   const paymentNames = {
@@ -44,7 +44,7 @@ export const generateWhatsAppMessage = (orderDetails) => {
   
   message += `💳 *PAGAMENTO:* ${paymentNames[payment.method]}\n`;
   if (payment.installments > 1) {
-    message += `• ${payment.installments}x de R\$ ${(totals.total / payment.installments).toFixed(2)}\n`;
+    message += `• ${payment.installments}x de R$ ${(totals.total / payment.installments).toFixed(2)}\n`;
   }
   message += `\n`;
   

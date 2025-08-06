@@ -228,8 +228,8 @@ const HeroSection = () => {
                     <span>(124)</span>
                   </div>
                   <div className={styles.productPrice}>
-                    <span className={styles.salePrice}>R\$ 299,90</span>
-                    <span className={styles.originalPrice}>R\$ 399,90</span>
+                    <span className={styles.salePrice}>R$ 299,90</span>
+                    <span className={styles.originalPrice}>R$ 399,90</span>
                   </div>
                 </div>
               </div>

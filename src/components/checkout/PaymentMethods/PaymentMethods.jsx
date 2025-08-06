@@ -113,10 +113,10 @@ const PaymentMethods = ({ selectedMethod, installments, onUpdate, total }) => {
                     </span>
                     <div className={styles.discountCalculation}>
                       <span className={styles.originalPrice}>
-                        De: R\$ {total.toFixed(2)}
+                        De: R$ {total.toFixed(2)}
                       </span>
                       <span className={styles.discountedPrice}>
-                        Por: R\$ {getDiscountedTotal(method.discount)}
+                        Por: R$ {getDiscountedTotal(method.discount)}
                       </span>
                     </div>
                   </div>
@@ -137,7 +137,7 @@ const PaymentMethods = ({ selectedMethod, installments, onUpdate, total }) => {
                         const installmentValue = calculateInstallmentValue(installmentCount);
                         return (
                           <option key={installmentCount} value={installmentCount}>
-                            {installmentCount}x de R\$ {installmentValue}
+                            {installmentCount}x de R$ {installmentValue}
                             {installmentCount === 1 ? ' à vista' : ' sem juros'}
                           </option>
                         );
@@ -191,7 +191,7 @@ const PaymentMethods = ({ selectedMethod, installments, onUpdate, total }) => {
               <div className={styles.summaryRow}>
                 <span>Parcelas:</span>
                 <span className={styles.summaryValue}>
-                  {installments}x de R\$ {calculateInstallmentValue(installments)}
+                  {installments}x de R$ {calculateInstallmentValue(installments)}
                 </span>
               </div>
             )}
@@ -200,7 +200,7 @@ const PaymentMethods = ({ selectedMethod, installments, onUpdate, total }) => {
               <div className={styles.summaryRow}>
                 <span>Desconto PIX:</span>
                 <span className={styles.summaryDiscount}>
-                  - R\$ {(total * 0.05).toFixed(2)}
+                  - R$ {(total * 0.05).toFixed(2)}
                 </span>
               </div>
             )}
@@ -208,7 +208,7 @@ const PaymentMethods = ({ selectedMethod, installments, onUpdate, total }) => {
             <div className={`${styles.summaryRow} ${styles.totalRow}`}>
               <span>Total a pagar:</span>
               <span className={styles.totalValue}>
-                R\$ {selectedMethod === 'pix' ? getDiscountedTotal(5) : total.toFixed(2)}
+                R$ {selectedMethod === 'pix' ? getDiscountedTotal(5) : total.toFixed(2)}
               </span>
             </div>
           </div>

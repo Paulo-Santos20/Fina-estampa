@@ -1,0 +1,162 @@
+/* Importar variáveis CSS globais */
+@import '../../styles/variables.css';
+
+.aboutPage {
+  padding: 4rem 2rem;
+  background-color: var(--cinza-claro);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height)); /* Ajuste conforme a altura do seu header/footer */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.aboutContainer {
+  max-width: 900px;
+  width: 100%;
+  background-color: var(--white-principal);
+  border-radius: var(--radius-large);
+  box-shadow: 0 10px 30px rgba(114, 47, 55, 0.1);
+  padding: 3rem 4rem;
+  text-align: center;
+}
+
+.aboutTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--wine-destaque);
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.aboutSubtitle {
+  font-size: 1.2rem;
+  color: var(--cinza-medio);
+  margin-bottom: 3rem;
+}
+
+.section {
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  color: var(--preto-secundario);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 600;
+}
+
+.sectionText {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--cinza-medio);
+  margin-bottom: 1.5rem;
+}
+
+.icon {
+  color: var(--wine-destaque);
+  font-size: 1.5rem;
+}
+
+.valuesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.valuesList li {
+  font-size: 1rem;
+  color: var(--cinza-medio);
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.valuesList li::before {
+  content: '•'; /* Ou qualquer outro marcador */
+  color: var(--wine-destaque);
+  position: absolute;
+  left: 0;
+  font-size: 1.2rem;
+  top: -2px;
+}
+
+.valuesList li strong {
+  color: var(--preto-secundario);
+  font-weight: 600;
+}
+
+.inlineIcon {
+  color: var(--wine-destaque);
+  font-size: 1rem;
+  vertical-align: middle;
+  margin-left: 0.3rem;
+}
+
+.callToAction {
+  display: inline-block;
+  background-color: var(--wine-destaque);
+  color: var(--white-principal);
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-medium);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color var(--transition-normal);
+  margin-top: 1.5rem;
+}
+
+.callToAction:hover {
+  background-color: #5a252a; /* Tom mais escuro do vinho */
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+@media (max-width: 768px) {
+  .aboutPage {
+    padding: 2rem 1rem;
+  }
+
+  .aboutContainer {
+    padding: 2rem;
+  }
+
+  .aboutTitle {
+    font-size: 2.2rem;
+  }
+
+  .aboutSubtitle {
+    font-size: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+
+  .icon {
+    font-size: 1.2rem;
+  }
+
+  .sectionText,
+  .valuesList li {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .aboutContainer {
+    padding: 1.5rem;
+  }
+
+  .aboutTitle {
+    font-size: 1.8rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+}

@@ -1,16 +1,21 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  FaSearch, 
-  FaHeart, 
-  FaShoppingCart, 
-  FaBars, 
-  FaTimes, 
+import ReactDOM from 'react-dom'; // Importe ReactDOM para usar createPortal
+import {
+  FaSearch,
+  FaShoppingCart,
+  FaBars,
+  FaTimes,
   FaUser,
   FaTags,
-  FaTimes as FaClose
+  FaTimes as FaClose,
+  FaUserCircle,
+  FaSignOutAlt,
+  FaTachometerAlt,
+  FaChevronDown,
 } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import CartDrawer from '../../cart/CartDrawer/CartDrawer';
 import SearchMenu from '../SearchMenu/SearchMenu';
 import styles from './Header.module.css';
@@ -18,13 +23,27 @@ import styles from './Header.module.css';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
+  const { getTotalItems, getTotalPrice } = useCart();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showPromoBar, setShowPromoBar] = useState(true);
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+
+  // Estado para controlar a visibilidade do SearchMenu (overlay)
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
 
-  const { getTotalItems, getTotalPrice } = useCart();
+  // NOVO: Estado para controlar a abertura/fechamento do dropdown do usuário
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+
+  // Referência para o BOTÃO que abre o dropdown (para calcular sua posição)
+  const userDropdownTriggerRef = useRef(null);
+  // Referência para o CONTEÚDO do dropdown (para detectar cliques fora)
+  const userDropdownContentRef = useRef(null);
+
+  // Estado para armazenar as propriedades de estilo do portal (top, left, transform)
+  const [dropdownPortalStyle, setDropdownPortalStyle] = useState({});
 
   // Memoizar categorias para evitar recriação desnecessária
   const categories = useMemo(() => [
@@ -51,17 +70,20 @@ const Header = () => {
   // Handlers otimizados com useCallback
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
-    if (!isMobileMenuOpen) {
+    // Se abrir o menu mobile, fecha o SearchMenu overlay (se estiver aberto)
+    if (!isMobileMenuOpen && isSearchMenuOpen) {
       setIsSearchMenuOpen(false);
-      setIsCartSidebarOpen(false);
     }
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, isSearchMenuOpen]);
+
+  // Handler para o dropdown do usuário (clicável)
+  const toggleUserDropdown = useCallback(() => {
+    setIsUserDropdownOpen(prev => !prev);
+  }, []);
 
   const toggleCartSidebar = useCallback((e) => {
     e.preventDefault();
     setIsCartSidebarOpen(prev => !prev);
-    setIsMobileMenuOpen(false);
-    setIsSearchMenuOpen(false);
   }, []);
 
   const closeCartSidebar = useCallback(() => {
@@ -72,11 +94,9 @@ const Header = () => {
     setShowPromoBar(false);
   }, []);
 
-  // Handlers para o SearchMenu
+  // Handlers para o SearchMenu overlay
   const handleSearchInputFocus = useCallback(() => {
     setIsSearchMenuOpen(true);
-    setIsMobileMenuOpen(false);
-    setIsCartSidebarOpen(false);
   }, []);
 
   const handleSearchMenuClose = useCallback(() => {
@@ -94,10 +114,18 @@ const Header = () => {
       const searchUrl = `/busca?q=${encodeURIComponent(searchQuery.trim())}`;
       navigate(searchUrl);
       setSearchQuery('');
-      setIsSearchMenuOpen(false);
-      setIsMobileMenuOpen(false);
+      setIsSearchMenuOpen(false); // Fecha o SearchMenu após a busca
+      if (isMobileMenuOpen) setIsMobileMenuOpen(false); // Fecha o menu mobile se a busca foi acionada por ele
     }
-  }, [searchQuery, navigate]);
+  }, [searchQuery, navigate, isMobileMenuOpen]);
+
+  // Handler de Logout
+  const handleLogout = useCallback(() => {
+    logout();
+    navigate('/');
+    setIsMobileMenuOpen(false);
+    setIsUserDropdownOpen(false); // Fecha o dropdown ao fazer logout
+  }, [logout, navigate]);
 
   // Função para navegar para categoria
   const navigateToCategory = useCallback((categorySlug, event) => {
@@ -105,17 +133,51 @@ const Header = () => {
       event.preventDefault();
       event.stopPropagation();
     }
-    
     const targetPath = `/categoria/${categorySlug}`;
     setIsMobileMenuOpen(false);
-    setIsSearchMenuOpen(false);
     navigate(targetPath, { replace: false });
   }, [navigate]);
 
-  // Verificar se link está ativo
+  // Verificar se link de categoria está ativo
   const isActiveCategory = useCallback((categorySlug) => {
     return location.pathname === `/categoria/${categorySlug}`;
   }, [location.pathname]);
+
+  // Efeito para calcular a posição do dropdown quando ele for aberto ou o layout mudar
+  useEffect(() => {
+    if (isUserDropdownOpen && userDropdownTriggerRef.current) {
+      const rect = userDropdownTriggerRef.current.getBoundingClientRect();
+      setDropdownPortalStyle({
+        position: 'fixed', // Posiciona o elemento em relação à viewport
+        top: rect.bottom + window.scrollY + 8, // 8px de margem abaixo do botão, considerando o scroll
+        left: rect.left + rect.width / 2, // Centraliza horizontalmente sobre o botão
+        transform: 'translateX(-50%)', // Ajusta para centralização exata
+        zIndex: 1005, // Um z-index alto para garantir que ele sobreponha outros elementos
+      });
+    }
+  }, [isUserDropdownOpen]); // Recalcula a posição sempre que o dropdown abre/fecha
+
+  // Efeito para fechar o dropdown do usuário ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Verifica se o clique não foi no botão que abre o dropdown E não foi dentro do conteúdo do dropdown
+      if (userDropdownTriggerRef.current && !userDropdownTriggerRef.current.contains(event.target) &&
+          userDropdownContentRef.current && !userDropdownContentRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    if (isUserDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUserDropdownOpen]);
+
 
   return (
     <>
@@ -125,10 +187,10 @@ const Header = () => {
           <div className={styles.promoContent}>
             <FaTags className={styles.promoIcon} />
             <span className={styles.promoText}>
-              🎉 FRETE GRÁTIS para compras acima de R\$ 199,90 | Use o cupom: FINAFRETE
+               FRETE GRÁTIS para compras acima de R\$ 199,90 | Use o cupom: FINAFRETE
             </span>
-            <button 
-              className={styles.closePromo} 
+            <button
+              className={styles.closePromo}
               onClick={closePromoBar}
               aria-label="Fechar comunicado"
             >
@@ -138,41 +200,20 @@ const Header = () => {
         </div>
       )}
 
-      <header className={styles.header}>
+      <header className={styles.header}> {/* <-- Header abre aqui */}
         {/* Seção Principal do Header */}
         <div className={styles.mainHeader}>
           <div className={styles.container}>
-            {/* Menu Hambúrguer Mobile - PRIMEIRO */}
-            <button 
-              className={styles.mobileMenuButton} 
-              onClick={toggleMobileMenu} 
-              aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
-            >
-              {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
-
-            {/* Logo com Imagem */}
+            {/* Logo */}
             <div className={styles.logo}>
               <Link to="/" className={styles.logoLink}>
-                <img 
-                  src="/logo-fina-estampa.png" 
-                  alt="Fina Estampa" 
-                  className={styles.logoImage}
-                  onError={(e) => {
-                    // Fallback para texto se a imagem não carregar
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className={styles.logoText} style={{ display: 'none' }}>
-                  <span className={styles.logoTextPrimary}>Fina</span>
-                  <span className={styles.logoTextAccent}>Estampa</span>
-                </div>
+                <span className={styles.logoText}>Fina</span>
+                <span className={styles.logoAccent}>Estampa</span>
               </Link>
             </div>
 
-            {/* Barra de Pesquisa - Desktop */}
-            <div className={`${styles.searchSection} ${styles.searchContainer} ${styles.desktopOnly}`}>
+            {/* Barra de Pesquisa (Desktop) */}
+            <div className={`${styles.searchSection} ${styles.searchContainer}`}>
               <form className={styles.searchForm} onSubmit={handleSearch}>
                 <input
                   type="text"
@@ -190,21 +231,9 @@ const Header = () => {
 
             {/* Ações do Usuário */}
             <div className={styles.userActions}>
-              {/* Login - Desktop */}
-              <Link to="/login" className={`${styles.actionButton} ${styles.desktopOnly}`} aria-label="Minha Conta">
-                <FaUser />
-                <span className={styles.actionText}>Entrar</span>
-              </Link>
-              
-              {/* Favoritos - Desktop */}
-              <button className={`${styles.actionButton} ${styles.desktopOnly}`} aria-label="Meus Favoritos">
-                <FaHeart />
-                <span className={styles.actionText}>Favoritos</span>
-              </button>
-              
-              {/* Carrinho */}
-              <button 
-                className={styles.cartButton} 
+              {/* Carrinho com sidebar */}
+              <button
+                className={styles.cartButton}
                 onClick={toggleCartSidebar}
                 aria-label="Meu Carrinho"
               >
@@ -214,38 +243,49 @@ const Header = () => {
                     <span className={styles.cartCount}>{totalItems}</span>
                   )}
                 </div>
-                <div className={`${styles.cartTextWrapper} ${styles.desktopOnly}`}>
+                <div className={styles.cartTextWrapper}>
                   <span className={styles.cartLabel}>Carrinho</span>
                   {totalItems > 0 && (
                     <span className={styles.cartTotal}>{formatPrice(totalPrice)}</span>
                   )}
                 </div>
               </button>
+
+              {/* Login/Usuário Logado - POSICIONADO DEPOIS DO CARRINHO */}
+              {isAuthenticated ? (
+                <div className={styles.dropdown}> {/* Este div permanece para agrupar visualmente */}
+                  <button
+                    className={styles.actionButton}
+                    onClick={toggleUserDropdown}
+                    ref={userDropdownTriggerRef} // Anexa a ref ao botão
+                  >
+                    <FaUserCircle />
+                    <span className={styles.actionText}>Olá, {user?.name?.split(' ')[0]}</span>
+                    <FaChevronDown className={`${styles.dropdownArrow} ${isUserDropdownOpen ? styles.arrowOpen : ''}`} />
+                  </button>
+                  {/* O conteúdo do dropdown NÃO está mais aqui, ele será renderizado via portal */}
+                </div>
+              ) : (
+                <Link to="/login" className={styles.actionButton} aria-label="Minha Conta">
+                  <FaUser />
+                  <span className={styles.actionText}>Entrar</span>
+                </Link>
+              )}
+
+              {/* Menu Hambúrguer para Mobile (visível apenas no mobile via CSS) */}
+              <button
+                className={styles.mobileMenuButton}
+                onClick={toggleMobileMenu}
+                aria-label="Abrir menu"
+              >
+                {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Barra de Pesquisa Mobile - NOVA SEÇÃO */}
-        <div className={`${styles.mobileSearchSection} ${styles.mobileOnly}`}>
-          <div className={styles.container}>
-            <form className={styles.searchForm} onSubmit={handleSearch}>
-              <input
-                type="text"
-                placeholder="Buscar produtos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={handleSearchInputFocus}
-                className={styles.searchInput}
-              />
-              <button type="submit" className={styles.searchButton} aria-label="Pesquisar">
-                <FaSearch />
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* Navegação de Categorias - Desktop */}
-        <nav className={`${styles.categoryNav} ${styles.desktopOnly}`}>
+        {/* Navegação de Categorias (Barra Inferior) */}
+        <nav className={styles.categoryNav}>
           <div className={styles.container}>
             <ul className={styles.categoryList}>
               {categories.map((category) => (
@@ -264,106 +304,149 @@ const Header = () => {
             </ul>
           </div>
         </nav>
-      </header>
+      </header> {/* <-- Header fecha aqui, após o nav de categorias */}
+
+      {/* Renderiza o conteúdo do dropdown em um PORTAL quando isUserDropdownOpen for true */}
+      {isUserDropdownOpen && ReactDOM.createPortal(
+        <div
+          className={styles.dropdownContentPortal} // Nova classe para estilização do portal
+          style={dropdownPortalStyle} // Aplica os estilos de posicionamento dinâmico
+          ref={userDropdownContentRef} // Anexa a ref ao conteúdo do portal
+        >
+          <Link to="/dashboard" onClick={() => setIsUserDropdownOpen(false)}><FaTachometerAlt /> Dashboard</Link>
+          <button onClick={handleLogout}><FaSignOutAlt /> Sair</button>
+        </div>,
+        document.body // O segundo argumento é onde o conteúdo será renderizado no DOM
+      )}
 
       {/* Menu Mobile Overlay */}
-      <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
-        <div className={styles.mobileMenuHeader}>
-          <div className={styles.mobileMenuLogo}>
-            <img 
-              src="/logo-fina-estampa.png" 
-              alt="Fina Estampa" 
-              className={styles.logoImageMobile}
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
-              }}
-            />
-            <div className={styles.logoText} style={{ display: 'none' }}>
-              <span className={styles.logoTextPrimary}>Fina</span>
-              <span className={styles.logoTextAccent}>Estampa</span>
+      {isMobileMenuOpen && (
+        <div className={styles.mobileMenuOverlay}>
+          <div className={styles.mobileMenuHeader}>
+            <div className={styles.mobileMenuLogo}>
+              <span className={styles.logoText}>Fina</span>
+              <span className={styles.logoAccent}>Estampa</span>
+            </div>
+            <button
+              className={styles.closeMobileMenu}
+              onClick={toggleMobileMenu}
+              aria-label="Fechar menu"
+            >
+              <FaTimes />
+            </button>
+          </div>
+
+          <div className={styles.mobileMenuContent}>
+            {/* Busca Mobile */}
+            <div className={styles.mobileSearch}>
+              <form className={styles.searchForm} onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  placeholder="Buscar produtos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={styles.searchInput}
+                />
+                <button type="submit" className={styles.searchButton}>
+                  <FaSearch />
+                </button>
+              </form>
+            </div>
+
+            {/* Ações do Usuário Mobile (sem favoritos) */}
+            <div className={styles.mobileUserActions}>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/dashboard" className={styles.mobileActionLink} onClick={toggleMobileMenu}>
+                    <FaTachometerAlt /> Dashboard
+                  </Link>
+                  <button className={styles.mobileActionLink} onClick={handleLogout}>
+                    <FaSignOutAlt /> Sair
+                  </button>
+                </>
+              ) : (
+                <Link to="/login" className={styles.mobileActionLink} onClick={toggleMobileMenu}>
+                  <FaUser /> Minha Conta
+                </Link>
+              )}
+
+              {/* Botão de Carrinho no menu mobile */}
+              <button
+                className={styles.mobileActionLink}
+                onClick={() => {
+                  toggleMobileMenu();
+                  setIsCartSidebarOpen(true);
+                }}
+              >
+                <div className={styles.mobileCartInfo}>
+                  <FaShoppingCart />
+                  <span>Carrinho</span>
+                  {totalItems > 0 && (
+                    <div className={styles.mobileCartDetails}>
+                      <span className={styles.mobileCartCount}>
+                        ({totalItems} {totalItems === 1 ? 'item' : 'itens'})
+                      </span>
+                      <span className={styles.mobileCartTotal}>{formatPrice(totalPrice)}</span>
+                    </div>
+                  )}
+                </div>
+              </button>
+            </div>
+
+            {/* Categorias Mobile */}
+            <nav className={styles.mobileCategoryNav}>
+              <h3 className={styles.mobileNavTitle}>Categorias</h3>
+              <ul className={styles.mobileCategoryList}>
+                {categories.map((category) => (
+                  <li key={category.slug} className={styles.mobileCategoryItem}>
+                    <button
+                      type="button"
+                      onClick={(e) => navigateToCategory(category.slug, e)}
+                      className={`${styles.mobileCategoryLink} ${
+                        isActiveCategory(category.slug) ? styles.active : ''
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Links Adicionais Mobile */}
+            <div className={styles.mobileExtraLinks}>
+              <Link
+                to="/about"
+                className={styles.mobileExtraLink}
+                onClick={toggleMobileMenu}
+              >
+                Sobre Nós
+              </Link>
+              <Link
+                to="/contact"
+                className={styles.mobileExtraLink}
+                onClick={toggleMobileMenu}
+              >
+                Contato
+              </Link>
             </div>
           </div>
-          <button 
-            className={styles.closeMobileMenu} 
-            onClick={toggleMobileMenu} 
-            aria-label="Fechar menu"
-          >
-            <FaTimes />
-          </button>
         </div>
+      )}
 
-        <div className={styles.mobileMenuContent}>
-          {/* Ações do Usuário Mobile */}
-          <div className={styles.mobileUserActions}>
-            <Link 
-              to="/login" 
-              className={styles.mobileActionLink} 
-              onClick={toggleMobileMenu}
-            >
-              <FaUser /> Minha Conta
-            </Link>
-            <Link 
-              to="/favoritos" 
-              className={styles.mobileActionLink} 
-              onClick={toggleMobileMenu}
-            >
-              <FaHeart /> Meus Favoritos
-            </Link>
-          </div>
-
-          {/* Categorias Mobile */}
-          <nav className={styles.mobileCategoryNav}>
-            <h3 className={styles.mobileNavTitle}>Categorias</h3>
-            <ul className={styles.mobileCategoryList}>
-              {categories.map((category) => (
-                <li key={category.slug} className={styles.mobileCategoryItem}>
-                  <button 
-                    type="button"
-                    onClick={(e) => navigateToCategory(category.slug, e)}
-                    className={`${styles.mobileCategoryLink} ${
-                      isActiveCategory(category.slug) ? styles.active : ''
-                    }`}
-                  >
-                    {category.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Links Adicionais Mobile */}
-          <div className={styles.mobileExtraLinks}>
-            <Link 
-              to="/sobre" 
-              className={styles.mobileExtraLink} 
-              onClick={toggleMobileMenu}
-            >
-              Sobre Nós
-            </Link>
-            <Link 
-              to="/contato" 
-              className={styles.mobileExtraLink} 
-              onClick={toggleMobileMenu}
-            >
-              Contato
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* SearchMenu */}
+      {/* SearchMenu - Importante: fica FORA do <header> */}
       <SearchMenu
         isOpen={isSearchMenuOpen}
         onClose={handleSearchMenuClose}
         searchQuery={searchQuery}
         onSearchChange={handleSearchQueryChange}
+        onSearchSubmit={handleSearch}
       />
 
-      {/* Cart Sidebar */}
-      <CartDrawer 
-        isOpen={isCartSidebarOpen} 
-        onClose={closeCartSidebar} 
+      {/* Cart Sidebar - Importante: fica FORA do <header> */}
+      <CartDrawer
+        isOpen={isCartSidebarOpen}
+        onClose={closeCartSidebar}
       />
     </>
   );

@@ -1,12 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUser, FaLock, FaGoogle, FaFacebook, FaCrown, FaUserTie } from 'react-icons/fa';
-import styles from './Login.module.css'; // Importa o módulo CSS
-import { useAuth } from '../../contexts/AuthContext.jsx'; // 💥 ESTA LINHA TEM QUE ESTAR ASSIM! 💥
+import styles from './Login.module.css';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isLoading: authLoading } = useAuth();
+  const location = useLocation();
+  const { login, isLoading: authLoading, isAuthenticated } = useAuth();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -16,6 +17,14 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Redirecionar se já estiver autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
+
   // Contas de demonstração
   const demoAccounts = [
     {
@@ -24,7 +33,8 @@ const Login = () => {
       email: 'admin@finaestampa.com',
       password: 'admin123',
       icon: <FaCrown />,
-      description: 'Acesso completo ao sistema'
+      description: 'Acesso completo ao sistema',
+      color: 'admin'
     },
     {
       type: 'customer',
@@ -32,7 +42,8 @@ const Login = () => {
       email: 'maria@email.com',
       password: '123456',
       icon: <FaUserTie />,
-      description: 'Experiência do cliente'
+      description: 'Experiência do cliente',
+      color: 'customer'
     }
   ];
 
@@ -82,6 +93,12 @@ const Login = () => {
     setIsLoading(true);
     setErrors({});
 
+    // Preencher os campos do formulário
+    setFormData({
+      email: account.email,
+      password: account.password
+    });
+
     try {
       const result = await login({
         email: account.email,
@@ -89,7 +106,8 @@ const Login = () => {
       });
 
       if (result.success) {
-        navigate('/dashboard', { replace: true });
+        const redirectTo = account.type === 'admin' ? '/dashboard' : '/';
+        navigate(redirectTo, { replace: true });
       } else {
         setErrors({
           general: result.error || 'Erro ao fazer login'
@@ -120,7 +138,8 @@ const Login = () => {
       const result = await login(formData);
 
       if (result.success) {
-        navigate('/dashboard', { replace: true });
+        const redirectTo = result.user.role === 'admin' ? '/dashboard' : '/';
+        navigate(redirectTo, { replace: true });
       } else {
         setErrors({
           general: result.error || 'Email ou senha incorretos'
@@ -164,13 +183,13 @@ const Login = () => {
 
           {/* Contas de Demonstração */}
           <div className={styles.demoSection}>
-            <h3 className={styles.demoTitle}>🚀 Contas de Demonstração</h3>
+            <h3 className={styles.demoTitle}>🚀 Acesso Rápido - Demonstração</h3>
             <div className={styles.demoAccounts}>
               {demoAccounts.map((account) => (
                 <button
                   key={account.type}
                   onClick={() => handleDemoLogin(account)}
-                  className={styles.demoButton}
+                  className={`${styles.demoButton} ${styles[account.color]}`}
                   disabled={isFormLoading}
                 >
                   <div className={styles.demoIcon}>
@@ -180,12 +199,18 @@ const Login = () => {
                     <span className={styles.demoName}>{account.name}</span>
                     <span className={styles.demoDesc}>{account.description}</span>
                     <span className={styles.demoCredentials}>
-                      {account.email} / {account.password}
+                      {account.email}
                     </span>
+                  </div>
+                  <div className={styles.demoAction}>
+                    {isFormLoading ? '⏳' : '→'}
                   </div>
                 </button>
               ))}
             </div>
+            <p className={styles.demoNote}>
+              💡 Clique em qualquer botão acima para entrar automaticamente
+            </p>
           </div>
 
           {/* Divisor */}

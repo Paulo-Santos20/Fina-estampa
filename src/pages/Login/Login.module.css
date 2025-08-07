@@ -494,3 +494,74 @@
     font-size: 0.7rem;
   }
 }
+
+/* Melhorias para os botões de demonstração */
+.demoButton.admin {
+  border-color: var(--wine-destaque);
+  background: linear-gradient(135deg, var(--rosa-suave) 0%, var(--white-principal) 100%);
+}
+
+.demoButton.admin:hover:not(:disabled) {
+  border-color: var(--wine-destaque);
+  background: linear-gradient(135deg, var(--wine-destaque) 0%, #8B3A42 100%);
+  color: var(--white-principal);
+}
+
+.demoButton.admin:hover:not(:disabled) .demoIcon {
+  background: var(--dourado-sutil);
+  color: var(--wine-destaque);
+}
+
+.demoButton.customer {
+  border-color: #3B82F6;
+  background: linear-gradient(135deg, #EBF8FF 0%, var(--white-principal) 100%);
+}
+
+.demoButton.customer:hover:not(:disabled) {
+  border-color: #3B82F6;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: var(--white-principal);
+}
+
+.demoButton.customer:hover:not(:disabled) .demoIcon {
+  background: var(--white-principal);
+  color: #3B82F6;
+}
+
+.demoAction {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--cinza-medio);
+  transition: all var(--transition-normal);
+}
+
+.demoButton:hover:not(:disabled) .demoAction {
+  color: var(--white-principal);
+  transform: translateX(5px);
+}
+
+.demoNote {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--cinza-medio);
+  margin-top: 1rem;
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+/* Animação para os campos preenchidos automaticamente */
+.input.filled {
+  animation: fillAnimation 0.3s ease-in-out;
+}
+
+@keyframes fillAnimation {
+  0% {
+    background-color: var(--white-principal);
+  }
+  50% {
+    background-color: var(--rosa-suave);
+  }
+  100% {
+    background-color: var(--white-principal);
+  }
+}

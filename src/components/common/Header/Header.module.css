@@ -380,20 +380,18 @@
   border: 1px solid var(--cinza-claro); /* Usando --cinza-claro */
   padding: var(--space-sm) 0; /* Usando --space-sm */
 
-  /* As propriedades position, top, left, transform, z-index são definidas via style no JSX */
+  /* Estas propriedades agora são controladas pela classe .active */
   visibility: hidden; /* Hidden por padrão */
   opacity: 0; /* Totalmente transparente por padrão */
-  transition: opacity var(--transition-normal) var(--ease-out-cubic), /* Usando --transition-normal e --ease-out-cubic */
+  transition: opacity var(--transition-normal) var(--ease-out-cubic),
               visibility var(--transition-normal) var(--ease-out-cubic);
 }
 
-/* Adicionada esta classe para garantir a transição de visibilidade */
-/* Esta classe será adicionada dinamicamente pelo React quando isUserDropdownOpen for true */
-.dropdownContentPortal[style*="visibility: visible"] {
+/* Quando o dropdown está ativo, mostrar */
+.dropdownContentPortal.active {
   visibility: visible;
   opacity: 1;
 }
-
 
 /* Estilos para links e botões DENTRO do dropdownContentPortal */
 .dropdownContentPortal a,
@@ -471,7 +469,7 @@
   padding: var(--space-md) 0;
   width: 100%;
   overflow-x: hidden;
-  /* overflow-y: visible; Removido, já que o dropdown flutua fora do Header */
+  overflow-y: visible; /* Mantido caso algum item interno precise de visibilidade */
   z-index: var(--z-sticky); /* Usando --z-sticky */
 }
 
@@ -1071,5 +1069,5 @@
 /* CONTAINER DE BUSCA COM POSIÇÃO RELATIVA */
 .searchContainer {
   position: relative;
-  z-index: 1; /* --z-base não existe, usando 1 */
+  z-index: 1;
 }

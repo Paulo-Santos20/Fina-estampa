@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Criar o contexto
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
-// Hook para usar o contexto
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -12,202 +10,181 @@ export const useAuth = () => {
   return context;
 };
 
-// Provider do contexto
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Inicializa como true
 
-  // Carregar usuário do localStorage ao inicializar
+  // Verificar se há usuário logado no localStorage ao inicializar
   useEffect(() => {
-    const loadUser = () => {
+    const checkAuthStatus = () => {
       try {
         const savedUser = localStorage.getItem('finaEstampaUser');
-        if (savedUser) {
+        const savedAuth = localStorage.getItem('finaEstampaAuth');
+        
+        if (savedUser && savedAuth === 'true') {
           const userData = JSON.parse(savedUser);
-          if (userData && typeof userData === 'object') {
-            setUser(userData);
-          }
+          setUser(userData);
+          setIsAuthenticated(true);
+          console.log('Usuário autenticado encontrado:', userData);
+        } else {
+          console.log('Nenhum usuário autenticado encontrado');
         }
       } catch (error) {
-        console.error('Erro ao carregar usuário:', error);
+        console.error('Erro ao verificar status de autenticação:', error);
+        // Limpar dados corrompidos
         localStorage.removeItem('finaEstampaUser');
+        localStorage.removeItem('finaEstampaAuth');
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadUser();
+    // Pequeno delay para evitar flash de conteúdo
+    const timer = setTimeout(checkAuthStatus, 100);
+    return () => clearTimeout(timer);
   }, []);
 
-  // Função de login
   const login = async (credentials) => {
+    setIsLoading(true);
+    
     try {
-      const { email, password } = credentials;
-
-      // Validação básica
-      if (!email || !password) {
-        return { success: false, error: 'Email e senha são obrigatórios' };
-      }
-
-      // Usuários de exemplo
-      const users = [
+      console.log('Tentativa de login:', credentials);
+      
+      // Simular validação de credenciais
+      const validCredentials = [
         {
-          id: 1,
-          name: 'Administrador',
           email: 'admin@finaestampa.com',
           password: 'admin123',
-          type: 'admin',
-          phone: '(11) 99999-9999'
+          user: {
+            id: 1,
+            name: 'Administradora',
+            email: 'admin@finaestampa.com',
+            role: 'admin',
+            avatar: null
+          }
         },
         {
-          id: 2,
-          name: 'Maria Silva',
           email: 'maria@email.com',
           password: '123456',
-          type: 'customer',
-          phone: '(11) 98888-8888'
-        },
-        {
-          id: 3,
-          name: 'João Santos',
-          email: 'joao@email.com',
-          password: '123456',
-          type: 'customer',
-          phone: '(11) 97777-7777'
+          user: {
+            id: 2,
+            name: 'Maria Silva',
+            email: 'maria@email.com',
+            role: 'customer',
+            avatar: null
+          }
         }
       ];
 
-      // Buscar usuário
-      const foundUser = users.find(u => u.email === email && u.password === password);
+      const validUser = validCredentials.find(
+        cred => cred.email === credentials.email && cred.password === credentials.password
+      );
 
-      if (foundUser) {
-        // Remover senha do objeto do usuário
-        const userWithoutPassword = {
-          id: foundUser.id,
-          name: foundUser.name,
-          email: foundUser.email,
-          type: foundUser.type,
-          phone: foundUser.phone,
-          avatar: null,
-          loginAt: new Date().toISOString()
+      if (validUser) {
+        // Login bem-sucedido
+        setUser(validUser.user);
+        setIsAuthenticated(true);
+        
+        // Salvar no localStorage
+        localStorage.setItem('finaEstampaUser', JSON.stringify(validUser.user));
+        localStorage.setItem('finaEstampaAuth', 'true');
+        
+        console.log('Login bem-sucedido:', validUser.user);
+        
+        return {
+          success: true,
+          user: validUser.user
         };
-
-        // Salvar usuário no estado e localStorage
-        setUser(userWithoutPassword);
-        localStorage.setItem('finaEstampaUser', JSON.stringify(userWithoutPassword));
-
-        return { success: true, user: userWithoutPassword };
       } else {
-        return { success: false, error: 'Email ou senha incorretos' };
+        // Credenciais inválidas
+        console.log('Credenciais inválidas');
+        return {
+          success: false,
+          error: 'Email ou senha incorretos'
+        };
       }
     } catch (error) {
       console.error('Erro no login:', error);
-      return { success: false, error: 'Erro interno do servidor' };
+      return {
+        success: false,
+        error: 'Erro interno. Tente novamente.'
+      };
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Função de registro
+  const logout = () => {
+    console.log('Fazendo logout...');
+    setUser(null);
+    setIsAuthenticated(false);
+    
+    // Limpar localStorage
+    localStorage.removeItem('finaEstampaUser');
+    localStorage.removeItem('finaEstampaAuth');
+    
+    console.log('Logout realizado com sucesso');
+  };
+
   const register = async (userData) => {
+    setIsLoading(true);
+    
     try {
-      const { name, email, password, phone } = userData;
-
-      // Validação básica
-      if (!name || !email || !password) {
-        return { success: false, error: 'Todos os campos são obrigatórios' };
-      }
-
-      // Verificar se email já existe (simulado)
-      const existingUsers = JSON.parse(localStorage.getItem('finaEstampaUsers') || '[]');
-      const emailExists = existingUsers.some(u => u.email === email);
-
-      if (emailExists) {
-        return { success: false, error: 'Este email já está cadastrado' };
-      }
-
-      // Criar novo usuário
+      console.log('Tentativa de registro:', userData);
+      
+      // Simular registro (em um app real, isso seria uma chamada para API)
       const newUser = {
         id: Date.now(),
-        name: name.trim(),
-        email: email.toLowerCase().trim(),
-        phone: phone || '',
-        type: 'customer',
-        avatar: null,
-        createdAt: new Date().toISOString()
+        name: userData.name,
+        email: userData.email,
+        role: 'customer',
+        avatar: null
       };
 
-      // Salvar na lista de usuários (com senha)
-      const userWithPassword = { ...newUser, password };
-      existingUsers.push(userWithPassword);
-      localStorage.setItem('finaEstampaUsers', JSON.stringify(existingUsers));
-
-      // Fazer login automático (sem senha)
       setUser(newUser);
+      setIsAuthenticated(true);
+      
+      // Salvar no localStorage
       localStorage.setItem('finaEstampaUser', JSON.stringify(newUser));
-
-      return { success: true, user: newUser };
+      localStorage.setItem('finaEstampaAuth', 'true');
+      
+      console.log('Registro bem-sucedido:', newUser);
+      
+      return {
+        success: true,
+        user: newUser
+      };
     } catch (error) {
       console.error('Erro no registro:', error);
-      return { success: false, error: 'Erro interno do servidor' };
+      return {
+        success: false,
+        error: 'Erro ao criar conta. Tente novamente.'
+      };
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Função de logout
-  const logout = () => {
-    try {
-      setUser(null);
-      localStorage.removeItem('finaEstampaUser');
-    } catch (error) {
-      console.error('Erro no logout:', error);
-    }
+  const updateUser = (userData) => {
+    const updatedUser = { ...user, ...userData };
+    setUser(updatedUser);
+    localStorage.setItem('finaEstampaUser', JSON.stringify(updatedUser));
+    console.log('Usuário atualizado:', updatedUser);
   };
 
-  // Função para atualizar usuário
-  const updateUser = (updatedData) => {
-    try {
-      if (user && updatedData) {
-        const updatedUser = { ...user, ...updatedData, updatedAt: new Date().toISOString() };
-        setUser(updatedUser);
-        localStorage.setItem('finaEstampaUser', JSON.stringify(updatedUser));
-
-        // Atualizar também na lista de usuários
-        const existingUsers = JSON.parse(localStorage.getItem('finaEstampaUsers') || '[]');
-        const updatedUsers = existingUsers.map(u => 
-          u.id === user.id ? { ...u, ...updatedData, updatedAt: new Date().toISOString() } : u
-        );
-        localStorage.setItem('finaEstampaUsers', JSON.stringify(updatedUsers));
-
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Erro ao atualizar usuário:', error);
-      return false;
-    }
-  };
-
-  // Propriedades derivadas
-  const isAuthenticated = !!user;
-  const isAdmin = user?.type === 'admin';
-  const isCustomer = user?.type === 'customer';
-
-  // Valor do contexto
-  const contextValue = {
-    // Estado
+  const value = {
     user,
-    isLoading,
     isAuthenticated,
-    isAdmin,
-    isCustomer,
-    
-    // Funções
+    isLoading,
     login,
-    register,
     logout,
+    register,
     updateUser
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,55 +1,59 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react'; // Adicione useEffect aqui
 import { Link } from 'react-router-dom';
-import { useCart } from '../../../contexts/CartContext';
-import { 
-  FaHeart, 
-  FaShoppingCart, 
-  FaEye, 
+import { useCart } from '../../../contexts/CartContext'; // Importa o hook useCart
+import {
+  FaHeart,
+  FaShoppingCart,
+  FaEye,
   FaStar,
   FaFire,
   FaTag,
   FaPlus,
-  FaMinus
+  FaMinus // Mantive o FaMinus caso use para controle de quantidade
 } from 'react-icons/fa';
 import styles from './ProductGrid.module.css';
 
 const ProductGrid = ({ products, viewMode = 'grid' }) => {
+  // Destrutura as funções do useCart. Se isInCart for undefined aqui,
+  // significa que CartContext.js não está retornando-a ou o provedor não está no lugar.
   const { addToCart, isInCart, getCartItem } = useCart();
   const [favorites, setFavorites] = useState(new Set());
   const [loadingStates, setLoadingStates] = useState({});
 
   // Gerenciar favoritos
   const toggleFavorite = (productId) => {
-    const newFavorites = new Set(favorites);
-    if (newFavorites.has(productId)) {
-      newFavorites.delete(productId);
-    } else {
-      newFavorites.add(productId);
-    }
-    setFavorites(newFavorites);
-    
-    // Salvar no localStorage
-    localStorage.setItem('finaEstampaFavorites', JSON.stringify([...newFavorites]));
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(productId)) {
+        newFavorites.delete(productId);
+      } else {
+        newFavorites.add(productId);
+      }
+      // Salvar no localStorage
+      localStorage.setItem('finaEstampaFavorites', JSON.stringify([...newFavorites]));
+      return newFavorites;
+    });
   };
 
-  // Carregar favoritos do localStorage
-  React.useEffect(() => {
+  // Carregar favoritos do localStorage (useEffect para rodar uma vez)
+  useEffect(() => {
     const savedFavorites = localStorage.getItem('finaEstampaFavorites');
     if (savedFavorites) {
       try {
         const favoritesArray = JSON.parse(savedFavorites);
         setFavorites(new Set(favoritesArray));
       } catch (error) {
-        console.error('Erro ao carregar favoritos:', error);
+        console.error('Erro ao carregar favoritos do localStorage:', error);
       }
     }
-  }, []);
+  }, []); // Array de dependências vazio para rodar apenas uma vez na montagem
 
   // Adicionar ao carrinho com loading
   const handleAddToCart = async (product) => {
     setLoadingStates(prev => ({ ...prev, [product.id]: true }));
-    
+
     try {
+      // Chamada a addToCart do contexto. O CartContext agora retorna true em caso de sucesso.
       const success = addToCart(product);
       if (success) {
         // Feedback visual de sucesso
@@ -65,15 +69,16 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
 
   // Calcular desconto percentual
   const getDiscountPercentage = (originalPrice, salePrice) => {
-    if (!salePrice) return 0;
+    if (!salePrice || originalPrice <= 0) return 0; // Evita divisão por zero
     return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
   };
 
   // Renderizar estrelas de avaliação (simulado)
-  const renderStars = (rating = 4.5) => {
+  const renderStars = (rating = 0) => { // Default para 0 caso não haja rating
     const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+    const normalizedRating = Math.max(0, Math.min(5, rating)); // Garante que o rating esteja entre 0 e 5
+    const fullStars = Math.floor(normalizedRating);
+    const hasHalfStar = normalizedRating % 1 !== 0 && normalizedRating % 1 >= 0.5; // Half star se >= 0.5
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(<FaStar key={i} className={styles.starFilled} />);
@@ -83,9 +88,10 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
       stars.push(<FaStar key="half" className={styles.starHalf} />);
     }
 
-    const emptyStars = 5 - Math.ceil(rating);
+    // Calcula estrelas vazias com base no número total de estrelas (5)
+    const emptyStars = 5 - stars.length;
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaStar key={`empty-${i}`} className={styles.starEmpty} />);
+      stars.push(<FaStar key={`empty-${i + fullStars + (hasHalfStar ? 1 : 0)}`} className={styles.starEmpty} />);
     }
 
     return stars;
@@ -94,8 +100,10 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
   // Componente do produto em modo grid
   const ProductCardGrid = ({ product }) => {
     const isInFavorites = favorites.has(product.id);
+    // Chamada isInCart(product.id) - aqui o erro ocorre se isInCart não for uma função.
+    // Isso é verificado pelo ProductGrid ao desestruturar useCart().
     const isInCartCheck = isInCart(product.id);
-    const cartItem = getCartItem(product.id);
+    const cartItem = getCartItem(product.id); // Pega o item para mostrar a quantidade
     const isLoading = loadingStates[product.id];
     const discountPercentage = getDiscountPercentage(product.price, product.salePrice);
 
@@ -138,7 +146,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
               >
                 <FaHeart />
               </button>
-              
+
               <Link
                 to={`/product/${product.id}`}
                 className={styles.actionButton}
@@ -146,7 +154,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
               >
                 <FaEye />
               </Link>
-              
+
               <button
                 onClick={() => handleAddToCart(product)}
                 disabled={isLoading}
@@ -171,7 +179,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
             <FaTag className={styles.categoryIcon} />
             {product.category}
           </div>
-          
+
           <h3 className={styles.productName}>
             <Link to={`/product/${product.id}`}>
               {product.name}
@@ -181,9 +189,9 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
           {/* Avaliação */}
           <div className={styles.rating}>
             <div className={styles.stars}>
-              {renderStars(4.5)}
+              {renderStars(product.rating || 0)} {/* Passa o rating do produto */}
             </div>
-            <span className={styles.ratingText}>(4.5)</span>
+            <span className={styles.ratingText}>({product.rating?.toFixed(1) || '0.0'})</span> {/* Mostra o rating */}
           </div>
 
           {/* Preços */}
@@ -249,7 +257,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
               alt={product.name}
               className={styles.listImage}
               onError={(e) => {
-                e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDE1MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0MCI+8J+RlzwvdGV4dD4KPHRleHQgeD0iNzUiIHk9IjEyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzcyMkYzNyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iNjAwIj5GaW5hIEVzdGFtcGE8L3RleHQ+Cjwvc3ZnPgo=";
+                e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDE1MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0MCI+8J+RlzwvdGV4dD4KPHRleHQgeD0iNzUiIHk9IjEyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzcyMkYzNyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iNjAwIj5GaW5hIEVzdGFtcGE8L2d0ZXh0Pgo8L3N2Zz4=";
               }}
             />
           </Link>
@@ -272,7 +280,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
               <FaTag className={styles.categoryIcon} />
               {product.category}
             </div>
-            
+
             <h3 className={styles.listProductName}>
               <Link to={`/product/${product.id}`}>
                 {product.name}
@@ -282,17 +290,17 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
             {/* Avaliação */}
             <div className={styles.rating}>
               <div className={styles.stars}>
-                {renderStars(4.5)}
+                {renderStars(product.rating || 0)}
               </div>
-              <span className={styles.ratingText}>(4.5) • 127 avaliações</span>
+              <span className={styles.ratingText}>({product.rating?.toFixed(1) || '0.0'}) • {product.reviewCount || 0} avaliações</span>
             </div>
           </div>
 
           {/* Descrição */}
           {product.description && (
             <p className={styles.listDescription}>
-              {product.description.length > 150 
-                ? `${product.description.substring(0, 150)}...` 
+              {product.description.length > 150
+                ? `${product.description.substring(0, 150)}...`
                 : product.description
               }
             </p>
@@ -308,7 +316,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
                 </span>
               </div>
             )}
-            
+
             {product.colors && product.colors.length > 0 && (
               <div className={styles.listColors}>
                 <span className={styles.detailLabel}>Cores:</span>
@@ -358,7 +366,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
             >
               <FaHeart />
             </button>
-            
+
             <Link
               to={`/product/${product.id}`}
               className={styles.listActionButton}
@@ -366,7 +374,7 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
             >
               <FaEye />
             </Link>
-            
+
             <button
               onClick={() => handleAddToCart(product)}
               disabled={isLoading}
@@ -390,10 +398,10 @@ const ProductGrid = ({ products, viewMode = 'grid' }) => {
 
   // Renderizar produtos com base no modo de visualização
   const renderProducts = () => {
-    if (products.length === 0) {
+    if (!products || products.length === 0) {
       return (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>🛍️</div>
+          <div className={styles.emptyIcon}>��️</div>
           <h3>Nenhum produto encontrado</h3>
           <p>Tente ajustar os filtros ou buscar por outros termos.</p>
         </div>

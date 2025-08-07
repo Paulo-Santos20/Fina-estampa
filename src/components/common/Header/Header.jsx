@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import ReactDOM from 'react-dom'; // Importe ReactDOM para usar createPortal
+import ReactDOM from 'react-dom';
 import {
   FaSearch,
   FaShoppingCart,
@@ -42,7 +42,8 @@ const Header = () => {
   // Referência para o CONTEÚDO do dropdown (para detectar cliques fora)
   const userDropdownContentRef = useRef(null);
 
-  // Estado para armazenar as propriedades de estilo do portal (top, left, transform)
+  // Estado para armazenar as propriedades de estilo do portal (top, left, transform, zIndex)
+  // Removendo 'visibility' e 'opacity' daqui, pois serão controlados por classe CSS.
   const [dropdownPortalStyle, setDropdownPortalStyle] = useState({});
 
   // Memoizar categorias para evitar recriação desnecessária
@@ -70,7 +71,6 @@ const Header = () => {
   // Handlers otimizados com useCallback
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
-    // Se abrir o menu mobile, fecha o SearchMenu overlay (se estiver aberto)
     if (!isMobileMenuOpen && isSearchMenuOpen) {
       setIsSearchMenuOpen(false);
     }
@@ -144,6 +144,7 @@ const Header = () => {
   }, [location.pathname]);
 
   // Efeito para calcular a posição do dropdown quando ele for aberto ou o layout mudar
+  // Este useEffect só calcula a posição, não a visibilidade/opacidade
   useEffect(() => {
     if (isUserDropdownOpen && userDropdownTriggerRef.current) {
       const rect = userDropdownTriggerRef.current.getBoundingClientRect();
@@ -160,7 +161,6 @@ const Header = () => {
   // Efeito para fechar o dropdown do usuário ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Verifica se o clique não foi no botão que abre o dropdown E não foi dentro do conteúdo do dropdown
       if (userDropdownTriggerRef.current && !userDropdownTriggerRef.current.contains(event.target) &&
           userDropdownContentRef.current && !userDropdownContentRef.current.contains(event.target)) {
         setIsUserDropdownOpen(false);
@@ -200,7 +200,7 @@ const Header = () => {
         </div>
       )}
 
-      <header className={styles.header}> {/* <-- Header abre aqui */}
+      <header className={styles.header}>
         {/* Seção Principal do Header */}
         <div className={styles.mainHeader}>
           <div className={styles.container}>
@@ -253,17 +253,16 @@ const Header = () => {
 
               {/* Login/Usuário Logado - POSICIONADO DEPOIS DO CARRINHO */}
               {isAuthenticated ? (
-                <div className={styles.dropdown}> {/* Este div permanece para agrupar visualmente */}
+                <div className={styles.dropdown}>
                   <button
                     className={styles.actionButton}
                     onClick={toggleUserDropdown}
-                    ref={userDropdownTriggerRef} // Anexa a ref ao botão
+                    ref={userDropdownTriggerRef}
                   >
                     <FaUserCircle />
                     <span className={styles.actionText}>Olá, {user?.name?.split(' ')[0]}</span>
                     <FaChevronDown className={`${styles.dropdownArrow} ${isUserDropdownOpen ? styles.arrowOpen : ''}`} />
                   </button>
-                  {/* O conteúdo do dropdown NÃO está mais aqui, ele será renderizado via portal */}
                 </div>
               ) : (
                 <Link to="/login" className={styles.actionButton} aria-label="Minha Conta">
@@ -304,19 +303,26 @@ const Header = () => {
             </ul>
           </div>
         </nav>
-      </header> {/* <-- Header fecha aqui, após o nav de categorias */}
+      </header>
 
       {/* Renderiza o conteúdo do dropdown em um PORTAL quando isUserDropdownOpen for true */}
       {isUserDropdownOpen && ReactDOM.createPortal(
         <div
-          className={styles.dropdownContentPortal} // Nova classe para estilização do portal
-          style={dropdownPortalStyle} // Aplica os estilos de posicionamento dinâmico
-          ref={userDropdownContentRef} // Anexa a ref ao conteúdo do portal
+          // Aplicamos a classe 'active' para controlar a visibilidade e transição
+          className={`${styles.dropdownContentPortal} ${isUserDropdownOpen ? styles.active : ''}`}
+          style={{ // Apenas estilos de posicionamento (fixed, top, left, transform, zIndex)
+            position: dropdownPortalStyle.position,
+            top: dropdownPortalStyle.top,
+            left: dropdownPortalStyle.left,
+            transform: dropdownPortalStyle.transform,
+            zIndex: dropdownPortalStyle.zIndex,
+          }}
+          ref={userDropdownContentRef}
         >
           <Link to="/dashboard" onClick={() => setIsUserDropdownOpen(false)}><FaTachometerAlt /> Dashboard</Link>
           <button onClick={handleLogout}><FaSignOutAlt /> Sair</button>
         </div>,
-        document.body // O segundo argumento é onde o conteúdo será renderizado no DOM
+        document.body
       )}
 
       {/* Menu Mobile Overlay */}

@@ -1,93 +1,90 @@
 import { useState, useEffect } from 'react';
-import { defaultCategories } from '../data/categories';
+import { categories as defaultCategories } from '../data/products';
 
 export const useCategories = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Carregar categorias do localStorage ou usar dados padrão
   useEffect(() => {
-    const savedCategories = localStorage.getItem('finaEstampaCategories');
-    if (savedCategories) {
-      try {
-        setCategories(JSON.parse(savedCategories));
-      } catch (error) {
-        console.error('Erro ao carregar categorias:', error);
-        setCategories(defaultCategories);
-        localStorage.setItem('finaEstampaCategories', JSON.stringify(defaultCategories));
+    console.log('useCategories: Iniciando carregamento...');
+    console.log('defaultCategories:', defaultCategories);
+    
+    try {
+      setLoading(true);
+      
+      const savedCategories = localStorage.getItem('finaEstampaCategories');
+      
+      if (savedCategories && savedCategories !== 'undefined') {
+        try {
+          const parsedCategories = JSON.parse(savedCategories);
+          setCategories(parsedCategories);
+        } catch (parseError) {
+          console.error('Erro ao fazer parse das categorias:', parseError);
+          const formattedCategories = defaultCategories.map(cat => ({
+            id: cat.id,
+            name: cat.name,
+            slug: cat.slug,
+            description: cat.description,
+            showInHeader: true,
+            isActive: true
+          }));
+          setCategories(formattedCategories);
+          localStorage.setItem('finaEstampaCategories', JSON.stringify(formattedCategories));
+        }
+      } else {
+        const formattedCategories = defaultCategories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description,
+          showInHeader: true,
+          isActive: true
+        }));
+        setCategories(formattedCategories);
+        localStorage.setItem('finaEstampaCategories', JSON.stringify(formattedCategories));
       }
-    } else {
-      setCategories(defaultCategories);
-      localStorage.setItem('finaEstampaCategories', JSON.stringify(defaultCategories));
+      
+      setError(null);
+    } catch (err) {
+      console.error('Erro no useCategories:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Salvar categorias no localStorage sempre que a lista mudar
-  useEffect(() => {
-    if (categories.length > 0) {
-      localStorage.setItem('finaEstampaCategories', JSON.stringify(categories));
-    }
-  }, [categories]);
-
   const addCategory = (categoryData) => {
-    const newCategory = {
-      ...categoryData,
-      id: Date.now(),
-      slug: categoryData.name.toLowerCase().replace(/\s+/g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-      order: categories.length + 1
-    };
-    setCategories(prev => [...prev, newCategory]);
-    return newCategory;
-  };
+    try {
+      const newCategory = {
+        ...categoryData,
+        id: Date.now(),
+        slug: categoryData.name.toLowerCase().replace(/\s+/g, '-'),
+        isActive: true,
+        showInHeader: false
+      };
 
-  const updateCategory = (categoryId, categoryData) => {
-    setCategories(prev => 
-      prev.map(c => c.id === categoryId ? { 
-        ...categoryData, 
-        id: categoryId,
-        slug: categoryData.name.toLowerCase().replace(/\s+/g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      } : c)
-    );
-  };
-
-  const deleteCategory = (categoryId) => {
-    setCategories(prev => prev.filter(c => c.id !== categoryId));
-  };
-
-  const toggleCategoryHeader = (categoryId) => {
-    setCategories(prev => 
-      prev.map(c => c.id === categoryId ? { ...c, showInHeader: !c.showInHeader } : c)
-    );
-  };
-
-  const updateCategoryOrder = (categoryId, newOrder) => {
-    setCategories(prev => 
-      prev.map(c => c.id === categoryId ? { ...c, order: newOrder } : c)
-    );
+      const updatedCategories = [...categories, newCategory];
+      setCategories(updatedCategories);
+      localStorage.setItem('finaEstampaCategories', JSON.stringify(updatedCategories));
+      
+      return newCategory;
+    } catch (err) {
+      console.error('Erro ao adicionar categoria:', err);
+      throw err;
+    }
   };
 
   const getActiveCategories = () => {
-    return categories.filter(c => c.isActive);
-  };
-
-  const getHeaderCategories = () => {
-    return categories
-      .filter(c => c.isActive && c.showInHeader)
-      .sort((a, b) => a.order - b.order);
-  };
-
-  const getCategoryBySlug = (slug) => {
-    return categories.find(c => c.slug === slug);
+    return categories.filter(cat => cat.isActive);
   };
 
   return {
     categories,
+    loading,
+    error,
     addCategory,
-    updateCategory,
-    deleteCategory,
-    toggleCategoryHeader,
-    updateCategoryOrder,
     getActiveCategories,
-    getHeaderCategories,
-    getCategoryBySlug
+    totalCategories: categories.length
   };
 };

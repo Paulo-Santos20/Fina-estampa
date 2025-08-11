@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { 
-  FaGlobe, 
-  FaSave, 
-  FaEdit, 
-  FaEye, 
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import styles from './CMSPage.module.css';
+import {
+  FaGlobe,
+  FaSave,
+  FaEdit,
+  FaEye,
   FaEyeSlash,
   FaArrowUp,
   FaArrowDown,
@@ -15,732 +16,944 @@ import {
   FaLink,
   FaTag,
   FaHome,
-  FaUpload
+  FaUpload,
+  FaTruck,
+  FaStar,
+  FaPercent,
+  FaFacebook,
+  FaInstagram,
+  FaWhatsapp,
+  FaCreditCard,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaGift,
+  FaClock,
+  FaSearch,
+  FaExchangeAlt,
+  FaShoppingBag,
+  FaUser,
+  FaMoneyBillWave,
+  FaBarcode
 } from 'react-icons/fa';
-import { useCategories } from '../../../hooks/useCategories';
-import styles from './CMSPage.module.css';
+
+// Dados simulados (fallback) — em produção, substitua por hooks/serviços reais
+const SAMPLE_PRODUCTS = [
+  { id: 'p1', name: 'Blusa Social Elegante', price: 89.90, image: 'https://picsum.photos/seed/blusa1/400/480', category: 'Blusas & Camisas', active: true },
+  { id: 'p2', name: 'Vestido Festa Velvet', price: 189.90, image: 'https://picsum.photos/seed/vestido2/400/480', category: 'Vestidos', active: true },
+  { id: 'p3', name: 'Calça Alfaiataria Slim', price: 159.90, image: 'https://picsum.photos/seed/calca3/400/480', category: 'Calças & Shorts', active: true },
+  { id: 'p4', name: 'Saia Midi Plissada', price: 129.90, image: 'https://picsum.photos/seed/saia4/400/480', category: 'Saias & Macacões', active: true },
+  { id: 'p5', name: 'Camisa Seda Premium', price: 219.90, image: 'https://picsum.photos/seed/camisa5/400/480', category: 'Blusas & Camisas', active: true },
+  { id: 'p6', name: 'Macacão Minimal Chic', price: 199.90, image: 'https://picsum.photos/seed/macacao6/400/480', category: 'Saias & Macacões', active: true },
+  { id: 'p7', name: 'Bolsa Courino Dourada', price: 149.90, image: 'https://picsum.photos/seed/bolsa7/400/480', category: 'Acessórios', active: true },
+  { id: 'p8', name: 'Sandália Salto Fino', price: 179.90, image: 'https://picsum.photos/seed/sandalia8/400/480', category: 'Acessórios', active: true },
+  { id: 'p9', name: 'Blazer Tweed Clássico', price: 259.90, image: 'https://picsum.photos/seed/blazer9/400/480', category: 'Blusas & Camisas', active: true },
+  { id: 'p10', name: 'Vestido Casual Summer', price: 129.90, image: 'https://picsum.photos/seed/vestido10/400/480', category: 'Vestidos', active: true },
+  { id: 'p11', name: 'Short Linho Fresh', price: 99.90, image: 'https://picsum.photos/seed/short11/400/480', category: 'Calças & Shorts', active: true },
+  { id: 'p12', name: 'Colar Pérolas Delicadas', price: 79.90, image: 'https://picsum.photos/seed/colar12/400/480', category: 'Acessórios', active: true }
+];
+
+const SAMPLE_CATEGORIES = [
+  { id: 'c1', name: 'Vestidos' },
+  { id: 'c2', name: 'Blusas & Camisas' },
+  { id: 'c3', name: 'Calças & Shorts' },
+  { id: 'c4', name: 'Saias & Macacões' },
+  { id: 'c5', name: 'Acessórios' },
+  { id: 'c6', name: 'Coleções Especiais' },
+  { id: 'c7', name: 'Trabalho' },
+  { id: 'c8', name: 'Festa' }
+];
+
+const formatPrice = (n) =>
+  typeof n === 'number'
+    ? `R$ ${n.toFixed(2).replace('.', ',')}`
+    : 'R$ 0,00';
 
 const CMSPage = () => {
-  const { categories, updateCategoryOrder, toggleCategoryHeader } = useCategories();
-  const [activeTab, setActiveTab] = useState('header');
-  const [showImageModal, setShowImageModal] = useState(false);
-  const [selectedImageType, setSelectedImageType] = useState('');
-  const fileInputRef = useRef(null);
+  // Abas
+  const [activeTab, setActiveTab] = useState('banners');
 
-  // Estado para configurações do header
-  const [headerConfig, setHeaderConfig] = useState({
-    logo: '/assets/logo.png',
-    showSearch: true,
-    showCart: true,
-    showLogin: true,
-    maxCategories: 6,
-    headerStyle: 'default'
-  });
+  // Dados base (em produção: buscar via API/contexts)
+  const [allProducts, setAllProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
 
-  // Estado para hero section
-  const [heroConfig, setHeroConfig] = useState({
-    mainBanner: {
-      image: '/assets/hero-main.jpg',
-      title: 'Moda Feminina Elegante',
-      subtitle: 'Descubra as últimas tendências em roupas femininas',
-      buttonText: 'Ver Coleção',
-      buttonLink: '/produtos',
-      isActive: true
+  // Banners
+  const [banners, setBanners] = useState([
+    {
+      id: 'b1',
+      title: 'Coleção Inverno 2025',
+      subtitle: 'Elegância e sofisticação para dias frios',
+      link: '/catalog?colecao=inverno-2025',
+      image: 'https://picsum.photos/seed/banner1/1200/450',
+      active: true,
+      order: 1
     },
-    secondaryBanners: [
-      {
-        id: 1,
-        image: '/assets/banner-1.jpg',
-        title: 'Vestidos de Verão',
-        subtitle: 'Até 40% OFF',
-        buttonText: 'Comprar Agora',
-        buttonLink: '/categoria/vestidos',
-        isActive: true
-      },
-      {
-        id: 2,
-        image: '/assets/banner-2.jpg',
-        title: 'Nova Coleção',
-        subtitle: 'Outono/Inverno 2025',
-        buttonText: 'Explorar',
-        buttonLink: '/categoria/nova-colecao',
-        isActive: true
-      }
-    ],
-    autoSlide: true,
-    slideInterval: 5000,
-    showIndicators: true,
-    showArrows: true
+    {
+      id: 'b2',
+      title: 'Vestidos Festa',
+      subtitle: 'Brilhe com glamour em qualquer ocasião',
+      link: '/catalog?categoria=vestidos-festa',
+      image: 'https://picsum.photos/seed/banner2/1200/450',
+      active: true,
+      order: 2
+    },
+    {
+      id: 'b3',
+      title: 'Acessórios Exclusivos',
+      subtitle: 'Detalhes que transformam seu look',
+      link: '/catalog?categoria=acessorios',
+      image: 'https://picsum.photos/seed/banner3/1200/450',
+      active: false,
+      order: 3
+    }
+  ]);
+
+  // Destaques (produtos em destaque)
+  const [featuredProductIds, setFeaturedProductIds] = useState(['p2', 'p1', 'p3', 'p4']);
+
+  // Categorias iniciais
+  const [homepageCategoryIds, setHomepageCategoryIds] = useState(['c1', 'c2', 'c5', 'c8']);
+
+  // Novidades (lista de produtos)
+  const [newArrivalIds, setNewArrivalIds] = useState(['p10', 'p6', 'p5']);
+
+  // Ofertas especiais
+  const [specialOffers, setSpecialOffers] = useState([
+    { id: 'p2', originalPrice: 219.90, salePrice: 189.90, active: true },
+    { id: 'p7', originalPrice: 169.90, salePrice: 149.90, active: true }
+  ]);
+
+  // Contato
+  const [contact, setContact] = useState({
+    phone: '+55 (11) 3333-2222',
+    whatsapp: '+55 (11) 99999-9999',
+    email: 'contato@finaestampa.com.br',
+    address: 'Rua da Moda, 123 - São Paulo/SP',
+    hours: 'Segunda a Sexta, 09:00 - 18:00',
+    instagram: 'https://instagram.com/finaestampa',
+    facebook: 'https://facebook.com/finaestampa'
   });
 
-  const tabs = [
-    { id: 'header', label: 'Header & Menu', icon: FaTag },
-    { id: 'hero', label: 'Banner Principal', icon: FaImage },
-    { id: 'homepage', label: 'Página Inicial', icon: FaHome }
-  ];
+  // Pagamento
+  const [payment, setPayment] = useState({
+    pixEnabled: true,
+    pixKey: 'finaestampa@pix.com.br',
+    cardEnabled: true,
+    boletoEnabled: true,
+    shippingNote: 'Frete grátis para pedidos acima de R$ 299,90'
+  });
 
-  // Categorias visíveis no header
-  const headerCategories = categories
-    .filter(cat => cat.showInHeader && cat.isActive)
-    .sort((a, b) => a.order - b.order)
-    .slice(0, headerConfig.maxCategories);
+  // Modais gerais
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [modalPurpose, setModalPurpose] = useState(null); // 'featured' | 'newArrivals' | 'specialOffers'
+  const [modalIndex, setModalIndex] = useState(null); // índice do item a trocar
+  const [productSearch, setProductSearch] = useState('');
+  const [categorySearch, setCategorySearch] = useState('');
 
-  const handleHeaderConfigChange = (field, value) => {
-    setHeaderConfig(prev => ({
+  // Upload refs
+  const bannerFileRefs = useRef({});
+
+  // Carrega dados simulados na montagem
+  useEffect(() => {
+    setAllProducts(SAMPLE_PRODUCTS);
+    setAllCategories(SAMPLE_CATEGORIES);
+  }, []);
+
+  // Computados
+  const featuredProducts = useMemo(
+    () => featuredProductIds
+      .map(id => allProducts.find(p => p.id === id))
+      .filter(Boolean),
+    [featuredProductIds, allProducts]
+  );
+
+  const homepageCategories = useMemo(
+    () => homepageCategoryIds
+      .map(id => allCategories.find(c => c.id === id))
+      .filter(Boolean),
+    [homepageCategoryIds, allCategories]
+  );
+
+  const newArrivals = useMemo(
+    () => newArrivalIds
+      .map(id => allProducts.find(p => p.id === id))
+      .filter(Boolean),
+    [newArrivalIds, allProducts]
+  );
+
+  const specialOffersDetailed = useMemo(
+    () => specialOffers.map(offer => {
+      const product = allProducts.find(p => p.id === offer.id);
+      const discount = offer.originalPrice && offer.salePrice
+        ? Math.max(0, Math.round((1 - (offer.salePrice / offer.originalPrice)) * 100))
+        : 0;
+      return { ...offer, product, discount };
+    }).filter(x => x.product),
+    [specialOffers, allProducts]
+  );
+
+  // Handlers de Banners
+  const handleAddBanner = () => {
+    const nextOrder = (banners[banners.length - 1]?.order || 0) + 1;
+    setBanners(prev => ([
       ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleHeroConfigChange = (field, value) => {
-    setHeroConfig(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleMainBannerChange = (field, value) => {
-    setHeroConfig(prev => ({
-      ...prev,
-      mainBanner: {
-        ...prev.mainBanner,
-        [field]: value
+      {
+        id: `b${Date.now()}`,
+        title: 'Novo Banner',
+        subtitle: '',
+        link: '',
+        image: '',
+        active: true,
+        order: nextOrder
       }
-    }));
+    ]));
   };
 
-  const handleSecondaryBannerChange = (bannerId, field, value) => {
-    setHeroConfig(prev => ({
-      ...prev,
-      secondaryBanners: prev.secondaryBanners.map(banner =>
-        banner.id === bannerId
-          ? { ...banner, [field]: value }
-          : banner
-      )
-    }));
+  const handleRemoveBanner = (id) => {
+    setBanners(prev => prev.filter(b => b.id !== id));
   };
 
-  const addSecondaryBanner = () => {
-    const newBanner = {
-      id: Date.now(),
-      image: '/assets/placeholder-banner.jpg',
-      title: 'Novo Banner',
-      subtitle: 'Descrição do banner',
-      buttonText: 'Clique Aqui',
-      buttonLink: '/produtos',
-      isActive: true
-    };
-
-    setHeroConfig(prev => ({
-      ...prev,
-      secondaryBanners: [...prev.secondaryBanners, newBanner]
-    }));
+  const handleMoveBanner = (id, dir) => {
+    setBanners(prev => {
+      const ordered = [...prev].sort((a, b) => a.order - b.order);
+      const idx = ordered.findIndex(b => b.id === id);
+      if (idx < 0) return prev;
+      const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= ordered.length) return prev;
+      const tmp = ordered[idx].order;
+      ordered[idx].order = ordered[swapIdx].order;
+      ordered[swapIdx].order = tmp;
+      return ordered;
+    });
   };
 
-  const removeSecondaryBanner = (bannerId) => {
-    if (window.confirm('Tem certeza que deseja remover este banner?')) {
-      setHeroConfig(prev => ({
-        ...prev,
-        secondaryBanners: prev.secondaryBanners.filter(banner => banner.id !== bannerId)
-      }));
-    }
+  const handleBannerChange = (id, field, value) => {
+    setBanners(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b));
   };
 
-  const handleImageUpload = (e, type, bannerId = null) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validar tipo de arquivo
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        alert('❌ Tipo de arquivo não suportado. Use: JPG, PNG ou WEBP');
-        return;
-      }
+  const handleBannerUpload = (id, file) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setBanners(prev => prev.map(b => b.id === id ? { ...b, image: url } : b));
+  };
 
-      // Validar tamanho (máximo 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('❌ Arquivo muito grande. Máximo 5MB');
-        return;
-      }
+  // Handlers de Destaques
+  const openProductPicker = (purpose, index = null) => {
+    setModalPurpose(purpose);
+    setModalIndex(index);
+    setProductSearch('');
+    setShowProductModal(true);
+  };
 
-      // Criar preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageUrl = e.target.result;
-        
-        if (type === 'logo') {
-          handleHeaderConfigChange('logo', imageUrl);
-        } else if (type === 'mainBanner') {
-          handleMainBannerChange('image', imageUrl);
-        } else if (type === 'secondaryBanner' && bannerId) {
-          handleSecondaryBannerChange(bannerId, 'image', imageUrl);
+  const handlePickProduct = (product) => {
+    if (modalPurpose === 'featured') {
+      setFeaturedProductIds(prev => {
+        const next = [...prev];
+        if (modalIndex === null || modalIndex === undefined) {
+          // adicionar no final se não há index
+          if (!next.includes(product.id)) next.push(product.id);
+        } else {
+          next[modalIndex] = product.id;
         }
-      };
-      reader.readAsDataURL(file);
+        return Array.from(new Set(next));
+      });
     }
-  };
-
-  const openImageModal = (type, bannerId = null) => {
-    setSelectedImageType(type);
-    setShowImageModal(true);
-    // Se for banner secundário, armazenar o ID
-    if (bannerId) {
-      setSelectedImageType(`secondaryBanner-${bannerId}`);
+    if (modalPurpose === 'newArrivals') {
+      setNewArrivalIds(prev => Array.from(new Set([...prev, product.id])));
     }
+    if (modalPurpose === 'specialOffers') {
+      setSpecialOffers(prev => {
+        const exists = prev.some(o => o.id === product.id);
+        if (exists) return prev;
+        return [...prev, { id: product.id, originalPrice: product.price, salePrice: product.price, active: true }];
+      });
+    }
+    setShowProductModal(false);
   };
 
-  const handleSaveChanges = () => {
-    // Aqui você salvaria as configurações no backend
-    alert('✅ Configurações salvas com sucesso!');
+  const removeFeatured = (index) => {
+    setFeaturedProductIds(prev => prev.filter((_, i) => i !== index));
   };
 
-  const previewSite = () => {
-    // Abrir preview do site em nova aba
-    window.open('/', '_blank');
+  const removeNewArrival = (id) => {
+    setNewArrivalIds(prev => prev.filter(pid => pid !== id));
   };
 
-  return (
-    <div className={styles.pageContainer}>
-      {/* Header */}
-      <div className={styles.pageHeader}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.pageTitle}>
-            <FaGlobe />
-            Gerenciar Conteúdo do Site
-          </h2>
-          <p className={styles.pageSubtitle}>
-            Configure o layout, banners e conteúdo das páginas
-          </p>
-        </div>
-        
-        <div className={styles.headerActions}>
-          <button 
-            onClick={previewSite}
-            className={styles.previewBtn}
-          >
-            <FaEye /> Preview do Site
+  const removeSpecialOffer = (id) => {
+    setSpecialOffers(prev => prev.filter(o => o.id !== id));
+  };
+
+  // Handlers de Categorias
+  const openCategoryPicker = () => {
+    setCategorySearch('');
+    setShowCategoryModal(true);
+  };
+
+  const handlePickCategory = (category) => {
+    setHomepageCategoryIds(prev => Array.from(new Set([...prev, category.id])));
+    setShowCategoryModal(false);
+  };
+
+  const removeHomepageCategory = (id) => {
+    setHomepageCategoryIds(prev => prev.filter(cid => cid !== id));
+  };
+
+  // Search filters
+  const filteredProducts = useMemo(() => {
+    const q = productSearch.trim().toLowerCase();
+    if (!q) return allProducts;
+    return allProducts.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    );
+  }, [productSearch, allProducts]);
+
+  const filteredCategories = useMemo(() => {
+    const q = categorySearch.trim().toLowerCase();
+    if (!q) return allCategories;
+    return allCategories.filter(c => c.name.toLowerCase().includes(q));
+  }, [categorySearch, allCategories]);
+
+  // Save (mock)
+  const handleSave = () => {
+    const payload = {
+      banners,
+      featuredProductIds,
+      homepageCategoryIds,
+      newArrivalIds,
+      specialOffers,
+      contact,
+      payment
+    };
+    console.log('CMS salvo:', payload);
+    alert('Conteúdo salvo com sucesso!');
+  };
+
+  // UI de Banners
+  const renderBanners = () => {
+    const ordered = [...banners].sort((a, b) => a.order - b.order);
+    return (
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaHome /> Banners da Home
+          </div>
+          <button className={styles.addButton} onClick={handleAddBanner}>
+            <FaPlus /> Adicionar Banner
           </button>
-          <button 
-            onClick={handleSaveChanges}
-            className={styles.saveBtn}
-          >
-            <FaSave /> Salvar Alterações
-          </button>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div className={styles.tabsContainer}>
-        <div className={styles.tabsList}>
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
-            >
-              <tab.icon />
-              {tab.label}
-            </button>
+        <div className={styles.bannerGrid}>
+          {ordered.map((b, index) => (
+            <div key={b.id} className={styles.bannerItem}>
+              <div className={styles.bannerPreview}>
+                {b.image ? (
+                  <img src={b.image} alt={b.title || 'Banner'} />
+                ) : (
+                  <div className={styles.bannerPlaceholder}>
+                    <FaImage />
+                    <span>Sem imagem</span>
+                  </div>
+                )}
+                <div className={styles.bannerOverlay}>
+                  <button
+                    className={styles.bannerIconBtn}
+                    title="Enviar imagem"
+                    onClick={() => bannerFileRefs.current[b.id]?.click()}
+                    type="button"
+                  >
+                    <FaUpload />
+                  </button>
+                  <input
+                    ref={(el) => (bannerFileRefs.current[b.id] = el)}
+                    type="file"
+                    accept="image/*"
+                    className={styles.hiddenInput}
+                    onChange={(e) => handleBannerUpload(b.id, e.target.files[0])}
+                  />
+                  <button
+                    className={styles.bannerIconBtn}
+                    title="Mover para cima"
+                    onClick={() => handleMoveBanner(b.id, 'up')}
+                    type="button"
+                    disabled={index === 0}
+                  >
+                    <FaArrowUp />
+                  </button>
+                  <button
+                    className={styles.bannerIconBtn}
+                    title="Mover para baixo"
+                    onClick={() => handleMoveBanner(b.id, 'down')}
+                    type="button"
+                    disabled={index === ordered.length - 1}
+                  >
+                    <FaArrowDown />
+                  </button>
+                  <button
+                    className={`${styles.bannerIconBtn} ${styles.danger}`}
+                    title="Remover banner"
+                    onClick={() => handleRemoveBanner(b.id)}
+                    type="button"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.bannerForm}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}><FaTag /> Título</label>
+                  <input
+                    className={styles.input}
+                    value={b.title}
+                    onChange={(e) => handleBannerChange(b.id, 'title', e.target.value)}
+                    placeholder="Ex.: Coleção Inverno 2025"
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}><FaEdit /> Subtítulo</label>
+                  <input
+                    className={styles.input}
+                    value={b.subtitle}
+                    onChange={(e) => handleBannerChange(b.id, 'subtitle', e.target.value)}
+                    placeholder="Ex.: Elegância e sofisticação para dias frios"
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}><FaLink /> Link</label>
+                  <input
+                    className={styles.input}
+                    value={b.link}
+                    onChange={(e) => handleBannerChange(b.id, 'link', e.target.value)}
+                    placeholder="Ex.: /catalog?colecao=inverno-2025"
+                  />
+                </div>
+                <div className={styles.toggleRow}>
+                  <span className={styles.toggleLabel}>
+                    {b.active ? <FaEye /> : <FaEyeSlash />} Visível
+                  </span>
+                  <label className={styles.switch}>
+                    <input
+                      type="checkbox"
+                      checked={b.active}
+                      onChange={(e) => handleBannerChange(b.id, 'active', e.target.checked)}
+                    />
+                    <span className={styles.switchSlider}></span>
+                  </label>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
+    );
+  };
 
-      {/* Tab Content */}
-      <div className={styles.tabContent}>
-        {/* Aba Header & Menu */}
-        {activeTab === 'header' && (
-          <div className={styles.headerSection}>
-            <div className={styles.sectionCard}>
-              <h3 className={styles.cardTitle}>
-                <FaTag /> Configurações do Header
-              </h3>
-              
-              <div className={styles.configGrid}>
-                {/* Logo */}
-                <div className={styles.configItem}>
-                  <label className={styles.configLabel}>Logo da Loja</label>
-                  <div className={styles.logoUpload}>
-                    <div className={styles.logoPreview}>
-                      <img 
-                        src={headerConfig.logo} 
-                        alt="Logo" 
-                        onError={(e) => {
-                          e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjYwIiB2aWV3Qm94PSIwIDAgMTIwIDYwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjYwIiB5PSIzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzcyMkYzNyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iNjAwIj5MT0dPPC90ZXh0Pgo8L3N2Zz4K";
-                        }}
-                      />
-                      <button 
-                        className={styles.changeLogoBtn}
-                        onClick={() => openImageModal('logo')}
-                      >
-                        <FaCamera />
-                      </button>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(e, 'logo')}
-                      style={{ display: 'none' }}
-                      ref={fileInputRef}
-                    />
-                  </div>
-                </div>
-
-                {/* Configurações do Header */}
-                <div className={styles.configItem}>
-                  <label className={styles.configLabel}>Máximo de Categorias no Menu</label>
-                  <input
-                    type="number"
-                    min="3"
-                    max="10"
-                    value={headerConfig.maxCategories}
-                    onChange={(e) => handleHeaderConfigChange('maxCategories', parseInt(e.target.value))}
-                    className={styles.configInput}
-                  />
-                </div>
-
-                <div className={styles.configItem}>
-                  <label className={styles.configLabel}>Estilo do Header</label>
-                  <select
-                    value={headerConfig.headerStyle}
-                    onChange={(e) => handleHeaderConfigChange('headerStyle', e.target.value)}
-                    className={styles.configSelect}
-                  >
-                    <option value="default">Padrão</option>
-                    <option value="minimal">Minimalista</option>
-                    <option value="bold">Destacado</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className={styles.togglesGrid}>
-                <label className={styles.toggleLabel}>
-                  <input
-                    type="checkbox"
-                    checked={headerConfig.showSearch}
-                    onChange={(e) => handleHeaderConfigChange('showSearch', e.target.checked)}
-                    className={styles.toggle}
-                  />
-                  <span className={styles.toggleText}>
-                    🔍 Mostrar Barra de Pesquisa
-                  </span>
-                </label>
-
-                <label className={styles.toggleLabel}>
-                  <input
-                    type="checkbox"
-                    checked={headerConfig.showCart}
-                    onChange={(e) => handleHeaderConfigChange('showCart', e.target.checked)}
-                    className={styles.toggle}
-                  />
-                  <span className={styles.toggleText}>
-                    🛒 Mostrar Carrinho
-                  </span>
-                </label>
-
-                <label className={styles.toggleLabel}>
-                  <input
-                    type="checkbox"
-                    checked={headerConfig.showLogin}
-                    onChange={(e) => handleHeaderConfigChange('showLogin', e.target.checked)}
-                    className={styles.toggle}
-                  />
-                  <span className={styles.toggleText}>
-                    👤 Mostrar Login
-                  </span>
-                </label>
-              </div>
-            </div>
-
-            {/* Categorias do Menu */}
-            <div className={styles.sectionCard}>
-              <h3 className={styles.cardTitle}>
-                <FaTag /> Categorias no Menu Principal
-              </h3>
-              
-              <div className={styles.categoriesInfo}>
-                <p>
-                  <strong>Categorias ativas no header:</strong> {headerCategories.length} de {headerConfig.maxCategories}
-                </p>
-                <p className={styles.infoText}>
-                  As categorias são ordenadas automaticamente. Use a página de Categorias para ativar/desativar e reordenar.
-                </p>
-              </div>
-
-              <div className={styles.categoriesList}>
-                {headerCategories.map((category, index) => (
-                  <div key={category.id} className={styles.categoryItem}>
-                    <div className={styles.categoryOrder}>
-                      {index + 1}
-                    </div>
-                    <div className={styles.categoryInfo}>
-                      <span className={styles.categoryName}>{category.name}</span>
-                      <span className={styles.categoryDesc}>{category.description}</span>
-                    </div>
-                    <div className={styles.categoryActions}>
-                      <button
-                        onClick={() => toggleCategoryHeader(category.id)}
-                        className={styles.toggleBtn}
-                        title="Remover do header"
-                      >
-                        <FaEyeSlash />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {headerCategories.length === 0 && (
-                <div className={styles.emptyCategories}>
-                  <FaTag className={styles.emptyIcon} />
-                  <p>Nenhuma categoria ativa no header</p>
-                  <p className={styles.emptyText}>
-                    Vá para a página de Categorias para ativar categorias no header
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Aba Hero Section */}
-        {activeTab === 'hero' && (
-          <div className={styles.heroSection}>
-            {/* Banner Principal */}
-            <div className={styles.sectionCard}>
-              <h3 className={styles.cardTitle}>
-                <FaImage /> Banner Principal
-              </h3>
-              
-              <div className={styles.bannerEditor}>
-                <div className={styles.bannerPreview}>
-                  <img 
-                    src={heroConfig.mainBanner.image} 
-                    alt="Banner Principal"
-                    className={styles.bannerImage}
-                    onError={(e) => {
-                      e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjEwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNzIyRjM3IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI2MDAiPkJBTk5FUiBQUklOQ0lQQUw8L3RleHQ+Cjwvc3ZnPgo=";
-                    }}
-                  />
-                  <div className={styles.bannerOverlay}>
-                    <h2 className={styles.bannerTitle}>{heroConfig.mainBanner.title}</h2>
-                    <p className={styles.bannerSubtitle}>{heroConfig.mainBanner.subtitle}</p>
-                    <button className={styles.bannerButton}>
-                      {heroConfig.mainBanner.buttonText}
-                    </button>
-                  </div>
-                  <button 
-                    className={styles.changeBannerBtn}
-                    onClick={() => openImageModal('mainBanner')}
-                  >
-                    <FaCamera /> Alterar Imagem
-                  </button>
-                </div>
-
-                <div className={styles.bannerForm}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Título Principal</label>
-                    <input
-                      type="text"
-                      value={heroConfig.mainBanner.title}
-                      onChange={(e) => handleMainBannerChange('title', e.target.value)}
-                      className={styles.formInput}
-                      placeholder="Digite o título principal"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Subtítulo</label>
-                    <input
-                      type="text"
-                      value={heroConfig.mainBanner.subtitle}
-                      onChange={(e) => handleMainBannerChange('subtitle', e.target.value)}
-                      className={styles.formInput}
-                      placeholder="Digite o subtítulo"
-                    />
-                  </div>
-
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Texto do Botão</label>
-                      <input
-                        type="text"
-                        value={heroConfig.mainBanner.buttonText}
-                        onChange={(e) => handleMainBannerChange('buttonText', e.target.value)}
-                        className={styles.formInput}
-                        placeholder="Ex: Ver Coleção"
-                      />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Link do Botão</label>
-                      <input
-                        type="text"
-                        value={heroConfig.mainBanner.buttonLink}
-                        onChange={(e) => handleMainBannerChange('buttonLink', e.target.value)}
-                        className={styles.formInput}
-                        placeholder="/produtos"
-                      />
-                    </div>
-                  </div>
-
-                  <label className={styles.toggleLabel}>
-                    <input
-                      type="checkbox"
-                      checked={heroConfig.mainBanner.isActive}
-                      onChange={(e) => handleMainBannerChange('isActive', e.target.checked)}
-                      className={styles.toggle}
-                    />
-                    <span className={styles.toggleText}>
-                      ✅ Banner Ativo
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Banners Secundários */}
-            <div className={styles.sectionCard}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>
-                  <FaImage /> Banners Secundários
-                </h3>
-                <button 
-                  onClick={addSecondaryBanner}
-                  className={styles.addBtn}
-                >
-                  <FaPlus /> Adicionar Banner
-                </button>
-              </div>
-
-              <div className={styles.secondaryBanners}>
-                {heroConfig.secondaryBanners.map((banner, index) => (
-                  <div key={banner.id} className={styles.secondaryBanner}>
-                    <div className={styles.bannerHeader}>
-                      <h4 className={styles.bannerNumber}>Banner {index + 1}</h4>
-                      <button 
-                        onClick={() => removeSecondaryBanner(banner.id)}
-                        className={styles.removeBtn}
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-
-                    <div className={styles.bannerEditor}>
-                      <div className={styles.bannerPreview}>
-                        <img 
-                          src={banner.image} 
-                          alt={`Banner ${index + 1}`}
-                          className={styles.bannerImage}
-                          onError={(e) => {
-                            e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTA1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNzIyRjM3IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSI2MDAiPkJBTk5FUjwvdGV4dD4KPC9zdmc+Cg==";
-                          }}
-                        />
-                        <div className={styles.bannerOverlay}>
-                          <h3 className={styles.bannerTitle}>{banner.title}</h3>
-                          <p className={styles.bannerSubtitle}>{banner.subtitle}</p>
-                          <button className={styles.bannerButton}>
-                            {banner.buttonText}
-                          </button>
-                        </div>
-                        <button 
-                          className={styles.changeBannerBtn}
-                          onClick={() => openImageModal('secondaryBanner', banner.id)}
-                        >
-                          <FaCamera />
-                        </button>
-                      </div>
-
-                      <div className={styles.bannerForm}>
-                        <div className={styles.formGroup}>
-                          <label className={styles.formLabel}>Título</label>
-                          <input
-                            type="text"
-                            value={banner.title}
-                            onChange={(e) => handleSecondaryBannerChange(banner.id, 'title', e.target.value)}
-                            className={styles.formInput}
-                          />
-                        </div>
-
-                        <div className={styles.formGroup}>
-                          <label className={styles.formLabel}>Subtítulo</label>
-                          <input
-                            type="text"
-                            value={banner.subtitle}
-                            onChange={(e) => handleSecondaryBannerChange(banner.id, 'subtitle', e.target.value)}
-                            className={styles.formInput}
-                          />
-                        </div>
-
-                        <div className={styles.formRow}>
-                          <div className={styles.formGroup}>
-                            <label className={styles.formLabel}>Texto do Botão</label>
-                            <input
-                              type="text"
-                              value={banner.buttonText}
-                              onChange={(e) => handleSecondaryBannerChange(banner.id, 'buttonText', e.target.value)}
-                              className={styles.formInput}
-                            />
-                          </div>
-
-                          <div className={styles.formGroup}>
-                            <label className={styles.formLabel}>Link</label>
-                            <input
-                              type="text"
-                              value={banner.buttonLink}
-                              onChange={(e) => handleSecondaryBannerChange(banner.id, 'buttonLink', e.target.value)}
-                              className={styles.formInput}
-                            />
-                          </div>
-                        </div>
-
-                        <label className={styles.toggleLabel}>
-                          <input
-                            type="checkbox"
-                            checked={banner.isActive}
-                            onChange={(e) => handleSecondaryBannerChange(banner.id, 'isActive', e.target.checked)}
-                            className={styles.toggle}
-                          />
-                          <span className={styles.toggleText}>
-                            ✅ Banner Ativo
-                          </span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {heroConfig.secondaryBanners.length === 0 && (
-                <div className={styles.emptyBanners}>
-                  <FaImage className={styles.emptyIcon} />
-                  <p>Nenhum banner secundário configurado</p>
-                  <button 
-                    onClick={addSecondaryBanner}
-                    className={styles.addBtn}
-                  >
-                    <FaPlus /> Adicionar Primeiro Banner
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Configurações do Slider */}
-            <div className={styles.sectionCard}>
-              <h3 className={styles.cardTitle}>
-                ⚙️ Configurações do Slider
-              </h3>
-
-              <div className={styles.sliderConfig}>
-                <div className={styles.configRow}>
-                  <div className={styles.configItem}>
-                    <label className={styles.configLabel}>Intervalo de Troca (segundos)</label>
-                    <input
-                      type="number"
-                      min="3"
-                      max="10"
-                      value={heroConfig.slideInterval / 1000}
-                      onChange={(e) => handleHeroConfigChange('slideInterval', parseInt(e.target.value) * 1000)}
-                      className={styles.configInput}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.togglesGrid}>
-                  <label className={styles.toggleLabel}>
-                    <input
-                      type="checkbox"
-                      checked={heroConfig.autoSlide}
-                      onChange={(e) => handleHeroConfigChange('autoSlide', e.target.checked)}
-                      className={styles.toggle}
-                    />
-                    <span className={styles.toggleText}>
-                      🔄 Troca Automática
-                    </span>
-                  </label>
-
-                  <label className={styles.toggleLabel}>
-                    <input
-                      type="checkbox"
-                      checked={heroConfig.showIndicators}
-                      onChange={(e) => handleHeroConfigChange('showIndicators', e.target.checked)}
-                      className={styles.toggle}
-                    />
-                    <span className={styles.toggleText}>
-                      ⚪ Mostrar Indicadores
-                    </span>
-                  </label>
-
-                  <label className={styles.toggleLabel}>
-                    <input
-                      type="checkbox"
-                      checked={heroConfig.showArrows}
-                      onChange={(e) => handleHeroConfigChange('showArrows', e.target.checked)}
-                      className={styles.toggle}
-                    />
-                    <span className={styles.toggleText}>
-                      ◀▶ Mostrar Setas
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Aba Página Inicial */}
-        {activeTab === 'homepage' && (
-          <div className={styles.homepageSection}>
-            <div className={styles.sectionCard}>
-              <h3 className={styles.cardTitle}>
-                <FaHome /> Configurações da Página Inicial
-              </h3>
-              <div className={styles.comingSoon}>
-                <FaHome className={styles.comingSoonIcon} />
-                <h4>Em Desenvolvimento</h4>
-                <p>Configurações para seções da página inicial em breve!</p>
-              </div>
-            </div>
-          </div>
-        )}
+  // UI de Destaques
+  const renderFeatured = () => (
+    <div className={styles.sectionCard}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitle}>
+          <FaStar /> Produtos em Destaque
+        </div>
+        <button className={styles.addButton} onClick={() => openProductPicker('featured')}>
+          <FaPlus /> Adicionar Destaque
+        </button>
       </div>
 
-      {/* Modal de Upload de Imagem */}
-      {showImageModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>
-                <FaUpload /> Fazer Upload de Imagem
-              </h3>
+      <div className={styles.productGrid}>
+        {featuredProducts.map((p, i) => (
+          <div key={`${p.id}-${i}`} className={styles.productCard}>
+            <div className={styles.productImage}>
+              <img src={p.image} alt={p.name} />
               <button
-                onClick={() => setShowImageModal(false)}
-                className={styles.modalCloseBtn}
+                className={styles.changeProductButton}
+                onClick={() => openProductPicker('featured', i)}
+                type="button"
+                title="Trocar produto"
               >
-                <FaTimes />
+                <FaExchangeAlt /> Trocar
               </button>
             </div>
-            
-            <div className={styles.modalContent}>
-              <div className={styles.uploadArea}>
-                <FaUpload className={styles.uploadIcon} />
-                <h4>Selecione uma imagem</h4>
-                <p>JPG, PNG ou WEBP - Máximo 5MB</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (selectedImageType === 'logo') {
-                      handleImageUpload(e, 'logo');
-                    } else if (selectedImageType === 'mainBanner') {
-                      handleImageUpload(e, 'mainBanner');
-                    } else if (selectedImageType.startsWith('secondaryBanner-')) {
-                      const bannerId = parseInt(selectedImageType.split('-')[1]);
-                      handleImageUpload(e, 'secondaryBanner', bannerId);
-                    }
-                    setShowImageModal(false);
-                  }}
-                  className={styles.fileInput}
-                />
+            <div className={styles.productInfo}>
+              <div className={styles.productName} title={p.name}>{p.name}</div>
+              <div className={styles.productCategory} title={p.category}>{p.category}</div>
+              <div className={styles.productPrice}>{formatPrice(p.price)}</div>
+            </div>
+            <button
+              className={styles.removeButton}
+              onClick={() => removeFeatured(i)}
+              type="button"
+              title="Remover dos destaques"
+            >
+              <FaTrash />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // UI de Categorias
+  const renderCategories = () => (
+    <div className={styles.sectionCard}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitle}>
+          <FaTag /> Categorias na Home
+        </div>
+        <button className={styles.addButton} onClick={openCategoryPicker}>
+          <FaPlus /> Adicionar Categoria
+        </button>
+      </div>
+
+      <div className={styles.categoryGrid}>
+        {homepageCategories.map((c) => (
+          <div key={c.id} className={styles.categoryCard}>
+            <div className={styles.categoryIcon}><FaShoppingBag /></div>
+            <div className={styles.categoryName} title={c.name}>{c.name}</div>
+            <button
+              className={styles.removeButton}
+              onClick={() => removeHomepageCategory(c.id)}
+              type="button"
+              title="Remover da home"
+            >
+              <FaTrash />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // UI de Novidades
+  const renderNewArrivals = () => (
+    <div className={styles.sectionCard}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitle}>
+          <FaGift /> Novidades
+        </div>
+        <button className={styles.addButton} onClick={() => openProductPicker('newArrivals')}>
+          <FaPlus /> Adicionar Novidade
+        </button>
+      </div>
+
+      <div className={styles.list}>
+        {newArrivals.map(p => (
+          <div key={p.id} className={styles.listItem}>
+            <div className={styles.listThumb}>
+              <img src={p.image} alt={p.name} />
+            </div>
+            <div className={styles.listInfo}>
+              <div className={styles.listTitle} title={p.name}>{p.name}</div>
+              <div className={styles.listMeta}>
+                <span>{p.category}</span>
+                <span className={styles.dot}>•</span>
+                <span className={styles.priceBlack}>{formatPrice(p.price)}</span>
               </div>
+            </div>
+            <button
+              className={styles.removeButton}
+              onClick={() => removeNewArrival(p.id)}
+              type="button"
+              title="Remover"
+            >
+              <FaTrash />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // UI de Ofertas Especiais
+  const renderSpecialOffers = () => (
+    <div className={styles.sectionCard}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitle}>
+          <FaPercent /> Ofertas Especiais
+        </div>
+        <button className={styles.addButton} onClick={() => openProductPicker('specialOffers')}>
+          <FaPlus /> Adicionar Oferta
+        </button>
+      </div>
+
+      <div className={styles.offerGrid}>
+        {specialOffersDetailed.map((o) => (
+          <div key={o.id} className={styles.offerCard}>
+            <div className={styles.offerTop}>
+              <div className={styles.offerThumb}>
+                <img src={o.product.image} alt={o.product.name} />
+              </div>
+              <div className={styles.offerInfo}>
+                <div className={styles.offerName} title={o.product.name}>{o.product.name}</div>
+                <div className={styles.offerMeta}>
+                  <span>{o.product.category}</span>
+                </div>
+                <div className={styles.offerPrices}>
+                  <div className={styles.offerPriceRow}>
+                    <span className={styles.priceLabel}>De</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      className={`${styles.priceInput} ${styles.blackText}`}
+                      value={o.originalPrice}
+                      onChange={(e) =>
+                        setSpecialOffers(prev =>
+                          prev.map(x => x.id === o.id ? { ...x, originalPrice: parseFloat(e.target.value || 0) } : x)
+                        )
+                      }
+                    />
+                  </div>
+                  <div className={styles.offerPriceRow}>
+                    <span className={styles.priceLabel}>Por</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      className={`${styles.priceInput} ${styles.blackText}`}
+                      value={o.salePrice}
+                      onChange={(e) =>
+                        setSpecialOffers(prev =>
+                          prev.map(x => x.id === o.id ? { ...x, salePrice: parseFloat(e.target.value || 0) } : x)
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <div className={styles.discountBadge}>
+                  {o.discount}% OFF
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.offerBottom}>
+              <div className={styles.toggleRow}>
+                <span className={styles.toggleLabel}>
+                  {o.active ? <FaEye /> : <FaEyeSlash />} Ativo
+                </span>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    checked={o.active}
+                    onChange={(e) =>
+                      setSpecialOffers(prev =>
+                        prev.map(x => x.id === o.id ? { ...x, active: e.target.checked } : x)
+                      )
+                    }
+                  />
+                  <span className={styles.switchSlider}></span>
+                </label>
+              </div>
+              <button
+                className={styles.removeButton}
+                onClick={() => removeSpecialOffer(o.id)}
+                type="button"
+                title="Remover oferta"
+              >
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // UI de Contato
+  const renderContact = () => (
+    <div className={styles.sectionCard}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitle}>
+          <FaPhone /> Contato e Endereço
+        </div>
+      </div>
+
+      <div className={styles.formGrid}>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}><FaPhone /> Telefone</label>
+          <input
+            className={styles.formInput}
+            value={contact.phone}
+            onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+            placeholder="+55 (11) 3333-2222"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}><FaWhatsapp /> WhatsApp</label>
+          <input
+            className={styles.formInput}
+            value={contact.whatsapp}
+            onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })}
+            placeholder="+55 (11) 99999-9999"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}><FaEnvelope /> E-mail</label>
+          <input
+            className={styles.formInput}
+            value={contact.email}
+            onChange={(e) => setContact({ ...contact, email: e.target.value })}
+            placeholder="contato@finaestampa.com.br"
+          />
+        </div>
+        <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
+          <label className={styles.formLabel}><FaMapMarkerAlt /> Endereço</label>
+          <input
+            className={styles.formInput}
+            value={contact.address}
+            onChange={(e) => setContact({ ...contact, address: e.target.value })}
+            placeholder="Rua da Moda, 123 - São Paulo/SP"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}><FaClock /> Horário</label>
+          <input
+            className={styles.formInput}
+            value={contact.hours}
+            onChange={(e) => setContact({ ...contact, hours: e.target.value })}
+            placeholder="Segunda a Sexta, 09:00 - 18:00"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}><FaInstagram /> Instagram</label>
+          <input
+            className={styles.formInput}
+            value={contact.instagram}
+            onChange={(e) => setContact({ ...contact, instagram: e.target.value })}
+            placeholder="https://instagram.com/finaestampa"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}><FaFacebook /> Facebook</label>
+          <input
+            className={styles.formInput}
+            value={contact.facebook}
+            onChange={(e) => setContact({ ...contact, facebook: e.target.value })}
+            placeholder="https://facebook.com/finaestampa"
+          />
+        </div>
+      </div>
+
+      <div className={styles.previewCard}>
+        <div className={styles.previewTitle}><FaHome /> Pré-visualização</div>
+        <div className={styles.contactPreview}>
+          <div><FaPhone /> {contact.phone}</div>
+          <div><FaWhatsapp /> {contact.whatsapp}</div>
+          <div><FaEnvelope /> {contact.email}</div>
+          <div><FaMapMarkerAlt /> {contact.address}</div>
+          <div><FaClock /> {contact.hours}</div>
+          <div><FaInstagram /> {contact.instagram}</div>
+          <div><FaFacebook /> {contact.facebook}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // UI de Pagamento
+  const renderPayment = () => (
+    <div className={styles.sectionCard}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitle}>
+          <FaCreditCard /> Pagamentos e Frete
+        </div>
+      </div>
+
+      <div className={styles.paymentGrid}>
+        <div className={styles.paymentCard}>
+          <div className={styles.paymentHeader}><FaMoneyBillWave /> PIX</div>
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>{payment.pixEnabled ? <FaEye /> : <FaEyeSlash />} Habilitar PIX</span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={payment.pixEnabled}
+                onChange={(e) => setPayment({ ...payment, pixEnabled: e.target.checked })}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Chave PIX</label>
+            <input
+              className={styles.formInput}
+              value={payment.pixKey}
+              onChange={(e) => setPayment({ ...payment, pixKey: e.target.value })}
+              placeholder="sua-chave-pix"
+            />
+          </div>
+        </div>
+
+        <div className={styles.paymentCard}>
+          <div className={styles.paymentHeader}><FaCreditCard /> Cartão</div>
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>{payment.cardEnabled ? <FaEye /> : <FaEyeSlash />} Habilitar Cartão</span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={payment.cardEnabled}
+                onChange={(e) => setPayment({ ...payment, cardEnabled: e.target.checked })}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+          <div className={styles.formHint}>Configurações avançadas de gateway podem ser adicionadas no admin.</div>
+        </div>
+
+        <div className={styles.paymentCard}>
+          <div className={styles.paymentHeader}><FaBarcode /> Boleto</div>
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>{payment.boletoEnabled ? <FaEye /> : <FaEyeSlash />} Habilitar Boleto</span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={payment.boletoEnabled}
+                onChange={(e) => setPayment({ ...payment, boletoEnabled: e.target.checked })}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+          <div className={styles.formHint}>Integração com bancos/PSPs conforme necessário.</div>
+        </div>
+      </div>
+
+      <div className={styles.formGroup} style={{ marginTop: 16 }}>
+        <label className={styles.formLabel}><FaTruck /> Observação de Frete</label>
+        <input
+          className={styles.formInput}
+          value={payment.shippingNote}
+          onChange={(e) => setPayment({ ...payment, shippingNote: e.target.value })}
+          placeholder="Frete grátis para pedidos acima de R$ 299,90"
+        />
+      </div>
+
+      <div className={styles.previewCard}>
+        <div className={styles.previewTitle}><FaHome /> Pré-visualização</div>
+        <div className={styles.paymentPreview}>
+          {payment.pixEnabled && <span className={styles.payBadge}><FaMoneyBillWave /> PIX</span>}
+          {payment.cardEnabled && <span className={styles.payBadge}><FaCreditCard /> Cartão</span>}
+          {payment.boletoEnabled && <span className={styles.payBadge}><FaBarcode /> Boleto</span>}
+          <div className={styles.shippingNote}><FaTruck /> {payment.shippingNote}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Tabs
+  const tabs = [
+    { id: 'banners', label: 'Banners' },
+    { id: 'featured', label: 'Destaques' },
+    { id: 'categories', label: 'Categorias' },
+    { id: 'new', label: 'Novidades' },
+    { id: 'offers', label: 'Ofertas Especiais' },
+    { id: 'contact', label: 'Contato' },
+    { id: 'payment', label: 'Pagamento' }
+  ];
+
+  return (
+    <div className={styles.cmsContainer}>
+      <div className={styles.header}>
+        <div className={styles.headerTitle}>
+          <FaGlobe /> Conteúdo do Site
+        </div>
+        <div className={styles.headerActions}>
+          <button className={styles.saveButton} onClick={handleSave}>
+            <FaSave /> Salvar Conteúdo
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.tabsContainer}>
+        {tabs.map(t => (
+          <button
+            key={t.id}
+            className={`${styles.tabButton} ${activeTab === t.id ? styles.active : ''}`}
+            onClick={() => setActiveTab(t.id)}
+            title={t.label}
+            type="button"
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.contentSection}>
+        {activeTab === 'banners' && renderBanners()}
+        {activeTab === 'featured' && renderFeatured()}
+        {activeTab === 'categories' && renderCategories()}
+        {activeTab === 'new' && renderNewArrivals()}
+        {activeTab === 'offers' && renderSpecialOffers()}
+        {activeTab === 'contact' && renderContact()}
+        {activeTab === 'payment' && renderPayment()}
+      </div>
+
+      {/* Modal de Produtos */}
+      {showProductModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowProductModal(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitle}><FaSearch /> Selecionar Produto</div>
+              <button className={styles.modalClose} onClick={() => setShowProductModal(false)}><FaTimes /></button>
+            </div>
+            <div className={styles.modalSearchRow}>
+              <input
+                className={styles.searchInput}
+                placeholder="Buscar por nome ou categoria..."
+                value={productSearch}
+                onChange={(e) => setProductSearch(e.target.value)}
+              />
+            </div>
+            <div className={styles.modalProductsGrid}>
+              {filteredProducts.map(p => (
+                <button
+                  key={p.id}
+                  className={styles.modalProductCard}
+                  onClick={() => handlePickProduct(p)}
+                  type="button"
+                >
+                  <img src={p.image} alt={p.name} />
+                  <div className={styles.modalProductInfo}>
+                    <div className={styles.modalProductName} title={p.name}>{p.name}</div>
+                    <div className={styles.modalProductMeta}>
+                      <span>{p.category}</span>
+                      <span className={styles.dot}>•</span>
+                      <span className={styles.blackText}>{formatPrice(p.price)}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Categorias */}
+      {showCategoryModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowCategoryModal(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitle}><FaSearch /> Selecionar Categoria</div>
+              <button className={styles.modalClose} onClick={() => setShowCategoryModal(false)}><FaTimes /></button>
+            </div>
+            <div className={styles.modalSearchRow}>
+              <input
+                className={styles.searchInput}
+                placeholder="Buscar categoria..."
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+              />
+            </div>
+            <div className={styles.modalCategoriesGrid}>
+              {filteredCategories.map(c => (
+                <button
+                  key={c.id}
+                  className={styles.modalCategoryCard}
+                  onClick={() => handlePickCategory(c)}
+                  type="button"
+                >
+                  <div className={styles.modalCategoryIcon}><FaShoppingBag /></div>
+                  <div className={styles.modalCategoryName} title={c.name}>{c.name}</div>
+                </button>
+              ))}
             </div>
           </div>
         </div>

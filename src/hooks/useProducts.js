@@ -1,3 +1,4 @@
+// src/hooks/useProducts.js
 import { useState, useEffect } from 'react';
 import { allProducts } from '../data/products';
 
@@ -9,14 +10,14 @@ export const useProducts = () => {
   useEffect(() => {
     console.log('useProducts: Iniciando carregamento...');
     console.log('allProducts importado:', allProducts);
-    
+
     try {
       setLoading(true);
-      
+
       // Verificar localStorage
       const savedProducts = localStorage.getItem('finaEstampaProducts');
       console.log('Produtos salvos no localStorage:', savedProducts);
-      
+
       if (savedProducts && savedProducts !== 'undefined') {
         try {
           const parsedProducts = JSON.parse(savedProducts);
@@ -34,7 +35,7 @@ export const useProducts = () => {
         setProducts(allProducts);
         localStorage.setItem('finaEstampaProducts', JSON.stringify(allProducts));
       }
-      
+
       setError(null);
     } catch (err) {
       console.error('Erro geral no useProducts:', err);
@@ -61,7 +62,7 @@ export const useProducts = () => {
       const updatedProducts = [...products, newProduct];
       setProducts(updatedProducts);
       localStorage.setItem('finaEstampaProducts', JSON.stringify(updatedProducts));
-      
+
       console.log('Produto adicionado com sucesso:', newProduct);
       return newProduct;
     } catch (err) {
@@ -73,15 +74,15 @@ export const useProducts = () => {
   const updateProduct = (productId, productData) => {
     console.log('Atualizando produto:', productId, productData);
     try {
-      const updatedProducts = products.map(product => 
-        product.id === productId 
+      const updatedProducts = products.map(product =>
+        product.id === productId
           ? { ...product, ...productData, updatedAt: new Date().toISOString() }
           : product
       );
-      
+
       setProducts(updatedProducts);
       localStorage.setItem('finaEstampaProducts', JSON.stringify(updatedProducts));
-      
+
       console.log('Produto atualizado com sucesso');
       return updatedProducts.find(p => p.id === productId);
     } catch (err) {
@@ -96,7 +97,7 @@ export const useProducts = () => {
       const updatedProducts = products.filter(product => product.id !== productId);
       setProducts(updatedProducts);
       localStorage.setItem('finaEstampaProducts', JSON.stringify(updatedProducts));
-      
+
       console.log('Produto removido com sucesso');
       return true;
     } catch (err) {
@@ -150,3 +151,6 @@ export const useProducts = () => {
     newProducts: products.filter(p => p.isNew).length
   };
 };
+
+// Adiciona export default para permitir: import useProducts from '.../useProducts.js'
+export default useProducts;

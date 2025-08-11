@@ -1,178 +1,160 @@
-import { useState, useEffect } from 'react';
+// src/hooks/useCategories.js
+import { useMemo } from 'react';
+import { useCMS } from '../contexts/CMSContext.jsx';
 
-// Dados simulados das categorias
-const initialCategories = [
+// Categorias padrão (fallback) — ajuste os slugs/imagens conforme seu projeto
+const DEFAULT_CATEGORIES = [
   {
-    id: 1,
+    id: 'vestidos',
     name: 'Vestidos',
-    description: 'Vestidos para todas as ocasiões',
     slug: 'vestidos',
-    order: 1,
-    showInHeader: true,
-    isActive: true,
-    image: '/assets/categories/vestidos.jpg',
-    productCount: 45
+    image: '/public/assets/categories/vestidos.jpg',
+    children: [
+      { id: 'casuais', name: 'Casuais', slug: 'vestidos-casuais' },
+      { id: 'festa', name: 'Festa', slug: 'vestidos-festa' },
+      { id: 'trabalho', name: 'Trabalho', slug: 'vestidos-trabalho' },
+    ],
   },
   {
-    id: 2,
-    name: 'Blusas',
-    description: 'Blusas casuais e sociais',
+    id: 'blusas',
+    name: 'Blusas & Camisas',
     slug: 'blusas',
-    order: 2,
-    showInHeader: true,
-    isActive: true,
-    image: '/assets/categories/blusas.jpg',
-    productCount: 32
+    image: '/public/assets/categories/blusas.jpg',
+    children: [
+      { id: 'camisetas', name: 'Camisetas', slug: 'camisetas' },
+      { id: 'camisas', name: 'Camisas', slug: 'camisas' },
+      { id: 'croppeds', name: 'Croppeds', slug: 'croppeds' },
+    ],
   },
   {
-    id: 3,
-    name: 'Calças',
-    description: 'Calças jeans, sociais e casuais',
+    id: 'calcas',
+    name: 'Calças & Shorts',
     slug: 'calcas',
-    order: 3,
-    showInHeader: true,
-    isActive: true,
-    image: '/assets/categories/calcas.jpg',
-    productCount: 28
+    image: '/public/assets/categories/calcas.jpg',
+    children: [
+      { id: 'jeans', name: 'Jeans', slug: 'jeans' },
+      { id: 'alfaiataria', name: 'Alfaiataria', slug: 'alfaiataria' },
+      { id: 'shorts', name: 'Shorts', slug: 'shorts' },
+    ],
   },
   {
-    id: 4,
-    name: 'Saias',
-    description: 'Saias midi, longas e curtas',
-    slug: 'saias',
-    order: 4,
-    showInHeader: true,
-    isActive: true,
-    image: '/assets/categories/saias.jpg',
-    productCount: 18
+    id: 'saias-macacoes',
+    name: 'Saias & Macacões',
+    slug: 'saias-macacoes',
+    image: '/public/assets/categories/saias.jpg',
+    children: [
+      { id: 'saias', name: 'Saias', slug: 'saias' },
+      { id: 'macacoes', name: 'Macacões', slug: 'macacoes' },
+    ],
   },
   {
-    id: 5,
+    id: 'acessorios',
     name: 'Acessórios',
-    description: 'Bolsas, joias e acessórios',
     slug: 'acessorios',
-    order: 5,
-    showInHeader: true,
-    isActive: true,
-    image: '/assets/categories/acessorios.jpg',
-    productCount: 24
+    image: '/public/assets/categories/acessorios.jpg',
+    children: [
+      { id: 'bolsas', name: 'Bolsas', slug: 'bolsas' },
+      { id: 'joias', name: 'Joias', slug: 'joias' },
+      { id: 'sapatos', name: 'Sapatos', slug: 'sapatos' },
+    ],
   },
   {
-    id: 6,
-    name: 'Moda Praia',
-    description: 'Biquínis, maiôs e saídas',
-    slug: 'moda-praia',
-    order: 6,
-    showInHeader: false,
-    isActive: true,
-    image: '/assets/categories/moda-praia.jpg',
-    productCount: 12
-  }
+    id: 'colecoes',
+    name: 'Coleções Especiais',
+    slug: 'colecoes',
+    image: '/public/assets/categories/colecoes.jpg',
+    children: [
+      { id: 'novidades', name: 'Novidades', slug: 'novidades' },
+      { id: 'basicos', name: 'Básicos', slug: 'basicos' },
+      { id: 'premium', name: 'Premium', slug: 'premium' },
+    ],
+  },
 ];
 
-export const useCategories = () => {
-  const [categories, setCategories] = useState(initialCategories);
+// Hook principal
+export function useCategories() {
+  const { header, categories: cmsCategories } = useCMS() || {};
 
-  // Carregar categorias do localStorage ou API
-  useEffect(() => {
-    const savedCategories = localStorage.getItem('categories');
-    if (savedCategories) {
-      setCategories(JSON.parse(savedCategories));
+  // Decide a fonte das categorias: CMS (quando existir/for válido) ou fallback
+  const categories = useMemo(() => {
+    // Se o CMS já tiver categorias, use-as
+    if (Array.isArray(cmsCategories) && cmsCategories.length > 0) {
+      return cmsCategories;
     }
-  }, []);
+    // Alguns projetos armazenam dentro de header.categories
+    if (header && Array.isArray(header.categories) && header.categories.length > 0) {
+      return header.categories;
+    }
+    // Fallback
+    return DEFAULT_CATEGORIES;
+  }, [header, cmsCategories]);
 
-  // Salvar categorias no localStorage
-  const saveCategories = (newCategories) => {
-    setCategories(newCategories);
-    localStorage.setItem('categories', JSON.stringify(newCategories));
-  };
-
-  // Atualizar ordem das categorias
-  const updateCategoryOrder = (categoryId, newOrder) => {
-    const updatedCategories = categories.map(cat => {
-      if (cat.id === categoryId) {
-        return { ...cat, order: newOrder };
+  // Lista achatada de subcategorias (útil para sugestões de busca)
+  const flatSubcategories = useMemo(() => {
+    const flat = [];
+    categories.forEach(cat => {
+      if (Array.isArray(cat.children)) {
+        cat.children.forEach(child => {
+          flat.push({
+            parentId: cat.id,
+            parentName: cat.name,
+            id: child.id,
+            name: child.name,
+            slug: child.slug,
+            image: cat.image, // opcional: usar imagem da categoria pai
+          });
+        });
       }
-      return cat;
     });
-    
-    // Reordenar todas as categorias
-    updatedCategories.sort((a, b) => a.order - b.order);
-    
-    saveCategories(updatedCategories);
-  };
+    return flat;
+  }, [categories]);
 
-  // Toggle categoria no header
-  const toggleCategoryHeader = (categoryId) => {
-    const updatedCategories = categories.map(cat => {
-      if (cat.id === categoryId) {
-        return { ...cat, showInHeader: !cat.showInHeader };
-      }
-      return cat;
-    });
-    
-    saveCategories(updatedCategories);
-  };
+  // Sugestões baseadas em termo e lista de produtos opcional
+  const getSuggestions = (term = '', products = []) => {
+    const q = term.trim().toLowerCase();
+    if (!q) {
+      return {
+        categories: categories.slice(0, 6),
+        subcategories: flatSubcategories.slice(0, 8),
+        products: products.slice(0, 6),
+      };
+    }
 
-  // Ativar/desativar categoria
-  const toggleCategoryActive = (categoryId) => {
-    const updatedCategories = categories.map(cat => {
-      if (cat.id === categoryId) {
-        return { ...cat, isActive: !cat.isActive };
-      }
-      return cat;
-    });
-    
-    saveCategories(updatedCategories);
-  };
+    const match = (text) => String(text || '').toLowerCase().includes(q);
 
-  // Adicionar nova categoria
-  const addCategory = (categoryData) => {
-    const newCategory = {
-      ...categoryData,
-      id: Date.now(),
-      order: categories.length + 1,
-      productCount: 0
+    const matchedCategories = categories.filter(
+      (c) => match(c.name) || match(c.slug)
+    );
+
+    const matchedSubcategories = flatSubcategories.filter(
+      (s) => match(s.name) || match(s.slug) || match(s.parentName)
+    );
+
+    const matchedProducts = Array.isArray(products)
+      ? products.filter(
+          (p) =>
+            match(p.name) ||
+            match(p.title) ||
+            match(p.category) ||
+            match(p.slug) ||
+            match(p.color) ||
+            match(p.size)
+        )
+      : [];
+
+    return {
+      categories: matchedCategories.slice(0, 6),
+      subcategories: matchedSubcategories.slice(0, 8),
+      products: matchedProducts.slice(0, 6),
     };
-    
-    const updatedCategories = [...categories, newCategory];
-    saveCategories(updatedCategories);
-  };
-
-  // Atualizar categoria
-  const updateCategory = (categoryId, categoryData) => {
-    const updatedCategories = categories.map(cat => {
-      if (cat.id === categoryId) {
-        return { ...cat, ...categoryData };
-      }
-      return cat;
-    });
-    
-    saveCategories(updatedCategories);
-  };
-
-  // Deletar categoria
-  const deleteCategory = (categoryId) => {
-    const updatedCategories = categories.filter(cat => cat.id !== categoryId);
-    saveCategories(updatedCategories);
-  };
-
-  // Obter categorias do header
-  const getHeaderCategories = (maxCategories = 6) => {
-    return categories
-      .filter(cat => cat.showInHeader && cat.isActive)
-      .sort((a, b) => a.order - b.order)
-      .slice(0, maxCategories);
   };
 
   return {
     categories,
-    updateCategoryOrder,
-    toggleCategoryHeader,
-    toggleCategoryActive,
-    addCategory,
-    updateCategory,
-    deleteCategory,
-    getHeaderCategories
+    flatSubcategories,
+    getSuggestions,
   };
-};
+}
+
+// Export default para compatibilidade com imports default existentes
+export default useCategories;

@@ -1,0 +1,235 @@
+/* src/pages/Admin/Content/CMSPage.module.css */
+
+:root {
+  --white-principal: #FFFFFF;
+  --wine-destaque: #722F37;
+  --preto-secundario: #000000;
+  --cinza-claro: #F8F9FA;
+  --cinza-medio: #6C757D;
+  --rosa-suave: #F8E8E9;
+  --dourado-sutil: #D4AF37;
+  --shadow-light: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-medium: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-heavy: 0 8px 32px rgba(0,0,0,0.15);
+  --radius-small: 6px;
+  --radius-medium: 10px;
+  --radius-large: 16px;
+  --transition: all 0.3s ease;
+}
+
+.cmsWrapper {
+  min-height: 100vh;
+  background: var(--cinza-claro);
+  padding: 20px;
+}
+
+/* Header do CMS */
+.cmsHeader {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--wine-destaque);
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pageSubtitle {
+  font-size: 16px;
+  color: var(--cinza-medio);
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.previewBtn {
+  background: var(--cinza-claro);
+  color: var(--preto-secundario);
+  border: 1px solid var(--cinza-medio);
+  border-radius: var(--radius-medium);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.previewBtn:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+  color: var(--wine-destaque);
+}
+
+.saveBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  border-radius: var(--radius-medium);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: var(--shadow-medium);
+}
+
+.saveBtn:hover {
+  background: #5a252b;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-heavy);
+}
+
+/* Tabs Navigation */
+.tabsContainer {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-light);
+}
+
+.tabsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.tab {
+  background: var(--cinza-claro);
+  border: 1px solid transparent;
+  border-radius: var(--radius-medium);
+  padding: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tab:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+}
+
+.tabActive {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-color: var(--wine-destaque);
+}
+
+.tabIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.tabContent {
+  flex: 1;
+}
+
+.tabLabel {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.tabDescription {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.tabActive .tabDescription {
+  opacity: 0.9;
+}
+
+/* Tab Content */
+.tabContent {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: 24px;
+  box-shadow: var(--shadow-light);
+  min-height: 600px;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .cmsWrapper {
+    padding: 16px;
+  }
+
+  .cmsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .tabsList {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .tabsList {
+    grid-template-columns: 1fr;
+  }
+
+  .tab {
+    padding: 12px;
+  }
+
+  .tabContent {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cmsWrapper {
+    padding: 12px;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .previewBtn,
+  .saveBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

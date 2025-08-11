@@ -1,0 +1,558 @@
+/* Adicionando novos estilos ao SettingsPanel.module.css existente */
+
+/* Hero Preview */
+.heroPreview {
+  position: relative;
+  height: 200px;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: white;
+}
+
+.heroContent h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.heroContent p {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+}
+
+.heroButton {
+  background: var(--wine-destaque);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Highlight Preview */
+.highlightPreview {
+  padding: 12px 20px;
+  text-align: center;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Banner List */
+.bannerList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bannerItem {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-medium);
+  padding: 16px;
+  background: var(--white-principal);
+}
+
+.bannerPreview {
+  position: relative;
+  height: 120px;
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.bannerOverlay h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bannerOverlay p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.bannerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bannerActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Product Grid */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.productCard {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-medium);
+  padding: 12px;
+  background: var(--white-principal);
+  position: relative;
+}
+
+.productImage {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.changeProductBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.productCard:hover .changeProductBtn {
+  opacity: 1;
+}
+
+.productInfo {
+  text-align: center;
+}
+
+.productInfo h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+.productInfo p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--wine-destaque);
+  font-weight: 600;
+}
+
+/* Offers List */
+.offersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.offerCard {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-medium);
+  padding: 16px;
+  background: var(--white-principal);
+}
+
+.discountBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--radius-small);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.offerInfo {
+  flex: 1;
+}
+
+.priceInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Category Grid */
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.categoryCard {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  background: var(--white-principal);
+}
+
+.categoryImageContainer {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+}
+
+.categoryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.categoryImageContainer:hover .imageOverlay {
+  opacity: 1;
+}
+
+.changeImageBtn {
+  background: var(--wine-destaque);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.categoryContent {
+  padding: 16px;
+}
+
+.categoryActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Methods List */
+.methodsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.methodCard {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-medium);
+  padding: 16px;
+  background: var(--white-principal);
+}
+
+.methodInfo {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.methodActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Security Options */
+.securityOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.securityBadges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.securityBadge {
+  background: var(--cinza-claro);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-small);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Social Preview */
+.socialPreview {
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  max-width: 400px;
+}
+
+.socialImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.socialContent {
+  padding: 12px;
+}
+
+.socialContent h5 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--preto-secundario);
+}
+
+.socialContent p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--cinza-medio);
+}
+
+.socialContent span {
+  font-size: 12px;
+  color: var(--cinza-medio);
+  text-transform: uppercase;
+}
+
+/* Color Grid */
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.colorItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colorRow {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.colorPreview {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.colorSwatch {
+  flex: 1;
+  height: 60px;
+  border-radius: var(--radius-small);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Typography Preview */
+.typographyPreview {
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-small);
+  padding: 20px;
+  background: var(--cinza-claro);
+}
+
+.typographyPreview h2 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  color: var(--preto-secundario);
+}
+
+.typographyPreview p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--cinza-medio);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  max-width: 800px;
+  max-height: 80vh;
+  width: 90%;
+  overflow: hidden;
+  box-shadow: var(--shadow-heavy);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--preto-secundario);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--cinza-medio);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.closeBtn:hover {
+  background: var(--cinza-claro);
+  color: var(--preto-secundario);
+}
+
+.modalContent {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .productGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .categoryGrid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  
+  .colorGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .bannerItem {
+    padding: 12px;
+  }
+  
+  .offerCard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .methodInfo {
+    grid-template-columns: 1fr;
+  }
+  
+  .priceInputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .colorRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .modalContent {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .productGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+  
+  .categoryGrid {
+    grid-template-columns: 1fr;
+  }
+}

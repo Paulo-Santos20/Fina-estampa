@@ -1,80 +1,64 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import { CMSProvider } from './contexts/CMSContext.jsx';
-import { SettingsProvider } from './contexts/SettingsContext.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
+import { CMSProvider } from './contexts/CMSContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
+import Layout from './components/common/Layout/Layout.jsx';
+import ProtectedRoute from './components/common/ProtectedRoute/ProtectedRoute.jsx';
 
-import Header from './components/common/Header/Header.jsx';
-import Footer from './components/common/Footer/Footer.jsx';
-
-// Páginas principais
+// Páginas
 import Home from './pages/Home/Home.jsx';
 import Catalog from './pages/Catalog/Catalog.jsx';
 import Product from './pages/Product/Product.jsx';
 import Cart from './pages/Cart/Cart.jsx';
-import Checkout from './pages/Checkout/Checkout.jsx';
-
-// Autenticação
 import Login from './pages/Auth/Login.jsx';
 import Register from './pages/Auth/Register.jsx';
-
-// Dashboard
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
-
-// CMS
-import CMSPage from './pages/Admin/Content/CMSPage.jsx';
-
-// Not Found
 import NotFound from './pages/NotFound/NotFound.jsx';
 
 // Estilos globais
 import './styles/globals.css';
+import './styles/variables.css';
 
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
-      <CMSProvider>
-        <SettingsProvider>
-          <AuthProvider>
-            <CartProvider>
-              <div className="app">
-                <Header />
-                
-                <main className="main-content">
-                  <Routes>
-                    {/* Páginas principais */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/catalogo" element={<Catalog />} />
-                    <Route path="/categoria/:categorySlug" element={<Catalog />} />
-                    <Route path="/busca" element={<Catalog />} />
-                    <Route path="/produto/:id" element={<Product />} />
-                    <Route path="/carrinho" element={<Cart />} />
-                    <Route path="/finalizar" element={<Checkout />} />
-
-                    {/* Autenticação */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/cadastro" element={<Register />} />
-                    <Route path="/register" element={<Register />} />
-
-                    {/* Admin/Dashboard */}
-                    <Route path="/admin/cms" element={<CMSPage />} />
-
-                    {/* 404 */}
-                    <Route path="*" element={<NotFound />} />
-                                    </Routes>
-                </main>
-
-                <Footer />
-              </div>
-            </CartProvider>
-          </AuthProvider>
-        </SettingsProvider>
-      </CMSProvider>
+      <AuthProvider>
+        <CMSProvider>
+          <CartProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/catalog" element={<Catalog />} />
+                <Route path="/product/:id" element={<Product />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/*" 
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </CartProvider>
+        </CMSProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

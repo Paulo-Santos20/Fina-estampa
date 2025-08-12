@@ -1,15 +1,6 @@
 // src/contexts/CMSContext.jsx
 import React, { createContext, useContext, useMemo, useState, useCallback } from 'react';
 
-/**
- * Este CMSContext provê:
- * - headerTopAnnouncements: anúncios do topo (controlado pelo admin)
- * - headerCategories: categorias e subcategorias do header (controlado pelo admin)
- * - headerSettings: configs do header (ex.: mostrar botão "Todas as categorias")
- * - searchSettings: controla sugestões relacionadas (exibidas abaixo da barra de pesquisa)
- * Em produção, você pode substituir os dados por fetch do seu backend CMS (services/cms.js).
- */
-
 const defaultCategories = [
   {
     id: 'vestidos',
@@ -59,40 +50,20 @@ const defaultCategories = [
       { id: 'sapatos', name: 'Sapatos', slug: 'sapatos' },
     ],
   },
-  {
-    id: 'colecoes',
-    name: 'Coleções Especiais',
-    slug: 'colecoes-especiais',
-    children: [
-      { id: 'inverno', name: 'Inverno', slug: 'colecao-inverno' },
-      { id: 'verao', name: 'Verão', slug: 'colecao-verao' },
-    ],
-  },
 ];
 
-const defaultAnnouncements = [
-  {
-    id: 'an1',
-    text: 'Frete grátis acima de R$ 299 para Sul e Sudeste',
-    link: null,
-  },
-  {
-    id: 'an2',
-    text: '10% OFF na primeira compra com o cupom BEMVINDA',
-    link: null,
-  },
-  {
-    id: 'an3',
-    text: 'Troca fácil em até 30 dias',
-    link: null,
-  },
-];
+// UM ÚNICO anúncio controlado pelo CMS
+const defaultAnnouncement = {
+  id: 'main-announcement',
+  text: 'Frete grátis acima de R$ 199 com o cupom: FINAFRETE',
+  enabled: true
+};
 
 const CMSContext = createContext(null);
 
 export const CMSProvider = ({ children }) => {
   const [headerCategories, setHeaderCategories] = useState(defaultCategories);
-  const [headerTopAnnouncements, setHeaderTopAnnouncements] = useState(defaultAnnouncements);
+  const [headerTopAnnouncements, setHeaderTopAnnouncements] = useState([defaultAnnouncement]);
   const [headerSettings, setHeaderSettings] = useState({
     showAllCategoriesButton: true,
     showTopAnnouncements: true,
@@ -105,9 +76,12 @@ export const CMSProvider = ({ children }) => {
   const updateHeaderCategories = useCallback((cats) => {
     setHeaderCategories(Array.isArray(cats) ? cats : []);
   }, []);
-  const updateAnnouncements = useCallback((items) => {
-    setHeaderTopAnnouncements(Array.isArray(items) ? items : []);
+
+  const updateAnnouncements = useCallback((announcement) => {
+    // Sempre mantém apenas UM anúncio
+    setHeaderTopAnnouncements([announcement]);
   }, []);
+
   const updateHeaderSettings = useCallback((patch) => {
     setHeaderSettings((prev) => ({ ...prev, ...(patch || {}) }));
   }, []);

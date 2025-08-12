@@ -1,198 +1,173 @@
-import React, { useState, useCallback } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaSignInAlt } from 'react-icons/fa';
-import { useAuth } from '../../contexts/AuthContext.jsx'; // 💥 CORREÇÃO AQUI: Importa useAuth do AuthContext.jsx
-import Layout from '../../components/common/Layout/Layout';
-import styles from './Login.module.css'; // Importa o módulo CSS
+// src/pages/Auth/Login.jsx
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.jsx';
+import styles from './Login.module.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Estado para o loading do formulário
-  const [errors, setErrors] = useState({}); // Usar objeto para erros específicos e gerais
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const { login, isLoading: authLoading } = useAuth(); // Usar isLoading do useAuth
-  const navigate = useNavigate();
-  const location = useLocation();
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
-  const from = location.state?.from?.pathname || '/dashboard';
-
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Limpar erro específico do campo ao digitar
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-    // Limpar erro geral ao digitar
-    if (errors.general) {
-      setErrors(prev => ({
-        ...prev,
-        general: ''
-      }));
-    }
-  }, [errors]);
-
-  const toggleShowPassword = useCallback(() => {
-    setShowPassword(prev => !prev);
-  }, []);
-
-  const validateForm = useCallback(() => {
-    const newErrors = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email inválido';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Senha é obrigatória';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [formData]);
-
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true); // Ativar loading local
-    setErrors({}); // Limpar erros anteriores
+    setLoading(true);
+    setError('');
 
     try {
-      const result = await login(formData);
-      
-      if (result.success) {
-        navigate(from, { replace: true });
-      } else {
-        setErrors({ general: result.error || 'Email ou senha incorretos' });
-      }
-    } catch (error) {
-      console.error('Erro no login:', error);
-      setErrors({ general: 'Erro interno do servidor. Tente novamente.' });
+      await login(formData.email, formData.password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Email ou senha incorretos');
     } finally {
-      setIsLoading(false); // Desativar loading local
+      setLoading(false);
     }
-  }, [formData, validateForm, login, from, navigate]);
+  };
 
-  const isFormLoading = isLoading || authLoading; // Combinar loadings
+  // Login automático como admin
+  const handleAdminLogin = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      await login('admin@finaestampa.com', 'admin123');
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Erro ao fazer login como admin');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Login automático como usuário
+  const handleUserLogin = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      await login('usuario@finaestampa.com', 'user123');
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Erro ao fazer login como usuário');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Layout>
-      <div className={styles.loginPage}>
-        <div className={styles.loginContainer}>
-          <div className={styles.loginCard}>
-            <div className={styles.loginHeader}>
-              <h1 className={styles.loginTitle}>Entrar</h1>
-              <p className={styles.loginSubtitle}>
-                Acesse sua conta na Fina Estampa
-              </p>
+    <div className={styles.loginPage}>
+      <div className={styles.loginContainer}>
+        <div className={styles.loginCard}>
+          <div className={styles.loginHeader}>
+            <h1 className={styles.loginTitle}>Entrar na sua conta</h1>
+            <p className={styles.loginSubtitle}>
+              Bem-vinda de volta à Fina Estampa
+            </p>
+          </div>
+
+          {error && (
+            <div className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className={styles.loginForm}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email" className={styles.label}>
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="seu@email.com"
+                required
+              />
             </div>
 
-            {errors.general && (
-              <div className={styles.errorMessage}>
-                {errors.general}
-              </div>
-            )}
+            <div className={styles.formGroup}>
+              <label htmlFor="password" className={styles.label}>
+                Senha
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="Sua senha"
+                required
+              />
+            </div>
 
-            <form onSubmit={handleSubmit} className={styles.loginForm}>
-              <div className={styles.inputGroup}>
-                <label htmlFor="email" className={styles.inputLabel}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
-                  disabled={isFormLoading}
-                  required
-                />
-                {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label htmlFor="password" className={styles.inputLabel}>
-                  Senha
-                </label>
-                <div className={styles.inputWithIcon}>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-                    disabled={isFormLoading}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={toggleShowPassword}
-                    className={styles.passwordToggleButton}
-                    disabled={isFormLoading}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-                {errors.password && <span className={styles.fieldError}>{errors.password}</span>}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isFormLoading}
-                className={styles.submitButton}
-              >
-                {isFormLoading ? (
-                  'Entrando...'
-                ) : (
-                  <>
-                    <FaSignInAlt />
-                    Entrar
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className={styles.loginFooter}>
-              <p className={styles.signupPrompt}>
-                Ainda não tem uma conta?
-              </p>
-              <Link
-                to="/register"
-                className={styles.signupLink}
-              >
-                Criar conta
+            <div className={styles.formOptions}>
+              <label className={styles.checkbox}>
+                <input type="checkbox" />
+                <span className={styles.checkmark}></span>
+                Lembrar de mim
+              </label>
+              <Link to="/forgot-password" className={styles.forgotLink}>
+                Esqueceu a senha?
               </Link>
             </div>
 
-            {/* Credenciais de teste */}
-            <div className={styles.testCredentials}>
-              <strong>Credenciais de teste:</strong><br />
-              <strong>Admin:</strong> admin@finaestampa.com / admin123<br />
-              <strong>Cliente:</strong> maria@email.com / 123456
+            <button
+              type="submit"
+              className={styles.loginButton}
+              disabled={loading}
+            >
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </form>
+
+          {/* Botões de login automático para desenvolvimento */}
+          <div className={styles.devButtons}>
+            <h3 className={styles.devTitle}>Acesso rápido (desenvolvimento)</h3>
+            <div className={styles.devButtonsRow}>
+              <button
+                onClick={handleAdminLogin}
+                className={styles.devButton}
+                disabled={loading}
+              >
+                🔧 Entrar como Admin
+              </button>
+              <button
+                onClick={handleUserLogin}
+                className={styles.devButton}
+                disabled={loading}
+              >
+                👤 Entrar como Usuário
+              </button>
             </div>
+          </div>
+
+          <div className={styles.loginFooter}>
+            <p className={styles.signupText}>
+              Não tem uma conta?{' '}
+              <Link to="/register" className={styles.signupLink}>
+                Criar conta
+              </Link>
+            </p>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

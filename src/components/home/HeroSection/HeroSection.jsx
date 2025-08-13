@@ -1,3 +1,4 @@
+// src/components/sections/HeroSection/HeroSection.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -8,51 +9,19 @@ import {
   FaShoppingBag
 } from 'react-icons/fa';
 import styles from './HeroSection.module.css';
+import { useCMS } from '../../../contexts/CMSContext.jsx';
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Slides do hero
-  const heroSlides = [
-    {
-      id: 1,
-      title: "Nova Coleção",
-      subtitle: "Primavera/Verão 2024",
-      description: "Descubra as últimas tendências em moda feminina com peças exclusivas que destacam sua elegância natural.",
-      ctaText: "Explorar Coleção",
-      ctaLink: "/categoria/novidades",
-      backgroundImage: generateHeroBackground("Coleção Primavera", "#722F37"),
-      badge: "Novo",
-      offer: "Até 30% OFF"
-    },
-    {
-      id: 2,
-      title: "Vestidos Elegantes",
-      subtitle: "Para Todas as Ocasiões",
-      description: "Do casual ao formal, encontre o vestido perfeito para cada momento especial da sua vida.",
-      ctaText: "Ver Vestidos",
-      ctaLink: "/categoria/vestidos",
-      backgroundImage: generateHeroBackground("Vestidos Elegantes", "#D4AF37"),
-      badge: "Destaque",
-      offer: "Frete Grátis"
-    },
-    {
-      id: 3,
-      title: "Estilo Profissional",
-      subtitle: "Confiança & Sofisticação",
-      description: "Peças versáteis que combinam conforto e elegância para a mulher moderna e determinada.",
-      ctaText: "Shop Now",
-      ctaLink: "/categoria/profissional",
-      backgroundImage: generateHeroBackground("Estilo Profissional", "#000000"),
-      badge: "Trending",
-      offer: "2x sem juros"
-    }
-  ];
+  // Obter slides do CMS
+  const { getActiveHeroSlides } = useCMS();
+  const heroSlides = getActiveHeroSlides();
 
   // Auto-play do slider
   useEffect(() => {
-    if (isAutoPlaying) {
+    if (isAutoPlaying && heroSlides.length > 1) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
       }, 5000);
@@ -60,7 +29,14 @@ const HeroSection = () => {
     }
   }, [isAutoPlaying, heroSlides.length]);
 
-  // Função para gerar background SVG
+  // Reset do slide atual se não existir mais
+  useEffect(() => {
+    if (currentSlide >= heroSlides.length && heroSlides.length > 0) {
+      setCurrentSlide(0);
+    }
+  }, [heroSlides.length, currentSlide]);
+
+  // Função para gerar background SVG (fallback se não houver imagem)
   function generateHeroBackground(theme, primaryColor) {
     return `data:image/svg+xml;base64,${btoa(`
       <svg width="1920" height="800" viewBox="0 0 1920 800" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -130,14 +106,23 @@ const HeroSection = () => {
     `)}`;
   }
 
-  const currentSlideData = heroSlides[currentSlide];
+  // Se não há slides, não renderizar nada
+  if (!heroSlides || heroSlides.length === 0) {
+    return null;
+  }
+
+  const currentSlideData = heroSlides[currentSlide] || heroSlides[0];
+
+  // Determinar imagem de background
+  const backgroundImage = currentSlideData.backgroundImage || 
+    generateHeroBackground(currentSlideData.title, "#722F37");
 
   return (
     <section className={styles.heroSection}>
       {/* Background Image */}
       <div 
         className={styles.heroBackground}
-        style={{ backgroundImage: `url(${currentSlideData.backgroundImage})` }}
+        style={{ backgroundImage: `url(${backgroundImage})` }}
       />
       
       {/* Overlay */}
@@ -215,7 +200,7 @@ const HeroSection = () => {
               <div className={styles.productCard}>
                 <div className={styles.productImage}>
                   <img 
-                    src={generateHeroBackground("Produto Destaque", "#722F37")}
+                    src={currentSlideData.backgroundImage || generateHeroBackground("Produto Destaque", "#722F37")}
                     alt="Produto em Destaque"
                     loading="lazy"
                   />
@@ -250,50 +235,52 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Slider Controls */}
-      <div className={styles.sliderControls}>
-        {/* Dots */}
-        <div className={styles.sliderDots}>
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ''}`}
+      {/* Slider Controls - só mostrar se há mais de 1 slide */}
+      {heroSlides.length > 1 && (
+        <div className={styles.sliderControls}>
+          {/* Dots */}
+          <div className={styles.sliderDots}>
+            {heroSlides.map((_, index) => (
+              <button
+                key={index}
+                className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ''}`}
+                onClick={() => {
+                  setCurrentSlide(index);
+                  setIsAutoPlaying(false);
+                  setTimeout(() => setIsAutoPlaying(true), 3000);
+                }}
+                aria-label={`Ir para slide ${index + 1}`}
+              />
+            ))}
+          </div>
+          
+          {/* Navigation Arrows */}
+          <div className={styles.sliderArrows}>
+            <button 
+              className={styles.prevArrow}
               onClick={() => {
-                setCurrentSlide(index);
+                setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
                 setIsAutoPlaying(false);
                 setTimeout(() => setIsAutoPlaying(true), 3000);
               }}
-              aria-label={`Ir para slide ${index + 1}`}
-            />
-          ))}
+              aria-label="Slide anterior"
+            >
+              ←
+            </button>
+            <button 
+              className={styles.nextArrow}
+              onClick={() => {
+                setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+                setIsAutoPlaying(false);
+                setTimeout(() => setIsAutoPlaying(true), 3000);
+              }}
+              aria-label="Próximo slide"
+            >
+              →
+            </button>
+          </div>
         </div>
-        
-        {/* Navigation Arrows */}
-        <div className={styles.sliderArrows}>
-          <button 
-            className={styles.prevArrow}
-            onClick={() => {
-              setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-              setIsAutoPlaying(false);
-              setTimeout(() => setIsAutoPlaying(true), 3000);
-            }}
-            aria-label="Slide anterior"
-          >
-            ←
-          </button>
-          <button 
-            className={styles.nextArrow}
-            onClick={() => {
-              setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-              setIsAutoPlaying(false);
-              setTimeout(() => setIsAutoPlaying(true), 3000);
-            }}
-            aria-label="Próximo slide"
-          >
-            →
-          </button>
-        </div>
-      </div>
+      )}
       
       {/* Scroll Indicator */}
       <div className={styles.scrollIndicator}>

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './CMSPage.module.css';
+import { useCMS } from '../../../contexts/CMSContext.jsx';
 import {
   FaGlobe,
   FaSave,
@@ -34,10 +35,13 @@ import {
   FaShoppingBag,
   FaUser,
   FaMoneyBillWave,
-  FaBarcode
+  FaBarcode,
+  FaBars,
+  FaSort,
+  FaGripVertical
 } from 'react-icons/fa';
 
-// Dados simulados (fallback) — em produção, substitua por hooks/serviços reais
+// Dados simulados (fallback)
 const SAMPLE_PRODUCTS = [
   { id: 'p1', name: 'Blusa Social Elegante', price: 89.90, image: 'https://picsum.photos/seed/blusa1/400/480', category: 'Blusas & Camisas', active: true },
   { id: 'p2', name: 'Vestido Festa Velvet', price: 189.90, image: 'https://picsum.photos/seed/vestido2/400/480', category: 'Vestidos', active: true },
@@ -54,14 +58,18 @@ const SAMPLE_PRODUCTS = [
 ];
 
 const SAMPLE_CATEGORIES = [
-  { id: 'c1', name: 'Vestidos' },
-  { id: 'c2', name: 'Blusas & Camisas' },
-  { id: 'c3', name: 'Calças & Shorts' },
-  { id: 'c4', name: 'Saias & Macacões' },
-  { id: 'c5', name: 'Acessórios' },
-  { id: 'c6', name: 'Coleções Especiais' },
-  { id: 'c7', name: 'Trabalho' },
-  { id: 'c8', name: 'Festa' }
+  { id: 'c1', name: 'Vestidos', slug: 'vestidos' },
+  { id: 'c2', name: 'Blusas & Camisas', slug: 'blusas-camisas' },
+  { id: 'c3', name: 'Calças & Shorts', slug: 'calcas-shorts' },
+  { id: 'c4', name: 'Saias & Macacões', slug: 'saias-macacoes' },
+  { id: 'c5', name: 'Acessórios', slug: 'acessorios' },
+  { id: 'c6', name: 'Coleções Especiais', slug: 'colecoes-especiais' },
+  { id: 'c7', name: 'Trabalho', slug: 'trabalho' },
+  { id: 'c8', name: 'Festa', slug: 'festa' },
+  { id: 'c9', name: 'Casual', slug: 'casual' },
+  { id: 'c10', name: 'Inverno', slug: 'inverno' },
+  { id: 'c11', name: 'Verão', slug: 'verao' },
+  { id: 'c12', name: 'Primavera', slug: 'primavera' }
 ];
 
 const formatPrice = (n) =>
@@ -71,93 +79,107 @@ const formatPrice = (n) =>
 
 const CMSPage = () => {
   // Abas
-  const [activeTab, setActiveTab] = useState('banners');
+  const [activeTab, setActiveTab] = useState('header');
 
   // Dados base (em produção: buscar via API/contexts)
   const [allProducts, setAllProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
 
-  // Banners
-  const [banners, setBanners] = useState([
-    {
-      id: 'b1',
-      title: 'Coleção Inverno 2025',
-      subtitle: 'Elegância e sofisticação para dias frios',
-      link: '/catalog?colecao=inverno-2025',
-      image: 'https://picsum.photos/seed/banner1/1200/450',
-      active: true,
-      order: 1
-    },
-    {
-      id: 'b2',
-      title: 'Vestidos Festa',
-      subtitle: 'Brilhe com glamour em qualquer ocasião',
-      link: '/catalog?categoria=vestidos-festa',
-      image: 'https://picsum.photos/seed/banner2/1200/450',
-      active: true,
-      order: 2
-    },
-    {
-      id: 'b3',
-      title: 'Acessórios Exclusivos',
-      subtitle: 'Detalhes que transformam seu look',
-      link: '/catalog?categoria=acessorios',
-      image: 'https://picsum.photos/seed/banner3/1200/450',
-      active: false,
-      order: 3
-    }
-  ]);
+  // === USAR DADOS DO CONTEXTO ===
+  const {
+    headerSettings: contextHeaderSettings,
+    setHeaderSettings: setContextHeaderSettings,
+    headerCategories: contextHeaderCategories,
+    setHeaderCategories: setContextHeaderCategories,
+    banners: contextBanners,
+    setBanners: setContextBanners,
+    contact: contextContact,
+    setContact: setContextContact,
+    payment: contextPayment,
+    setPayment: setContextPayment,
+    saveAllData
+  } = useCMS();
 
-  // Destaques (produtos em destaque)
+  // Estados locais que sincronizam com o contexto
+  const [headerSettings, setHeaderSettings] = useState(contextHeaderSettings);
+  const [headerCategories, setHeaderCategories] = useState(contextHeaderCategories);
+  const [banners, setBanners] = useState(contextBanners);
+  const [contact, setContact] = useState(contextContact);
+  const [payment, setPayment] = useState(contextPayment);
+
+  // Estados que ainda não estão no contexto (podem ser adicionados depois)
   const [featuredProductIds, setFeaturedProductIds] = useState(['p2', 'p1', 'p3', 'p4']);
-
-  // Categorias iniciais
   const [homepageCategoryIds, setHomepageCategoryIds] = useState(['c1', 'c2', 'c5', 'c8']);
-
-  // Novidades (lista de produtos)
   const [newArrivalIds, setNewArrivalIds] = useState(['p10', 'p6', 'p5']);
-
-  // Ofertas especiais
   const [specialOffers, setSpecialOffers] = useState([
     { id: 'p2', originalPrice: 219.90, salePrice: 189.90, active: true },
     { id: 'p7', originalPrice: 169.90, salePrice: 149.90, active: true }
   ]);
 
-  // Contato
-  const [contact, setContact] = useState({
-    phone: '+55 (11) 3333-2222',
-    whatsapp: '+55 (11) 99999-9999',
-    email: 'contato@finaestampa.com.br',
-    address: 'Rua da Moda, 123 - São Paulo/SP',
-    hours: 'Segunda a Sexta, 09:00 - 18:00',
-    instagram: 'https://instagram.com/finaestampa',
-    facebook: 'https://facebook.com/finaestampa'
-  });
-
-  // Pagamento
-  const [payment, setPayment] = useState({
-    pixEnabled: true,
-    pixKey: 'finaestampa@pix.com.br',
-    cardEnabled: true,
-    boletoEnabled: true,
-    shippingNote: 'Frete grátis para pedidos acima de R$ 299,90'
-  });
-
   // Modais gerais
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [modalPurpose, setModalPurpose] = useState(null); // 'featured' | 'newArrivals' | 'specialOffers'
-  const [modalIndex, setModalIndex] = useState(null); // índice do item a trocar
+  const [showHeaderCategoryModal, setShowHeaderCategoryModal] = useState(false);
+  const [modalPurpose, setModalPurpose] = useState(null);
+  const [modalIndex, setModalIndex] = useState(null);
   const [productSearch, setProductSearch] = useState('');
   const [categorySearch, setCategorySearch] = useState('');
 
   // Upload refs
   const bannerFileRefs = useRef({});
+  const logoFileRef = useRef(null);
 
-  // Carrega dados simulados na montagem
+  // === SINCRONIZAÇÃO COM O CONTEXTO ===
+  
+  // Sincronizar estados locais com o contexto quando o contexto muda
+  useEffect(() => {
+    setHeaderSettings(contextHeaderSettings);
+  }, [contextHeaderSettings]);
+
+  useEffect(() => {
+    setHeaderCategories(contextHeaderCategories);
+  }, [contextHeaderCategories]);
+
+  useEffect(() => {
+    setBanners(contextBanners);
+  }, [contextBanners]);
+
+  useEffect(() => {
+    setContact(contextContact);
+  }, [contextContact]);
+
+  useEffect(() => {
+    setPayment(contextPayment);
+  }, [contextPayment]);
+
+  // Carregar dados do localStorage na montagem
   useEffect(() => {
     setAllProducts(SAMPLE_PRODUCTS);
     setAllCategories(SAMPLE_CATEGORIES);
+
+    // Carregar dados salvos do localStorage
+    try {
+      const savedData = localStorage.getItem('finaEstampaCMS');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        
+        // Restaurar estados que não estão no contexto ainda
+        if (parsedData.featuredProductIds) {
+          setFeaturedProductIds(parsedData.featuredProductIds);
+        }
+        if (parsedData.homepageCategoryIds) {
+          setHomepageCategoryIds(parsedData.homepageCategoryIds);
+        }
+        if (parsedData.newArrivalIds) {
+          setNewArrivalIds(parsedData.newArrivalIds);
+        }
+        if (parsedData.specialOffers) {
+          setSpecialOffers(parsedData.specialOffers);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados do CMS:', error);
+    }
   }, []);
 
   // Computados
@@ -193,11 +215,83 @@ const CMSPage = () => {
     [specialOffers, allProducts]
   );
 
-  // Handlers de Banners
+  // === HANDLERS PARA HEADER (ATUALIZADOS PARA USAR CONTEXTO) ===
+
+  // Logo handlers
+  const handleLogoUpload = (file) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const newSettings = { 
+      ...headerSettings, 
+      logoType: 'image',
+      logoImage: url 
+    };
+    setHeaderSettings(newSettings);
+    setContextHeaderSettings(newSettings);
+  };
+
+  const handleLogoChange = (field, value) => {
+    const newSettings = { ...headerSettings, [field]: value };
+    setHeaderSettings(newSettings);
+    setContextHeaderSettings(newSettings);
+  };
+
+  // Header categories handlers
+  const openHeaderCategoryPicker = () => {
+    setCategorySearch('');
+    setShowHeaderCategoryModal(true);
+  };
+
+  const handlePickHeaderCategory = (category) => {
+    const nextOrder = Math.max(...headerCategories.map(c => c.order), 0) + 1;
+    const newCategory = {
+      ...category,
+      order: nextOrder,
+      active: true
+    };
+    const newCategories = [...headerCategories, newCategory];
+    setHeaderCategories(newCategories);
+    setContextHeaderCategories(newCategories);
+    setShowHeaderCategoryModal(false);
+  };
+
+  const removeHeaderCategory = (id) => {
+    const newCategories = headerCategories.filter(c => c.id !== id);
+    setHeaderCategories(newCategories);
+    setContextHeaderCategories(newCategories);
+  };
+
+  const moveHeaderCategory = (id, direction) => {
+    const sorted = [...headerCategories].sort((a, b) => a.order - b.order);
+    const index = sorted.findIndex(c => c.id === id);
+    
+    if (index < 0) return;
+    
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= sorted.length) return;
+    
+    // Trocar as ordens
+    const temp = sorted[index].order;
+    sorted[index].order = sorted[swapIndex].order;
+    sorted[swapIndex].order = temp;
+    
+    setHeaderCategories(sorted);
+    setContextHeaderCategories(sorted);
+  };
+
+  const toggleHeaderCategory = (id) => {
+    const newCategories = headerCategories.map(c => 
+      c.id === id ? { ...c, active: !c.active } : c
+    );
+    setHeaderCategories(newCategories);
+    setContextHeaderCategories(newCategories);
+  };
+
+  // Handlers de Banners (ATUALIZADOS PARA USAR CONTEXTO)
   const handleAddBanner = () => {
     const nextOrder = (banners[banners.length - 1]?.order || 0) + 1;
-    setBanners(prev => ([
-      ...prev,
+    const newBanners = [
+      ...banners,
       {
         id: `b${Date.now()}`,
         title: 'Novo Banner',
@@ -207,35 +301,56 @@ const CMSPage = () => {
         active: true,
         order: nextOrder
       }
-    ]));
+    ];
+    setBanners(newBanners);
+    setContextBanners(newBanners);
   };
 
   const handleRemoveBanner = (id) => {
-    setBanners(prev => prev.filter(b => b.id !== id));
+    const newBanners = banners.filter(b => b.id !== id);
+    setBanners(newBanners);
+    setContextBanners(newBanners);
   };
 
   const handleMoveBanner = (id, dir) => {
-    setBanners(prev => {
-      const ordered = [...prev].sort((a, b) => a.order - b.order);
-      const idx = ordered.findIndex(b => b.id === id);
-      if (idx < 0) return prev;
-      const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
-      if (swapIdx < 0 || swapIdx >= ordered.length) return prev;
-      const tmp = ordered[idx].order;
-      ordered[idx].order = ordered[swapIdx].order;
-      ordered[swapIdx].order = tmp;
-      return ordered;
-    });
+    const ordered = [...banners].sort((a, b) => a.order - b.order);
+    const idx = ordered.findIndex(b => b.id === id);
+    if (idx < 0) return;
+    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= ordered.length) return;
+    const tmp = ordered[idx].order;
+    ordered[idx].order = ordered[swapIdx].order;
+    ordered[swapIdx].order = tmp;
+    setBanners(ordered);
+    setContextBanners(ordered);
   };
 
   const handleBannerChange = (id, field, value) => {
-    setBanners(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b));
+    const newBanners = banners.map(b => b.id === id ? { ...b, [field]: value } : b);
+    setBanners(newBanners);
+    setContextBanners(newBanners);
   };
 
   const handleBannerUpload = (id, file) => {
     if (!file) return;
     const url = URL.createObjectURL(file);
-    setBanners(prev => prev.map(b => b.id === id ? { ...b, image: url } : b));
+    const newBanners = banners.map(b => b.id === id ? { ...b, image: url } : b);
+    setBanners(newBanners);
+    setContextBanners(newBanners);
+  };
+
+  // Handlers de Contato (ATUALIZADOS PARA USAR CONTEXTO)
+  const handleContactChange = (field, value) => {
+    const newContact = { ...contact, [field]: value };
+    setContact(newContact);
+    setContextContact(newContact);
+  };
+
+  // Handlers de Pagamento (ATUALIZADOS PARA USAR CONTEXTO)
+  const handlePaymentChange = (field, value) => {
+    const newPayment = { ...payment, [field]: value };
+    setPayment(newPayment);
+    setContextPayment(newPayment);
   };
 
   // Handlers de Destaques
@@ -251,7 +366,6 @@ const CMSPage = () => {
       setFeaturedProductIds(prev => {
         const next = [...prev];
         if (modalIndex === null || modalIndex === undefined) {
-          // adicionar no final se não há index
           if (!next.includes(product.id)) next.push(product.id);
         } else {
           next[modalIndex] = product.id;
@@ -315,9 +429,17 @@ const CMSPage = () => {
     return allCategories.filter(c => c.name.toLowerCase().includes(q));
   }, [categorySearch, allCategories]);
 
-  // Save (mock)
+  // Categorias disponíveis para adicionar no header
+  const availableHeaderCategories = useMemo(() => {
+    const usedIds = headerCategories.map(c => c.id);
+    return allCategories.filter(c => !usedIds.includes(c.id));
+  }, [allCategories, headerCategories]);
+
+  // Save (MELHORADO PARA SALVAR TUDO)
   const handleSave = () => {
     const payload = {
+      headerSettings,
+      headerCategories,
       banners,
       featuredProductIds,
       homepageCategoryIds,
@@ -326,11 +448,363 @@ const CMSPage = () => {
       contact,
       payment
     };
-    console.log('CMS salvo:', payload);
-    alert('Conteúdo salvo com sucesso!');
+    
+    console.log('Salvando dados do CMS:', payload);
+    
+    // Salvar no contexto
+    const success = saveAllData(payload);
+    
+    // Salvar também no localStorage diretamente para garantir persistência
+    try {
+      localStorage.setItem('finaEstampaCMS', JSON.stringify(payload));
+    } catch (error) {
+      console.error('Erro ao salvar no localStorage:', error);
+    }
+    
+    if (success) {
+      alert('Conteúdo salvo com sucesso! As mudanças já estão visíveis no site.');
+    } else {
+      alert('Erro ao salvar conteúdo. Tente novamente.');
+    }
   };
 
-  // UI de Banners
+  // === UI DO HEADER ===
+  const renderHeader = () => (
+    <div className={styles.sectionCard}>
+      {/* Logo Section */}
+      <div className={styles.headerSection}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaImage /> Logo da Loja
+          </div>
+        </div>
+
+        <div className={styles.logoConfig}>
+          <div className={styles.logoTypeSelector}>
+            <label className={styles.radioLabel}>
+              <input
+                type="radio"
+                name="logoType"
+                value="text"
+                checked={headerSettings.logoType === 'text'}
+                onChange={(e) => handleLogoChange('logoType', e.target.value)}
+              />
+              <span className={styles.radioText}>Texto</span>
+            </label>
+            <label className={styles.radioLabel}>
+              <input
+                type="radio"
+                name="logoType"
+                value="image"
+                checked={headerSettings.logoType === 'image'}
+                onChange={(e) => handleLogoChange('logoType', e.target.value)}
+              />
+              <span className={styles.radioText}>Upload de Imagem</span>
+            </label>
+            <label className={styles.radioLabel}>
+              <input
+                type="radio"
+                name="logoType"
+                value="url"
+                checked={headerSettings.logoType === 'url'}
+                onChange={(e) => handleLogoChange('logoType', e.target.value)}
+              />
+              <span className={styles.radioText}>URL da Imagem</span>
+            </label>
+          </div>
+
+          <div className={styles.logoConfigContent}>
+            {headerSettings.logoType === 'text' && (
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>Texto do Logo</label>
+                <input
+                  className={styles.input}
+                  value={headerSettings.logoText}
+                  onChange={(e) => handleLogoChange('logoText', e.target.value)}
+                  placeholder="Ex: Fina Estampa"
+                />
+              </div>
+            )}
+
+            {headerSettings.logoType === 'image' && (
+              <div className={styles.logoUploadSection}>
+                <div className={styles.logoPreview}>
+                  {headerSettings.logoImage ? (
+                    <img src={headerSettings.logoImage} alt="Logo" />
+                  ) : (
+                    <div className={styles.logoPlaceholder}>
+                      <FaImage />
+                      <span>Nenhuma imagem</span>
+                    </div>
+                  )}
+                </div>
+                <button
+                  className={styles.uploadButton}
+                  onClick={() => logoFileRef.current?.click()}
+                  type="button"
+                >
+                  <FaUpload /> Enviar Logo
+                </button>
+                <input
+                  ref={logoFileRef}
+                  type="file"
+                  accept="image/*"
+                  className={styles.hiddenInput}
+                  onChange={(e) => handleLogoUpload(e.target.files[0])}
+                />
+              </div>
+            )}
+
+            {headerSettings.logoType === 'url' && (
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>URL da Imagem</label>
+                <input
+                  className={styles.input}
+                  value={headerSettings.logoUrl}
+                  onChange={(e) => handleLogoChange('logoUrl', e.target.value)}
+                  placeholder="https://exemplo.com/logo.png"
+                />
+              </div>
+            )}
+
+            {(headerSettings.logoType === 'image' || headerSettings.logoType === 'url') && (
+              <div className={styles.logoSizeConfig}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}>Largura (px)</label>
+                  <input
+                    type="number"
+                    className={styles.input}
+                    value={headerSettings.logoWidth}
+                    onChange={(e) => handleLogoChange('logoWidth', parseInt(e.target.value) || 180)}
+                    min="50"
+                    max="400"
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}>Altura (px)</label>
+                  <input
+                    type="number"
+                    className={styles.input}
+                    value={headerSettings.logoHeight}
+                    onChange={(e) => handleLogoChange('logoHeight', parseInt(e.target.value) || 40)}
+                    min="20"
+                    max="200"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Preview do Logo */}
+        <div className={styles.previewCard}>
+          <div className={styles.previewTitle}><FaEye /> Pré-visualização</div>
+          <div className={styles.logoPreviewContainer}>
+            {headerSettings.logoType === 'text' ? (
+              <div className={styles.logoTextPreview}>
+                <span className={styles.logoMain}>{headerSettings.logoText?.split(' ')[0] || 'Fina'}</span>
+                <span className={styles.logoAccent}>{headerSettings.logoText?.split(' ')[1] || 'Estampa'}</span>
+              </div>
+            ) : (
+              <div 
+                className={styles.logoImagePreview}
+                style={{
+                  width: `${headerSettings.logoWidth}px`,
+                  height: `${headerSettings.logoHeight}px`
+                }}
+              >
+                {(headerSettings.logoImage || headerSettings.logoUrl) ? (
+                  <img 
+                    src={headerSettings.logoImage || headerSettings.logoUrl} 
+                    alt="Logo Preview"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
+                ) : (
+                  <div className={styles.logoPlaceholder}>
+                    <FaImage />
+                    <span>Logo</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Anúncio Superior */}
+      <div className={styles.headerSection}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaBars /> Anúncio Superior
+          </div>
+        </div>
+
+        <div className={styles.announcementConfig}>
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>
+              {headerSettings.showTopAnnouncements ? <FaEye /> : <FaEyeSlash />} Mostrar Anúncio
+            </span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={headerSettings.showTopAnnouncements}
+                onChange={(e) => handleLogoChange('showTopAnnouncements', e.target.checked)}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+
+          {headerSettings.showTopAnnouncements && (
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}>Texto do Anúncio</label>
+              <input
+                className={styles.input}
+                value={headerSettings.topAnnouncement?.text || ''}
+                onChange={(e) => {
+                  const newSettings = {
+                    ...headerSettings,
+                    topAnnouncement: { 
+                      ...headerSettings.topAnnouncement, 
+                      text: e.target.value 
+                    }
+                  };
+                  setHeaderSettings(newSettings);
+                  setContextHeaderSettings(newSettings);
+                }}
+                placeholder="Ex: Frete grátis para pedidos acima de R$ 299,90! 🚚"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Categorias do Header */}
+      <div className={styles.headerSection}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaTag /> Categorias do Header
+          </div>
+          <button className={styles.addButton} onClick={openHeaderCategoryPicker}>
+            <FaPlus /> Adicionar Categoria
+          </button>
+        </div>
+
+        <div className={styles.headerCategoriesList}>
+          {headerCategories
+            .sort((a, b) => a.order - b.order)
+            .map((category, index) => (
+              <div key={category.id} className={styles.headerCategoryItem}>
+                <div className={styles.categoryDragHandle}>
+                  <FaGripVertical />
+                </div>
+                
+                <div className={styles.categoryInfo}>
+                  <div className={styles.categoryName}>{category.name}</div>
+                  <div className={styles.categorySlug}>/{category.slug}</div>
+                </div>
+
+                <div className={styles.categoryActions}>
+                  <div className={styles.toggleRow}>
+                    <label className={styles.switch}>
+                      <input
+                        type="checkbox"
+                        checked={category.active}
+                        onChange={() => toggleHeaderCategory(category.id)}
+                      />
+                      <span className={styles.switchSlider}></span>
+                    </label>
+                  </div>
+
+                  <button
+                    className={styles.moveButton}
+                    onClick={() => moveHeaderCategory(category.id, 'up')}
+                    disabled={index === 0}
+                    title="Mover para cima"
+                    type="button"
+                  >
+                    <FaArrowUp />
+                  </button>
+
+                  <button
+                    className={styles.moveButton}
+                    onClick={() => moveHeaderCategory(category.id, 'down')}
+                    disabled={index === headerCategories.length - 1}
+                    title="Mover para baixo"
+                    type="button"
+                  >
+                    <FaArrowDown />
+                  </button>
+
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => removeHeaderCategory(category.id)}
+                    title="Remover categoria"
+                    type="button"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        {headerCategories.length === 0 && (
+          <div className={styles.emptyState}>
+            <FaTag />
+            <span>Nenhuma categoria adicionada ao header</span>
+            <button className={styles.addButton} onClick={openHeaderCategoryPicker}>
+              <FaPlus /> Adicionar Primeira Categoria
+            </button>
+          </div>
+        )}
+
+        {/* Configurações Gerais */}
+        <div className={styles.headerGeneralConfig}>
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>
+              {headerSettings.showAllCategoriesButton ? <FaEye /> : <FaEyeSlash />} Botão "Todas as Categorias"
+            </span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={headerSettings.showAllCategoriesButton}
+                onChange={(e) => handleLogoChange('showAllCategoriesButton', e.target.checked)}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+        </div>
+
+        {/* Preview das Categorias */}
+        <div className={styles.previewCard}>
+          <div className={styles.previewTitle}><FaEye /> Pré-visualização do Header</div>
+          <div className={styles.headerPreview}>
+            <div className={styles.headerPreviewNav}>
+              {headerSettings.showAllCategoriesButton && (
+                <button className={styles.allCategoriesPreview}>
+                  <FaBars /> Todas as categorias
+                </button>
+              )}
+              {headerCategories
+                .filter(c => c.active)
+                .sort((a, b) => a.order - b.order)
+                .map(category => (
+                  <span key={category.id} className={styles.categoryPreviewLink}>
+                    {category.name}
+                  </span>
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // UI de Banners (ATUALIZADA PARA USAR HANDLERS DO CONTEXTO)
   const renderBanners = () => {
     const ordered = [...banners].sort((a, b) => a.order - b.order);
     return (
@@ -638,7 +1112,7 @@ const CMSPage = () => {
                     onChange={(e) =>
                       setSpecialOffers(prev =>
                         prev.map(x => x.id === o.id ? { ...x, active: e.target.checked } : x)
-                      )
+                                              )
                     }
                   />
                   <span className={styles.switchSlider}></span>
@@ -659,7 +1133,7 @@ const CMSPage = () => {
     </div>
   );
 
-  // UI de Contato
+  // UI de Contato (ATUALIZADA PARA USAR HANDLERS DO CONTEXTO)
   const renderContact = () => (
     <div className={styles.sectionCard}>
       <div className={styles.sectionHeader}>
@@ -674,7 +1148,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.phone}
-            onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+            onChange={(e) => handleContactChange('phone', e.target.value)}
             placeholder="+55 (11) 3333-2222"
           />
         </div>
@@ -683,7 +1157,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.whatsapp}
-            onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })}
+            onChange={(e) => handleContactChange('whatsapp', e.target.value)}
             placeholder="+55 (11) 99999-9999"
           />
         </div>
@@ -692,7 +1166,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.email}
-            onChange={(e) => setContact({ ...contact, email: e.target.value })}
+            onChange={(e) => handleContactChange('email', e.target.value)}
             placeholder="contato@finaestampa.com.br"
           />
         </div>
@@ -701,7 +1175,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.address}
-            onChange={(e) => setContact({ ...contact, address: e.target.value })}
+            onChange={(e) => handleContactChange('address', e.target.value)}
             placeholder="Rua da Moda, 123 - São Paulo/SP"
           />
         </div>
@@ -710,7 +1184,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.hours}
-            onChange={(e) => setContact({ ...contact, hours: e.target.value })}
+            onChange={(e) => handleContactChange('hours', e.target.value)}
             placeholder="Segunda a Sexta, 09:00 - 18:00"
           />
         </div>
@@ -719,7 +1193,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.instagram}
-            onChange={(e) => setContact({ ...contact, instagram: e.target.value })}
+            onChange={(e) => handleContactChange('instagram', e.target.value)}
             placeholder="https://instagram.com/finaestampa"
           />
         </div>
@@ -728,7 +1202,7 @@ const CMSPage = () => {
           <input
             className={styles.formInput}
             value={contact.facebook}
-            onChange={(e) => setContact({ ...contact, facebook: e.target.value })}
+            onChange={(e) => handleContactChange('facebook', e.target.value)}
             placeholder="https://facebook.com/finaestampa"
           />
         </div>
@@ -749,7 +1223,7 @@ const CMSPage = () => {
     </div>
   );
 
-  // UI de Pagamento
+  // UI de Pagamento (ATUALIZADA PARA USAR HANDLERS DO CONTEXTO)
   const renderPayment = () => (
     <div className={styles.sectionCard}>
       <div className={styles.sectionHeader}>
@@ -767,7 +1241,7 @@ const CMSPage = () => {
               <input
                 type="checkbox"
                 checked={payment.pixEnabled}
-                onChange={(e) => setPayment({ ...payment, pixEnabled: e.target.checked })}
+                onChange={(e) => handlePaymentChange('pixEnabled', e.target.checked)}
               />
               <span className={styles.switchSlider}></span>
             </label>
@@ -777,7 +1251,7 @@ const CMSPage = () => {
             <input
               className={styles.formInput}
               value={payment.pixKey}
-              onChange={(e) => setPayment({ ...payment, pixKey: e.target.value })}
+              onChange={(e) => handlePaymentChange('pixKey', e.target.value)}
               placeholder="sua-chave-pix"
             />
           </div>
@@ -791,7 +1265,7 @@ const CMSPage = () => {
               <input
                 type="checkbox"
                 checked={payment.cardEnabled}
-                onChange={(e) => setPayment({ ...payment, cardEnabled: e.target.checked })}
+                onChange={(e) => handlePaymentChange('cardEnabled', e.target.checked)}
               />
               <span className={styles.switchSlider}></span>
             </label>
@@ -807,7 +1281,7 @@ const CMSPage = () => {
               <input
                 type="checkbox"
                 checked={payment.boletoEnabled}
-                onChange={(e) => setPayment({ ...payment, boletoEnabled: e.target.checked })}
+                onChange={(e) => handlePaymentChange('boletoEnabled', e.target.checked)}
               />
               <span className={styles.switchSlider}></span>
             </label>
@@ -821,7 +1295,7 @@ const CMSPage = () => {
         <input
           className={styles.formInput}
           value={payment.shippingNote}
-          onChange={(e) => setPayment({ ...payment, shippingNote: e.target.value })}
+          onChange={(e) => handlePaymentChange('shippingNote', e.target.value)}
           placeholder="Frete grátis para pedidos acima de R$ 299,90"
         />
       </div>
@@ -838,8 +1312,9 @@ const CMSPage = () => {
     </div>
   );
 
-  // Tabs
+  // Tabs - INCLUINDO A ABA HEADER
   const tabs = [
+    { id: 'header', label: 'Header' },
     { id: 'banners', label: 'Banners' },
     { id: 'featured', label: 'Destaques' },
     { id: 'categories', label: 'Categorias' },
@@ -877,6 +1352,7 @@ const CMSPage = () => {
       </div>
 
       <div className={styles.contentSection}>
+        {activeTab === 'header' && renderHeader()}
         {activeTab === 'banners' && renderBanners()}
         {activeTab === 'featured' && renderFeatured()}
         {activeTab === 'categories' && renderCategories()}
@@ -955,6 +1431,50 @@ const CMSPage = () => {
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Categorias do Header */}
+      {showHeaderCategoryModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowHeaderCategoryModal(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitle}><FaSearch /> Adicionar Categoria ao Header</div>
+              <button className={styles.modalClose} onClick={() => setShowHeaderCategoryModal(false)}><FaTimes /></button>
+            </div>
+            <div className={styles.modalSearchRow}>
+              <input
+                className={styles.searchInput}
+                placeholder="Buscar categoria..."
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+              />
+            </div>
+            <div className={styles.modalCategoriesGrid}>
+              {availableHeaderCategories
+                .filter(c => 
+                  categorySearch.trim() === '' || 
+                  c.name.toLowerCase().includes(categorySearch.toLowerCase())
+                )
+                .map(c => (
+                  <button
+                    key={c.id}
+                    className={styles.modalCategoryCard}
+                    onClick={() => handlePickHeaderCategory(c)}
+                    type="button"
+                  >
+                    <div className={styles.modalCategoryIcon}><FaShoppingBag /></div>
+                    <div className={styles.modalCategoryName} title={c.name}>{c.name}</div>
+                  </button>
+                ))}
+            </div>
+            {availableHeaderCategories.length === 0 && (
+              <div className={styles.emptyModalState}>
+                <FaTag />
+                <span>Todas as categorias já foram adicionadas ao header</span>
+              </div>
+            )}
           </div>
         </div>
       )}

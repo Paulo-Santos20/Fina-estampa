@@ -113,9 +113,9 @@ export const AuthProvider = ({ children }) => {
     return user?.role === 'admin';
   };
 
-  const isLoggedIn = () => {
-    return isAuthenticated && !!user;
-  };
+const isLoggedIn = () => {
+  return isAuthenticated && !!user && !!localStorage.getItem('finaEstampaToken');
+};
 
   const value = {
     user,

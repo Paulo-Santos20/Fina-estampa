@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './CMSPage.module.css';
 import { useCMS } from '../../../contexts/CMSContext.jsx';
+import { useToast } from '../../../contexts/ToastContext.jsx';
 import {
   FaGlobe,
   FaSave,
@@ -78,6 +79,9 @@ const formatPrice = (n) =>
     : 'R$ 0,00';
 
 const CMSPage = () => {
+  // Hooks
+  const { showToast } = useToast();
+
   // Abas
   const [activeTab, setActiveTab] = useState('header');
 
@@ -91,8 +95,14 @@ const CMSPage = () => {
     setHeaderSettings: setContextHeaderSettings,
     headerCategories: contextHeaderCategories,
     setHeaderCategories: setContextHeaderCategories,
-    banners: contextBanners,
-    setBanners: setContextBanners,
+    heroSlides: contextHeroSlides,
+    setHeroSlides: setContextHeroSlides,
+    carouselSettings: contextCarouselSettings,
+    setCarouselSettings: setContextCarouselSettings,
+    newProductsSettings: contextNewProductsSettings,
+    setNewProductsSettings: setContextNewProductsSettings,
+    categoriesShowcase: contextCategoriesShowcase,
+    setCategoriesShowcase: setContextCategoriesShowcase,
     contact: contextContact,
     setContact: setContextContact,
     payment: contextPayment,
@@ -103,13 +113,14 @@ const CMSPage = () => {
   // Estados locais que sincronizam com o contexto
   const [headerSettings, setHeaderSettings] = useState(contextHeaderSettings);
   const [headerCategories, setHeaderCategories] = useState(contextHeaderCategories);
-  const [banners, setBanners] = useState(contextBanners);
+  const [heroSlides, setHeroSlides] = useState(contextHeroSlides);
+  const [carouselSettings, setCarouselSettings] = useState(contextCarouselSettings);
+  const [newProductsSettings, setNewProductsSettings] = useState(contextNewProductsSettings);
+  const [categoriesShowcase, setCategoriesShowcase] = useState(contextCategoriesShowcase);
   const [contact, setContact] = useState(contextContact);
   const [payment, setPayment] = useState(contextPayment);
 
   // Estados que ainda não estão no contexto (podem ser adicionados depois)
-  const [featuredProductIds, setFeaturedProductIds] = useState(['p2', 'p1', 'p3', 'p4']);
-  const [homepageCategoryIds, setHomepageCategoryIds] = useState(['c1', 'c2', 'c5', 'c8']);
   const [newArrivalIds, setNewArrivalIds] = useState(['p10', 'p6', 'p5']);
   const [specialOffers, setSpecialOffers] = useState([
     { id: 'p2', originalPrice: 219.90, salePrice: 189.90, active: true },
@@ -126,7 +137,8 @@ const CMSPage = () => {
   const [categorySearch, setCategorySearch] = useState('');
 
   // Upload refs
-  const bannerFileRefs = useRef({});
+  const heroFileRefs = useRef({});
+  const categoryFileRefs = useRef({});
   const logoFileRef = useRef(null);
 
   // === SINCRONIZAÇÃO COM O CONTEXTO ===
@@ -141,8 +153,20 @@ const CMSPage = () => {
   }, [contextHeaderCategories]);
 
   useEffect(() => {
-    setBanners(contextBanners);
-  }, [contextBanners]);
+    setHeroSlides(contextHeroSlides);
+  }, [contextHeroSlides]);
+
+  useEffect(() => {
+    setCarouselSettings(contextCarouselSettings);
+  }, [contextCarouselSettings]);
+
+  useEffect(() => {
+    setNewProductsSettings(contextNewProductsSettings);
+  }, [contextNewProductsSettings]);
+
+  useEffect(() => {
+    setCategoriesShowcase(contextCategoriesShowcase);
+  }, [contextCategoriesShowcase]);
 
   useEffect(() => {
     setContact(contextContact);
@@ -164,12 +188,6 @@ const CMSPage = () => {
         const parsedData = JSON.parse(savedData);
         
         // Restaurar estados que não estão no contexto ainda
-        if (parsedData.featuredProductIds) {
-          setFeaturedProductIds(parsedData.featuredProductIds);
-        }
-        if (parsedData.homepageCategoryIds) {
-          setHomepageCategoryIds(parsedData.homepageCategoryIds);
-        }
         if (parsedData.newArrivalIds) {
           setNewArrivalIds(parsedData.newArrivalIds);
         }
@@ -183,20 +201,6 @@ const CMSPage = () => {
   }, []);
 
   // Computados
-  const featuredProducts = useMemo(
-    () => featuredProductIds
-      .map(id => allProducts.find(p => p.id === id))
-      .filter(Boolean),
-    [featuredProductIds, allProducts]
-  );
-
-  const homepageCategories = useMemo(
-    () => homepageCategoryIds
-      .map(id => allCategories.find(c => c.id === id))
-      .filter(Boolean),
-    [homepageCategoryIds, allCategories]
-  );
-
   const newArrivals = useMemo(
     () => newArrivalIds
       .map(id => allProducts.find(p => p.id === id))
@@ -215,19 +219,33 @@ const CMSPage = () => {
     [specialOffers, allProducts]
   );
 
-  // === HANDLERS PARA HEADER (ATUALIZADOS PARA USAR CONTEXTO) ===
+  // === HANDLERS PARA HEADER ===
 
   // Logo handlers
-  const handleLogoUpload = (file) => {
+  const handleLogoUpload = async (file) => {
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    const newSettings = { 
-      ...headerSettings, 
-      logoType: 'image',
-      logoImage: url 
-    };
-    setHeaderSettings(newSettings);
-    setContextHeaderSettings(newSettings);
+    
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        const newSettings = { 
+          ...headerSettings, 
+          logoType: 'image',
+          logoImage: base64Image 
+        };
+        setHeaderSettings(newSettings);
+        setContextHeaderSettings(newSettings);
+        showToast('Logo atualizado com sucesso!', 'success');
+      };
+      reader.onerror = () => {
+        showToast('Erro ao fazer upload do logo', 'error');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      showToast('Erro ao fazer upload do logo', 'error');
+    }
   };
 
   const handleLogoChange = (field, value) => {
@@ -253,12 +271,14 @@ const CMSPage = () => {
     setHeaderCategories(newCategories);
     setContextHeaderCategories(newCategories);
     setShowHeaderCategoryModal(false);
+    showToast('Categoria adicionada ao header!', 'success');
   };
 
   const removeHeaderCategory = (id) => {
     const newCategories = headerCategories.filter(c => c.id !== id);
     setHeaderCategories(newCategories);
     setContextHeaderCategories(newCategories);
+    showToast('Categoria removida do header!', 'success');
   };
 
   const moveHeaderCategory = (id, direction) => {
@@ -287,66 +307,256 @@ const CMSPage = () => {
     setContextHeaderCategories(newCategories);
   };
 
-  // Handlers de Banners (ATUALIZADOS PARA USAR CONTEXTO)
-  const handleAddBanner = () => {
-    const nextOrder = (banners[banners.length - 1]?.order || 0) + 1;
-    const newBanners = [
-      ...banners,
+  // === HANDLERS PARA HERO ===
+  const handleAddHeroSlide = () => {
+    const nextOrder = (heroSlides[heroSlides.length - 1]?.order || 0) + 1;
+    const newSlides = [
+      ...heroSlides,
       {
-        id: `b${Date.now()}`,
-        title: 'Novo Banner',
-        subtitle: '',
-        link: '',
-        image: '',
+        id: Date.now(),
+        title: "Novo Slide",
+        subtitle: "Subtítulo",
+        description: "Descrição do slide",
+        ctaText: "Ver Mais",
+        ctaLink: "/catalog",
+        backgroundImage: "",
+        badge: "Novo",
+        offer: "",
         active: true,
         order: nextOrder
       }
     ];
-    setBanners(newBanners);
-    setContextBanners(newBanners);
+    setHeroSlides(newSlides);
+    setContextHeroSlides(newSlides);
+    showToast('Novo slide adicionado!', 'success');
   };
 
-  const handleRemoveBanner = (id) => {
-    const newBanners = banners.filter(b => b.id !== id);
-    setBanners(newBanners);
-    setContextBanners(newBanners);
+  const handleRemoveHeroSlide = (id) => {
+    if (window.confirm('Tem certeza que deseja remover este slide?')) {
+      const newSlides = heroSlides.filter(s => s.id !== id);
+      
+      // Reorganizar as ordens para evitar gaps
+      const reorderedSlides = newSlides.map((slide, index) => ({
+        ...slide,
+        order: index + 1
+      }));
+      
+      setHeroSlides(reorderedSlides);
+      setContextHeroSlides(reorderedSlides);
+      showToast('Slide removido com sucesso!', 'success');
+    }
   };
 
-  const handleMoveBanner = (id, dir) => {
-    const ordered = [...banners].sort((a, b) => a.order - b.order);
-    const idx = ordered.findIndex(b => b.id === id);
+  const handleMoveHeroSlide = (id, dir) => {
+    const ordered = [...heroSlides].sort((a, b) => a.order - b.order);
+    const idx = ordered.findIndex(s => s.id === id);
+    
+    if (idx < 0) return;
+    
+    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= ordered.length) return;
+    
+    // Trocar as posições
+    const temp = ordered[idx];
+    ordered[idx] = ordered[swapIdx];
+    ordered[swapIdx] = temp;
+    
+    // Reorganizar as ordens
+    const reorderedSlides = ordered.map((slide, index) => ({
+      ...slide,
+      order: index + 1
+    }));
+    
+    setHeroSlides(reorderedSlides);
+    setContextHeroSlides(reorderedSlides);
+  };
+
+  const handleHeroSlideChange = (id, field, value) => {
+    const newSlides = heroSlides.map(s => s.id === id ? { ...s, [field]: value } : s);
+    setHeroSlides(newSlides);
+    setContextHeroSlides(newSlides);
+  };
+
+  const handleHeroImageUpload = async (id, file) => {
+    if (!file) return;
+    
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        const newSlides = heroSlides.map(s => s.id === id ? { ...s, backgroundImage: base64Image } : s);
+        setHeroSlides(newSlides);
+        setContextHeroSlides(newSlides);
+        showToast('Imagem do slide atualizada!', 'success');
+      };
+      reader.onerror = () => {
+        showToast('Erro ao fazer upload da imagem', 'error');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      showToast('Erro ao fazer upload da imagem', 'error');
+    }
+  };
+
+  // === HANDLERS PARA CAROUSEL ===
+  const handleCarouselSettingChange = (field, value) => {
+    const newSettings = { ...carouselSettings, [field]: value };
+    setCarouselSettings(newSettings);
+    setContextCarouselSettings(newSettings);
+  };
+
+  const handleAddProductToCarousel = (productId) => {
+    if (!carouselSettings.productIds.includes(productId)) {
+      const newProductIds = [...carouselSettings.productIds, productId];
+      handleCarouselSettingChange('productIds', newProductIds);
+      showToast('Produto adicionado ao carousel!', 'success');
+    }
+  };
+
+  const handleRemoveProductFromCarousel = (productId) => {
+    const newProductIds = carouselSettings.productIds.filter(id => id !== productId);
+    handleCarouselSettingChange('productIds', newProductIds);
+    showToast('Produto removido do carousel!', 'success');
+  };
+
+  const handleMoveProductInCarousel = (productId, direction) => {
+    const currentIndex = carouselSettings.productIds.indexOf(productId);
+    if (currentIndex === -1) return;
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= carouselSettings.productIds.length) return;
+    
+    const newProductIds = [...carouselSettings.productIds];
+    [newProductIds[currentIndex], newProductIds[newIndex]] = [newProductIds[newIndex], newProductIds[currentIndex]];
+    
+    handleCarouselSettingChange('productIds', newProductIds);
+  };
+
+  // === HANDLERS PARA NOVOS PRODUTOS ===
+  const handleNewProductsSettingChange = (field, value) => {
+    const newSettings = { ...newProductsSettings, [field]: value };
+    setNewProductsSettings(newSettings);
+    setContextNewProductsSettings(newSettings);
+  };
+
+  const handleAddProductToNewProducts = (productId) => {
+    if (!newProductsSettings.productIds.includes(productId)) {
+      const newProductIds = [...newProductsSettings.productIds, productId];
+      handleNewProductsSettingChange('productIds', newProductIds);
+      showToast('Produto adicionado aos novos produtos!', 'success');
+    }
+  };
+
+  const handleRemoveProductFromNewProducts = (productId) => {
+    const newProductIds = newProductsSettings.productIds.filter(id => id !== productId);
+    handleNewProductsSettingChange('productIds', newProductIds);
+    showToast('Produto removido dos novos produtos!', 'success');
+  };
+
+  const handleMoveProductInNewProducts = (productId, direction) => {
+    const currentIndex = newProductsSettings.productIds.indexOf(productId);
+    if (currentIndex === -1) return;
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= newProductsSettings.productIds.length) return;
+    
+    const newProductIds = [...newProductsSettings.productIds];
+    [newProductIds[currentIndex], newProductIds[newIndex]] = [newProductIds[newIndex], newProductIds[currentIndex]];
+    
+    handleNewProductsSettingChange('productIds', newProductIds);
+  };
+
+  // === HANDLERS PARA CATEGORIAS SHOWCASE ===
+  const handleAddCategoryShowcase = () => {
+    const nextOrder = (categoriesShowcase[categoriesShowcase.length - 1]?.order || 0) + 1;
+    const newCategories = [
+      ...categoriesShowcase,
+      {
+        id: `cs${Date.now()}`,
+        name: 'Nova Categoria',
+        slug: 'nova-categoria',
+        description: 'Descrição da categoria',
+        image: '',
+        active: true,
+        order: nextOrder,
+        showInHome: true
+      }
+    ];
+    setCategoriesShowcase(newCategories);
+    setContextCategoriesShowcase(newCategories);
+    showToast('Nova categoria adicionada!', 'success');
+  };
+
+  const handleRemoveCategoryShowcase = (id) => {
+    if (window.confirm('Tem certeza que deseja remover esta categoria?')) {
+      const newCategories = categoriesShowcase.filter(c => c.id !== id);
+      setCategoriesShowcase(newCategories);
+      setContextCategoriesShowcase(newCategories);
+      showToast('Categoria removida com sucesso!', 'success');
+    }
+  };
+
+  const handleMoveCategoryShowcase = (id, dir) => {
+    const ordered = [...categoriesShowcase].sort((a, b) => a.order - b.order);
+    const idx = ordered.findIndex(c => c.id === id);
     if (idx < 0) return;
     const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= ordered.length) return;
     const tmp = ordered[idx].order;
     ordered[idx].order = ordered[swapIdx].order;
     ordered[swapIdx].order = tmp;
-    setBanners(ordered);
-    setContextBanners(ordered);
+    setCategoriesShowcase(ordered);
+    setContextCategoriesShowcase(ordered);
   };
 
-  const handleBannerChange = (id, field, value) => {
-    const newBanners = banners.map(b => b.id === id ? { ...b, [field]: value } : b);
-    setBanners(newBanners);
-    setContextBanners(newBanners);
+  const handleCategoryShowcaseChange = (id, field, value) => {
+    const newCategories = categoriesShowcase.map(c => c.id === id ? { ...c, [field]: value } : c);
+    setCategoriesShowcase(newCategories);
+    setContextCategoriesShowcase(newCategories);
+    
+    // Mostrar notificação para mudanças importantes
+    if (field === 'name') {
+      showToast('Nome da categoria atualizado', 'info', 2000);
+    } else if (field === 'active') {
+      showToast(`Categoria ${value ? 'ativada' : 'desativada'}`, 'info', 2000);
+    } else if (field === 'showInHome') {
+      showToast(`Categoria ${value ? 'adicionada à' : 'removida da'} home`, 'info', 2000);
+    }
   };
 
-  const handleBannerUpload = (id, file) => {
+  const handleCategoryImageUpload = async (id, file) => {
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    const newBanners = banners.map(b => b.id === id ? { ...b, image: url } : b);
-    setBanners(newBanners);
-    setContextBanners(newBanners);
+    
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        const newCategories = categoriesShowcase.map(c => 
+          c.id === id ? { ...c, image: base64Image } : c
+        );
+        setCategoriesShowcase(newCategories);
+        setContextCategoriesShowcase(newCategories);
+        showToast('Imagem da categoria atualizada com sucesso!', 'success');
+      };
+      reader.onerror = () => {
+        showToast('Erro ao fazer upload da imagem', 'error');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      showToast('Erro ao fazer upload da imagem', 'error');
+    }
   };
 
-  // Handlers de Contato (ATUALIZADOS PARA USAR CONTEXTO)
+  // Handlers de Contato
   const handleContactChange = (field, value) => {
     const newContact = { ...contact, [field]: value };
     setContact(newContact);
     setContextContact(newContact);
   };
 
-  // Handlers de Pagamento (ATUALIZADOS PARA USAR CONTEXTO)
+  // Handlers de Pagamento
   const handlePaymentChange = (field, value) => {
     const newPayment = { ...payment, [field]: value };
     setPayment(newPayment);
@@ -362,55 +572,35 @@ const CMSPage = () => {
   };
 
   const handlePickProduct = (product) => {
-    if (modalPurpose === 'featured') {
-      setFeaturedProductIds(prev => {
-        const next = [...prev];
-        if (modalIndex === null || modalIndex === undefined) {
-          if (!next.includes(product.id)) next.push(product.id);
-        } else {
-          next[modalIndex] = product.id;
-        }
-        return Array.from(new Set(next));
-      });
-    }
     if (modalPurpose === 'newArrivals') {
       setNewArrivalIds(prev => Array.from(new Set([...prev, product.id])));
+      showToast('Produto adicionado às novidades!', 'success');
     }
     if (modalPurpose === 'specialOffers') {
       setSpecialOffers(prev => {
         const exists = prev.some(o => o.id === product.id);
         if (exists) return prev;
+        showToast('Produto adicionado às ofertas!', 'success');
         return [...prev, { id: product.id, originalPrice: product.price, salePrice: product.price, active: true }];
       });
+    }
+    if (modalPurpose === 'carousel') {
+      handleAddProductToCarousel(product.id);
+    }
+    if (modalPurpose === 'newProducts') {
+      handleAddProductToNewProducts(product.id);
     }
     setShowProductModal(false);
   };
 
-  const removeFeatured = (index) => {
-    setFeaturedProductIds(prev => prev.filter((_, i) => i !== index));
-  };
-
   const removeNewArrival = (id) => {
     setNewArrivalIds(prev => prev.filter(pid => pid !== id));
+    showToast('Produto removido das novidades!', 'success');
   };
 
   const removeSpecialOffer = (id) => {
     setSpecialOffers(prev => prev.filter(o => o.id !== id));
-  };
-
-  // Handlers de Categorias
-  const openCategoryPicker = () => {
-    setCategorySearch('');
-    setShowCategoryModal(true);
-  };
-
-  const handlePickCategory = (category) => {
-    setHomepageCategoryIds(prev => Array.from(new Set([...prev, category.id])));
-    setShowCategoryModal(false);
-  };
-
-  const removeHomepageCategory = (id) => {
-    setHomepageCategoryIds(prev => prev.filter(cid => cid !== id));
+    showToast('Oferta removida!', 'success');
   };
 
   // Search filters
@@ -423,12 +613,6 @@ const CMSPage = () => {
     );
   }, [productSearch, allProducts]);
 
-  const filteredCategories = useMemo(() => {
-    const q = categorySearch.trim().toLowerCase();
-    if (!q) return allCategories;
-    return allCategories.filter(c => c.name.toLowerCase().includes(q));
-  }, [categorySearch, allCategories]);
-
   // Categorias disponíveis para adicionar no header
   const availableHeaderCategories = useMemo(() => {
     const usedIds = headerCategories.map(c => c.id);
@@ -437,34 +621,36 @@ const CMSPage = () => {
 
   // Save (MELHORADO PARA SALVAR TUDO)
   const handleSave = () => {
-    const payload = {
-      headerSettings,
-      headerCategories,
-      banners,
-      featuredProductIds,
-      homepageCategoryIds,
-      newArrivalIds,
-      specialOffers,
-      contact,
-      payment
-    };
-    
-    console.log('Salvando dados do CMS:', payload);
-    
-    // Salvar no contexto
-    const success = saveAllData(payload);
-    
-    // Salvar também no localStorage diretamente para garantir persistência
     try {
+      const payload = {
+        headerSettings,
+        headerCategories,
+        heroSlides,
+        carouselSettings,
+        newProductsSettings,
+        categoriesShowcase,
+        newArrivalIds,
+        specialOffers,
+        contact,
+        payment
+      };
+      
+      console.log('Salvando dados do CMS:', payload);
+      
+      // Salvar no contexto
+      const success = saveAllData(payload);
+      
+      // Salvar também no localStorage diretamente para garantir persistência
       localStorage.setItem('finaEstampaCMS', JSON.stringify(payload));
+      
+      if (success) {
+        showToast('✅ Configurações salvas com sucesso! As mudanças já estão visíveis no site.', 'success', 4000);
+      } else {
+        showToast('❌ Erro ao salvar configurações. Tente novamente.', 'error');
+      }
     } catch (error) {
-      console.error('Erro ao salvar no localStorage:', error);
-    }
-    
-    if (success) {
-      alert('Conteúdo salvo com sucesso! As mudanças já estão visíveis no site.');
-    } else {
-      alert('Erro ao salvar conteúdo. Tente novamente.');
+      console.error('Erro ao salvar:', error);
+      showToast('❌ Erro ao salvar configurações. Tente novamente.', 'error');
     }
   };
 
@@ -804,70 +990,673 @@ const CMSPage = () => {
     </div>
   );
 
-  // UI de Banners (ATUALIZADA PARA USAR HANDLERS DO CONTEXTO)
-  const renderBanners = () => {
-    const ordered = [...banners].sort((a, b) => a.order - b.order);
+  // === UI DO HERO ===
+  const renderHero = () => {
+    const ordered = [...heroSlides].sort((a, b) => a.order - b.order);
     return (
       <div className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionTitle}>
-            <FaHome /> Banners da Home
+            <FaHome /> Slides do Hero ({heroSlides.length})
           </div>
-          <button className={styles.addButton} onClick={handleAddBanner}>
-            <FaPlus /> Adicionar Banner
+          <button className={styles.addButton} onClick={handleAddHeroSlide}>
+            <FaPlus /> Adicionar Slide
           </button>
         </div>
 
-        <div className={styles.bannerGrid}>
-          {ordered.map((b, index) => (
-            <div key={b.id} className={styles.bannerItem}>
-              <div className={styles.bannerPreview}>
-                {b.image ? (
-                  <img src={b.image} alt={b.title || 'Banner'} />
+        {heroSlides.length > 0 ? (
+          <div className={styles.heroGrid}>
+            {ordered.map((slide, index) => (
+              <div key={slide.id} className={styles.heroSlideItem}>
+                <div className={styles.heroSlidePreview}>
+                  {slide.backgroundImage ? (
+                    <img src={slide.backgroundImage} alt={slide.title || 'Hero Slide'} />
+                  ) : (
+                    <div className={styles.heroPlaceholder}>
+                      <FaImage />
+                      <span>Sem imagem</span>
+                    </div>
+                  )}
+                  <div className={styles.heroOverlay}>
+                    <button
+                      className={styles.heroIconBtn}
+                      title="Enviar imagem"
+                      onClick={() => heroFileRefs.current[slide.id]?.click()}
+                      type="button"
+                    >
+                      <FaUpload />
+                    </button>
+                    <input
+                      ref={(el) => (heroFileRefs.current[slide.id] = el)}
+                      type="file"
+                      accept="image/*"
+                      className={styles.hiddenInput}
+                      onChange={(e) => handleHeroImageUpload(slide.id, e.target.files[0])}
+                    />
+                    <button
+                      className={styles.heroIconBtn}
+                      title="Mover para cima"
+                      onClick={() => handleMoveHeroSlide(slide.id, 'up')}
+                      type="button"
+                      disabled={index === 0}
+                    >
+                      <FaArrowUp />
+                    </button>
+                    <button
+                      className={styles.heroIconBtn}
+                      title="Mover para baixo"
+                      onClick={() => handleMoveHeroSlide(slide.id, 'down')}
+                      type="button"
+                      disabled={index === ordered.length - 1}
+                    >
+                      <FaArrowDown />
+                    </button>
+                    <button
+                      className={`${styles.heroIconBtn} ${styles.danger}`}
+                      title="Remover slide"
+                      onClick={() => handleRemoveHeroSlide(slide.id)}
+                      type="button"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.heroSlideForm}>
+                  <div className={styles.heroFormRow}>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel}><FaTag /> Título</label>
+                      <input
+                        className={styles.input}
+                        value={slide.title}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'title', e.target.value)}
+                        placeholder="Ex.: Nova Coleção"
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel}><FaEdit /> Subtítulo</label>
+                      <input
+                        className={styles.input}
+                        value={slide.subtitle}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'subtitle', e.target.value)}
+                        placeholder="Ex.: Primavera/Verão 2024"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                                       <label className={styles.inputLabel}><FaEdit /> Descrição</label>
+                    <textarea
+                      className={styles.textarea}
+                      value={slide.description}
+                      onChange={(e) => handleHeroSlideChange(slide.id, 'description', e.target.value)}
+                      placeholder="Descrição do slide..."
+                      rows="3"
+                    />
+                  </div>
+
+                  <div className={styles.heroFormRow}>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel}><FaTag /> Badge</label>
+                      <input
+                        className={styles.input}
+                        value={slide.badge}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'badge', e.target.value)}
+                        placeholder="Ex.: Novo"
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel}><FaPercent /> Oferta</label>
+                      <input
+                        className={styles.input}
+                        value={slide.offer}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'offer', e.target.value)}
+                        placeholder="Ex.: Até 30% OFF"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.heroFormRow}>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel}><FaLink /> Texto do Botão</label>
+                      <input
+                        className={styles.input}
+                        value={slide.ctaText}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'ctaText', e.target.value)}
+                        placeholder="Ex.: Explorar Coleção"
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel}><FaLink /> Link do Botão</label>
+                      <input
+                        className={styles.input}
+                        value={slide.ctaLink}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'ctaLink', e.target.value)}
+                        placeholder="Ex.: /categoria/novidades"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.toggleRow}>
+                    <span className={styles.toggleLabel}>
+                      {slide.active ? <FaEye /> : <FaEyeSlash />} Visível
+                    </span>
+                    <label className={styles.switch}>
+                      <input
+                        type="checkbox"
+                        checked={slide.active}
+                        onChange={(e) => handleHeroSlideChange(slide.id, 'active', e.target.checked)}
+                      />
+                      <span className={styles.switchSlider}></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.emptyState}>
+            <FaImage />
+            <span>Nenhum slide adicionado ao hero</span>
+            <button className={styles.addButton} onClick={handleAddHeroSlide}>
+              <FaPlus /> Adicionar Primeiro Slide
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // === UI DO CAROUSEL ===
+  const renderCarousel = () => {
+    const carouselProducts = carouselSettings.productIds
+      .map(id => allProducts.find(p => p.id === id))
+      .filter(Boolean);
+
+    return (
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaStar /> Carousel de Produtos
+          </div>
+          <button className={styles.addButton} onClick={() => openProductPicker('carousel')}>
+            <FaPlus /> Adicionar Produto
+          </button>
+        </div>
+
+        {/* Configurações Gerais */}
+        <div className={styles.carouselConfig}>
+          <div className={styles.configRow}>
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}><FaTag /> Título</label>
+              <input
+                className={styles.input}
+                value={carouselSettings.title}
+                onChange={(e) => handleCarouselSettingChange('title', e.target.value)}
+                placeholder="Ex: Produtos em Destaque"
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}><FaEdit /> Subtítulo</label>
+              <input
+                className={styles.input}
+                value={carouselSettings.subtitle}
+                onChange={(e) => handleCarouselSettingChange('subtitle', e.target.value)}
+                placeholder="Ex: Descubra as peças mais desejadas"
+              />
+            </div>
+          </div>
+
+          <div className={styles.configRow}>
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>
+                {carouselSettings.autoPlay ? <FaEye /> : <FaEyeSlash />} Auto-play
+              </span>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={carouselSettings.autoPlay}
+                  onChange={(e) => handleCarouselSettingChange('autoPlay', e.target.checked)}
+                />
+                <span className={styles.switchSlider}></span>
+              </label>
+            </div>
+
+            {carouselSettings.autoPlay && (
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}><FaClock /> Intervalo (ms)</label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={carouselSettings.autoPlayInterval}
+                  onChange={(e) => handleCarouselSettingChange('autoPlayInterval', parseInt(e.target.value) || 4000)}
+                  min="1000"
+                  max="10000"
+                  step="500"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className={styles.configRow}>
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>
+                {carouselSettings.showArrows ? <FaEye /> : <FaEyeSlash />} Setas de Navegação
+              </span>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={carouselSettings.showArrows}
+                  onChange={(e) => handleCarouselSettingChange('showArrows', e.target.checked)}
+                />
+                <span className={styles.switchSlider}></span>
+              </label>
+            </div>
+
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>
+                {carouselSettings.showIndicators ? <FaEye /> : <FaEyeSlash />} Indicadores
+              </span>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={carouselSettings.showIndicators}
+                  onChange={(e) => handleCarouselSettingChange('showIndicators', e.target.checked)}
+                />
+                <span className={styles.switchSlider}></span>
+              </label>
+            </div>
+          </div>
+
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>
+              {carouselSettings.active ? <FaEye /> : <FaEyeSlash />} Carousel Ativo
+            </span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={carouselSettings.active}
+                onChange={(e) => handleCarouselSettingChange('active', e.target.checked)}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+        </div>
+
+        {/* Lista de Produtos */}
+        <div className={styles.carouselProductsList}>
+          <h3 className={styles.subsectionTitle}>
+            Produtos no Carousel ({carouselProducts.length})
+          </h3>
+
+          {carouselProducts.length > 0 ? (
+            <div className={styles.carouselProductsGrid}>
+              {carouselProducts.map((product, index) => (
+                <div key={product.id} className={styles.carouselProductItem}>
+                  <div className={styles.carouselProductImage}>
+                    <img src={product.image} alt={product.name} />
+                    <div className={styles.carouselProductOrder}>#{index + 1}</div>
+                  </div>
+
+                  <div className={styles.carouselProductInfo}>
+                    <div className={styles.carouselProductName} title={product.name}>
+                      {product.name}
+                    </div>
+                    <div className={styles.carouselProductMeta}>
+                      <span>{product.category}</span>
+                      <span className={styles.dot}>•</span>
+                      <span className={styles.priceBlack}>{formatPrice(product.price)}</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.carouselProductActions}>
+                    <button
+                      className={styles.moveButton}
+                      onClick={() => handleMoveProductInCarousel(product.id, 'up')}
+                      disabled={index === 0}
+                      title="Mover para cima"
+                      type="button"
+                    >
+                      <FaArrowUp />
+                    </button>
+
+                    <button
+                      className={styles.moveButton}
+                      onClick={() => handleMoveProductInCarousel(product.id, 'down')}
+                      disabled={index === carouselProducts.length - 1}
+                      title="Mover para baixo"
+                      type="button"
+                    >
+                      <FaArrowDown />
+                    </button>
+
+                    <button
+                      className={styles.removeButton}
+                      onClick={() => handleRemoveProductFromCarousel(product.id)}
+                      title="Remover do carousel"
+                      type="button"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <FaStar />
+              <span>Nenhum produto adicionado ao carousel</span>
+              <button className={styles.addButton} onClick={() => openProductPicker('carousel')}>
+                <FaPlus /> Adicionar Primeiro Produto
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Preview do Carousel */}
+        <div className={styles.previewCard}>
+          <div className={styles.previewTitle}><FaEye /> Pré-visualização</div>
+          <div className={styles.carouselPreview}>
+            <div className={styles.carouselPreviewHeader}>
+              <h3>{carouselSettings.title}</h3>
+              {carouselSettings.subtitle && <p>{carouselSettings.subtitle}</p>}
+            </div>
+            <div className={styles.carouselPreviewProducts}>
+              {carouselProducts.slice(0, 4).map(product => (
+                <div key={product.id} className={styles.carouselPreviewProduct}>
+                  <img src={product.image} alt={product.name} />
+                  <span>{product.name}</span>
+                </div>
+              ))}
+              {carouselProducts.length > 4 && (
+                <div className={styles.carouselPreviewMore}>
+                  +{carouselProducts.length - 4} mais
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // === UI DOS NOVOS PRODUTOS ===
+  const renderNewProducts = () => {
+    const newProductsProducts = newProductsSettings.productIds
+      .map(id => allProducts.find(p => p.id === id))
+      .filter(Boolean);
+
+    return (
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaGift /> Novos Produtos
+          </div>
+          <button className={styles.addButton} onClick={() => openProductPicker('newProducts')}>
+            <FaPlus /> Adicionar Produto
+          </button>
+        </div>
+
+        {/* Configurações Gerais */}
+        <div className={styles.carouselConfig}>
+          <div className={styles.configRow}>
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}><FaTag /> Título</label>
+              <input
+                className={styles.input}
+                value={newProductsSettings.title}
+                onChange={(e) => handleNewProductsSettingChange('title', e.target.value)}
+                placeholder="Ex: Novos Produtos"
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}><FaEdit /> Subtítulo</label>
+              <input
+                className={styles.input}
+                value={newProductsSettings.subtitle}
+                onChange={(e) => handleNewProductsSettingChange('subtitle', e.target.value)}
+                placeholder="Ex: Confira as últimas novidades"
+              />
+            </div>
+          </div>
+
+          <div className={styles.configRow}>
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>
+                {newProductsSettings.autoPlay ? <FaEye /> : <FaEyeSlash />} Auto-play
+              </span>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={newProductsSettings.autoPlay}
+                  onChange={(e) => handleNewProductsSettingChange('autoPlay', e.target.checked)}
+                />
+                <span className={styles.switchSlider}></span>
+              </label>
+            </div>
+
+            {newProductsSettings.autoPlay && (
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}><FaClock /> Intervalo (ms)</label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={newProductsSettings.autoPlayInterval}
+                  onChange={(e) => handleNewProductsSettingChange('autoPlayInterval', parseInt(e.target.value) || 5000)}
+                  min="1000"
+                  max="10000"
+                  step="500"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className={styles.configRow}>
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>
+                {newProductsSettings.showArrows ? <FaEye /> : <FaEyeSlash />} Setas de Navegação
+              </span>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={newProductsSettings.showArrows}
+                  onChange={(e) => handleNewProductsSettingChange('showArrows', e.target.checked)}
+                />
+                <span className={styles.switchSlider}></span>
+              </label>
+            </div>
+
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>
+                {newProductsSettings.showIndicators ? <FaEye /> : <FaEyeSlash />} Indicadores
+              </span>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={newProductsSettings.showIndicators}
+                  onChange={(e) => handleNewProductsSettingChange('showIndicators', e.target.checked)}
+                />
+                <span className={styles.switchSlider}></span>
+              </label>
+            </div>
+          </div>
+
+          <div className={styles.toggleRow}>
+            <span className={styles.toggleLabel}>
+              {newProductsSettings.active ? <FaEye /> : <FaEyeSlash />} Seção Ativa
+            </span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={newProductsSettings.active}
+                onChange={(e) => handleNewProductsSettingChange('active', e.target.checked)}
+              />
+              <span className={styles.switchSlider}></span>
+            </label>
+          </div>
+        </div>
+
+        {/* Lista de Produtos */}
+        <div className={styles.carouselProductsList}>
+          <h3 className={styles.subsectionTitle}>
+            Novos Produtos ({newProductsProducts.length})
+          </h3>
+
+          {newProductsProducts.length > 0 ? (
+            <div className={styles.carouselProductsGrid}>
+              {newProductsProducts.map((product, index) => (
+                <div key={product.id} className={styles.carouselProductItem}>
+                  <div className={styles.carouselProductImage}>
+                    <img src={product.image} alt={product.name} />
+                    <div className={styles.carouselProductOrder}>#{index + 1}</div>
+                  </div>
+
+                  <div className={styles.carouselProductInfo}>
+                    <div className={styles.carouselProductName} title={product.name}>
+                      {product.name}
+                    </div>
+                    <div className={styles.carouselProductMeta}>
+                      <span>{product.category}</span>
+                      <span className={styles.dot}>•</span>
+                      <span className={styles.priceBlack}>{formatPrice(product.price)}</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.carouselProductActions}>
+                    <button
+                      className={styles.moveButton}
+                      onClick={() => handleMoveProductInNewProducts(product.id, 'up')}
+                      disabled={index === 0}
+                      title="Mover para cima"
+                      type="button"
+                    >
+                      <FaArrowUp />
+                    </button>
+
+                    <button
+                      className={styles.moveButton}
+                      onClick={() => handleMoveProductInNewProducts(product.id, 'down')}
+                      disabled={index === newProductsProducts.length - 1}
+                      title="Mover para baixo"
+                      type="button"
+                    >
+                      <FaArrowDown />
+                    </button>
+
+                    <button
+                      className={styles.removeButton}
+                      onClick={() => handleRemoveProductFromNewProducts(product.id)}
+                      title="Remover dos novos produtos"
+                      type="button"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <FaGift />
+              <span>Nenhum produto adicionado aos novos produtos</span>
+              <button className={styles.addButton} onClick={() => openProductPicker('newProducts')}>
+                <FaPlus /> Adicionar Primeiro Produto
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Preview dos Novos Produtos */}
+        <div className={styles.previewCard}>
+          <div className={styles.previewTitle}><FaEye /> Pré-visualização</div>
+          <div className={styles.carouselPreview}>
+            <div className={styles.carouselPreviewHeader}>
+              <h3>{newProductsSettings.title}</h3>
+              {newProductsSettings.subtitle && <p>{newProductsSettings.subtitle}</p>}
+            </div>
+            <div className={styles.carouselPreviewProducts}>
+              {newProductsProducts.slice(0, 4).map(product => (
+                <div key={product.id} className={styles.carouselPreviewProduct}>
+                  <img src={product.image} alt={product.name} />
+                  <span>{product.name}</span>
+                </div>
+              ))}
+              {newProductsProducts.length > 4 && (
+                <div className={styles.carouselPreviewMore}>
+                  +{newProductsProducts.length - 4} mais
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // === UI DAS CATEGORIAS SHOWCASE ===
+  const renderCategoriesShowcase = () => {
+    const ordered = [...categoriesShowcase].sort((a, b) => a.order - b.order);
+    return (
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>
+            <FaTag /> Categorias em Destaque
+          </div>
+          <button className={styles.addButton} onClick={handleAddCategoryShowcase}>
+            <FaPlus /> Adicionar Categoria
+          </button>
+        </div>
+
+        <div className={styles.categoriesGrid}>
+          {ordered.map((category, index) => (
+            <div key={category.id} className={styles.categoryShowcaseItem}>
+              <div className={styles.categoryShowcasePreview}>
+                {category.image ? (
+                  <img src={category.image} alt={category.name || 'Categoria'} />
                 ) : (
-                  <div className={styles.bannerPlaceholder}>
-                    <FaImage />
+                  <div className={styles.categoryPlaceholder}>
+                    <FaTag />
                     <span>Sem imagem</span>
                   </div>
                 )}
-                <div className={styles.bannerOverlay}>
+                <div className={styles.categoryOverlay}>
                   <button
-                    className={styles.bannerIconBtn}
+                    className={styles.categoryIconBtn}
                     title="Enviar imagem"
-                    onClick={() => bannerFileRefs.current[b.id]?.click()}
+                    onClick={() => categoryFileRefs.current[category.id]?.click()}
                     type="button"
                   >
                     <FaUpload />
                   </button>
                   <input
-                    ref={(el) => (bannerFileRefs.current[b.id] = el)}
+                    ref={(el) => (categoryFileRefs.current[category.id] = el)}
                     type="file"
                     accept="image/*"
                     className={styles.hiddenInput}
-                    onChange={(e) => handleBannerUpload(b.id, e.target.files[0])}
+                    onChange={(e) => handleCategoryImageUpload(category.id, e.target.files[0])}
                   />
                   <button
-                    className={styles.bannerIconBtn}
+                    className={styles.categoryIconBtn}
                     title="Mover para cima"
-                    onClick={() => handleMoveBanner(b.id, 'up')}
+                    onClick={() => handleMoveCategoryShowcase(category.id, 'up')}
                     type="button"
                     disabled={index === 0}
                   >
                     <FaArrowUp />
                   </button>
                   <button
-                    className={styles.bannerIconBtn}
+                    className={styles.categoryIconBtn}
                     title="Mover para baixo"
-                    onClick={() => handleMoveBanner(b.id, 'down')}
+                    onClick={() => handleMoveCategoryShowcase(category.id, 'down')}
                     type="button"
                     disabled={index === ordered.length - 1}
                   >
                     <FaArrowDown />
                   </button>
                   <button
-                    className={`${styles.bannerIconBtn} ${styles.danger}`}
-                    title="Remover banner"
-                    onClick={() => handleRemoveBanner(b.id)}
+                    className={`${styles.categoryIconBtn} ${styles.danger}`}
+                    title="Remover categoria"
+                    onClick={() => handleRemoveCategoryShowcase(category.id)}
                     type="button"
                   >
                     <FaTrash />
@@ -875,130 +1664,113 @@ const CMSPage = () => {
                 </div>
               </div>
 
-              <div className={styles.bannerForm}>
-                <div className={styles.inputGroup}>
-                  <label className={styles.inputLabel}><FaTag /> Título</label>
-                  <input
-                    className={styles.input}
-                    value={b.title}
-                    onChange={(e) => handleBannerChange(b.id, 'title', e.target.value)}
-                    placeholder="Ex.: Coleção Inverno 2025"
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label className={styles.inputLabel}><FaEdit /> Subtítulo</label>
-                  <input
-                    className={styles.input}
-                    value={b.subtitle}
-                    onChange={(e) => handleBannerChange(b.id, 'subtitle', e.target.value)}
-                    placeholder="Ex.: Elegância e sofisticação para dias frios"
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label className={styles.inputLabel}><FaLink /> Link</label>
-                  <input
-                    className={styles.input}
-                    value={b.link}
-                    onChange={(e) => handleBannerChange(b.id, 'link', e.target.value)}
-                    placeholder="Ex.: /catalog?colecao=inverno-2025"
-                  />
-                </div>
-                <div className={styles.toggleRow}>
-                  <span className={styles.toggleLabel}>
-                    {b.active ? <FaEye /> : <FaEyeSlash />} Visível
-                  </span>
-                  <label className={styles.switch}>
+              <div className={styles.categoryShowcaseForm}>
+                <div className={styles.categoryFormRow}>
+                  <div className={styles.inputGroup}>
+                    <label className={styles.inputLabel}><FaTag /> Nome</label>
                     <input
-                      type="checkbox"
-                      checked={b.active}
-                      onChange={(e) => handleBannerChange(b.id, 'active', e.target.checked)}
+                      className={styles.input}
+                      value={category.name}
+                      onChange={(e) => handleCategoryShowcaseChange(category.id, 'name', e.target.value)}
+                      placeholder="Ex.: Vestidos"
                     />
-                    <span className={styles.switchSlider}></span>
-                  </label>
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label className={styles.inputLabel}><FaLink /> Slug</label>
+                    <input
+                      className={styles.input}
+                      value={category.slug}
+                      onChange={(e) => handleCategoryShowcaseChange(category.id, 'slug', e.target.value)}
+                      placeholder="Ex.: vestidos"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}><FaEdit /> Descrição</label>
+                  <textarea
+                    className={styles.textarea}
+                    value={category.description}
+                    onChange={(e) => handleCategoryShowcaseChange(category.id, 'description', e.target.value)}
+                    placeholder="Descrição da categoria..."
+                    rows="2"
+                  />
+                </div>
+
+                <div className={styles.categoryFormRow}>
+                  <div className={styles.toggleRow}>
+                    <span className={styles.toggleLabel}>
+                      {category.active ? <FaEye /> : <FaEyeSlash />} Ativa
+                    </span>
+                    <label className={styles.switch}>
+                      <input
+                        type="checkbox"
+                        checked={category.active}
+                        onChange={(e) => handleCategoryShowcaseChange(category.id, 'active', e.target.checked)}
+                      />
+                      <span className={styles.switchSlider}></span>
+                    </label>
+                  </div>
+
+                  <div className={styles.toggleRow}>
+                    <span className={styles.toggleLabel}>
+                      {category.showInHome ? <FaEye /> : <FaEyeSlash />} Mostrar na Home
+                    </span>
+                    <label className={styles.switch}>
+                      <input
+                        type="checkbox"
+                        checked={category.showInHome}
+                        onChange={(e) => handleCategoryShowcaseChange(category.id, 'showInHome', e.target.checked)}
+                      />
+                      <span className={styles.switchSlider}></span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
+
+        {categoriesShowcase.length === 0 && (
+          <div className={styles.emptyState}>
+            <FaTag />
+            <span>Nenhuma categoria adicionada</span>
+            <button className={styles.addButton} onClick={handleAddCategoryShowcase}>
+              <FaPlus /> Adicionar Primeira Categoria
+            </button>
+          </div>
+        )}
+
+        {/* Preview das Categorias */}
+        <div className={styles.previewCard}>
+          <div className={styles.previewTitle}><FaEye /> Pré-visualização</div>
+          <div className={styles.categoriesPreview}>
+            {categoriesShowcase
+              .filter(c => c.active && c.showInHome)
+              .sort((a, b) => a.order - b.order)
+              .slice(0, 4)
+              .map(category => (
+                <div key={category.id} className={styles.categoryPreviewCard}>
+                  <div className={styles.categoryPreviewImage}>
+                    {category.image ? (
+                      <img src={category.image} alt={category.name} />
+                    ) : (
+                      <div className={styles.categoryPreviewPlaceholder}>
+                        <FaTag />
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.categoryPreviewInfo}>
+                    <h4>{category.name}</h4>
+                    <p>{category.description}</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
       </div>
     );
   };
-
-  // UI de Destaques
-  const renderFeatured = () => (
-    <div className={styles.sectionCard}>
-      <div className={styles.sectionHeader}>
-        <div className={styles.sectionTitle}>
-          <FaStar /> Produtos em Destaque
-        </div>
-        <button className={styles.addButton} onClick={() => openProductPicker('featured')}>
-          <FaPlus /> Adicionar Destaque
-        </button>
-      </div>
-
-      <div className={styles.productGrid}>
-        {featuredProducts.map((p, i) => (
-          <div key={`${p.id}-${i}`} className={styles.productCard}>
-            <div className={styles.productImage}>
-              <img src={p.image} alt={p.name} />
-              <button
-                className={styles.changeProductButton}
-                onClick={() => openProductPicker('featured', i)}
-                type="button"
-                title="Trocar produto"
-              >
-                <FaExchangeAlt /> Trocar
-              </button>
-            </div>
-            <div className={styles.productInfo}>
-              <div className={styles.productName} title={p.name}>{p.name}</div>
-              <div className={styles.productCategory} title={p.category}>{p.category}</div>
-              <div className={styles.productPrice}>{formatPrice(p.price)}</div>
-            </div>
-            <button
-              className={styles.removeButton}
-              onClick={() => removeFeatured(i)}
-              type="button"
-              title="Remover dos destaques"
-            >
-              <FaTrash />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  // UI de Categorias
-  const renderCategories = () => (
-    <div className={styles.sectionCard}>
-      <div className={styles.sectionHeader}>
-        <div className={styles.sectionTitle}>
-          <FaTag /> Categorias na Home
-        </div>
-        <button className={styles.addButton} onClick={openCategoryPicker}>
-          <FaPlus /> Adicionar Categoria
-        </button>
-      </div>
-
-      <div className={styles.categoryGrid}>
-        {homepageCategories.map((c) => (
-          <div key={c.id} className={styles.categoryCard}>
-            <div className={styles.categoryIcon}><FaShoppingBag /></div>
-            <div className={styles.categoryName} title={c.name}>{c.name}</div>
-            <button
-              className={styles.removeButton}
-              onClick={() => removeHomepageCategory(c.id)}
-              type="button"
-              title="Remover da home"
-            >
-              <FaTrash />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 
   // UI de Novidades
   const renderNewArrivals = () => (
@@ -1112,7 +1884,7 @@ const CMSPage = () => {
                     onChange={(e) =>
                       setSpecialOffers(prev =>
                         prev.map(x => x.id === o.id ? { ...x, active: e.target.checked } : x)
-                                              )
+                      )
                     }
                   />
                   <span className={styles.switchSlider}></span>
@@ -1133,7 +1905,7 @@ const CMSPage = () => {
     </div>
   );
 
-  // UI de Contato (ATUALIZADA PARA USAR HANDLERS DO CONTEXTO)
+  // UI de Contato
   const renderContact = () => (
     <div className={styles.sectionCard}>
       <div className={styles.sectionHeader}>
@@ -1223,7 +1995,7 @@ const CMSPage = () => {
     </div>
   );
 
-  // UI de Pagamento (ATUALIZADA PARA USAR HANDLERS DO CONTEXTO)
+  // UI de Pagamento
   const renderPayment = () => (
     <div className={styles.sectionCard}>
       <div className={styles.sectionHeader}>
@@ -1312,11 +2084,12 @@ const CMSPage = () => {
     </div>
   );
 
-  // Tabs - INCLUINDO A ABA HEADER
+  // Tabs - COM NOVOS PRODUTOS
   const tabs = [
     { id: 'header', label: 'Header' },
-    { id: 'banners', label: 'Banners' },
-    { id: 'featured', label: 'Destaques' },
+    { id: 'hero', label: 'Hero' },
+    { id: 'carousel', label: 'Carousel' },
+    { id: 'newProducts', label: 'Novos Produtos' },
     { id: 'categories', label: 'Categorias' },
     { id: 'new', label: 'Novidades' },
     { id: 'offers', label: 'Ofertas Especiais' },
@@ -1353,9 +2126,10 @@ const CMSPage = () => {
 
       <div className={styles.contentSection}>
         {activeTab === 'header' && renderHeader()}
-        {activeTab === 'banners' && renderBanners()}
-        {activeTab === 'featured' && renderFeatured()}
-        {activeTab === 'categories' && renderCategories()}
+        {activeTab === 'hero' && renderHero()}
+        {activeTab === 'carousel' && renderCarousel()}
+        {activeTab === 'newProducts' && renderNewProducts()}
+        {activeTab === 'categories' && renderCategoriesShowcase()}
         {activeTab === 'new' && renderNewArrivals()}
         {activeTab === 'offers' && renderSpecialOffers()}
         {activeTab === 'contact' && renderContact()}
@@ -1395,39 +2169,6 @@ const CMSPage = () => {
                       <span className={styles.blackText}>{formatPrice(p.price)}</span>
                     </div>
                   </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Categorias */}
-      {showCategoryModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowCategoryModal(false)}>
-          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitle}><FaSearch /> Selecionar Categoria</div>
-              <button className={styles.modalClose} onClick={() => setShowCategoryModal(false)}><FaTimes /></button>
-            </div>
-            <div className={styles.modalSearchRow}>
-              <input
-                className={styles.searchInput}
-                placeholder="Buscar categoria..."
-                value={categorySearch}
-                onChange={(e) => setCategorySearch(e.target.value)}
-              />
-            </div>
-            <div className={styles.modalCategoriesGrid}>
-              {filteredCategories.map(c => (
-                <button
-                  key={c.id}
-                  className={styles.modalCategoryCard}
-                  onClick={() => handlePickCategory(c)}
-                  type="button"
-                >
-                  <div className={styles.modalCategoryIcon}><FaShoppingBag /></div>
-                  <div className={styles.modalCategoryName} title={c.name}>{c.name}</div>
                 </button>
               ))}
             </div>

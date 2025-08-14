@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { CMSProvider } from './contexts/CMSContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
+import { ToastProvider } from './contexts/ToastContext.jsx';
 import Layout from './components/common/Layout/Layout.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute/ProtectedRoute.jsx';
 
@@ -27,62 +28,64 @@ const App = () => {
       <AuthProvider>
         <CMSProvider>
           <CartProvider>
-            <Layout>
-              <Routes>
-                {/* Rotas públicas */}
-                <Route path="/" element={<Home />} />
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/product/:id" element={<Product />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                
-                {/* Rotas protegidas - requer login */}
-                <Route 
-                  path="/dashboard/*" 
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/orders" 
-                  element={
-                    <ProtectedRoute>
-                      <div style={{ padding: '40px', textAlign: 'center' }}>
-                        <h1>Meus Pedidos</h1>
-                        <p>Página em desenvolvimento...</p>
-                      </div>
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/favorites" 
-                  element={
-                    <ProtectedRoute>
-                      <div style={{ padding: '40px', textAlign: 'center' }}>
-                        <h1>Favoritos</h1>
-                        <p>Página em desenvolvimento...</p>
-                      </div>
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Rotas protegidas - requer admin */}
-                <Route 
-                  path="/admin/*" 
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Página 404 */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
+            <ToastProvider>
+              <Layout>
+                <Routes>
+                  {/* Rotas públicas */}
+                  <Route path="/" element={<Home />} />
+                  <Route path="/catalog" element={<Catalog />} />
+                  <Route path="/product/:id" element={<Product />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  
+                  {/* Rotas protegidas - requer login */}
+                  <Route 
+                    path="/dashboard/*" 
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/orders" 
+                    element={
+                      <ProtectedRoute>
+                        <div style={{ padding: '40px', textAlign: 'center' }}>
+                          <h1>Meus Pedidos</h1>
+                          <p>Página em desenvolvimento...</p>
+                        </div>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/favorites" 
+                    element={
+                      <ProtectedRoute>
+                        <div style={{ padding: '40px', textAlign: 'center' }}>
+                          <h1>Favoritos</h1>
+                          <p>Página em desenvolvimento...</p>
+                        </div>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  {/* Rotas protegidas - requer admin */}
+                  <Route 
+                    path="/admin/*" 
+                    element={
+                      <ProtectedRoute requireAdmin={true}>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  {/* Página 404 */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            </ToastProvider>
           </CartProvider>
         </CMSProvider>
       </AuthProvider>

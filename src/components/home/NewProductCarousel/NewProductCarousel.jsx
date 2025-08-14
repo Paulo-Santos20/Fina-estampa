@@ -6,11 +6,12 @@ import {
   FaStar,
   FaChevronLeft,
   FaChevronRight,
-  FaShoppingCart
+  FaShoppingCart,
+  FaGift
 } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
-import { useCMS } from '../../../contexts/CMSContext'; // NOVO
-import styles from './ProductCarousel.module.css';
+import { useCMS } from '../../../contexts/CMSContext';
+import styles from './NewProductCarousel.module.css';
 
 // Produtos simulados (fallback)
 const SAMPLE_PRODUCTS = [
@@ -38,6 +39,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Vestidos', 
     rating: 4.8,
     reviews: 89,
+    isNew: true,
     sizes: ['P', 'M', 'G', 'GG'],
     colors: ['Vinho', 'Preto', 'Azul Marinho']
   },
@@ -49,6 +51,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Calças & Shorts', 
     rating: 4.3,
     reviews: 67,
+    isNew: true,
     sizes: ['36', '38', '40', '42'],
     colors: ['Preto', 'Cinza', 'Marinho']
   },
@@ -72,6 +75,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Blusas & Camisas', 
     rating: 4.9,
     reviews: 203,
+    isNew: true,
     sizes: ['P', 'M', 'G'],
     colors: ['Branco', 'Nude', 'Preto']
   },
@@ -83,6 +87,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Saias & Macacões', 
     rating: 4.4,
     reviews: 78,
+    isNew: true,
     sizes: ['P', 'M', 'G'],
     colors: ['Preto', 'Camel', 'Branco']
   },
@@ -98,6 +103,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Acessórios', 
     rating: 4.2,
     reviews: 45,
+    isNew: true,
     colors: ['Dourado', 'Preto', 'Camel']
   },
   { 
@@ -108,6 +114,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Acessórios', 
     rating: 4.7,
     reviews: 134,
+    isNew: true,
     sizes: ['35', '36', '37', '38', '39'],
     colors: ['Nude', 'Preto', 'Dourado']
   },
@@ -131,6 +138,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Vestidos', 
     rating: 4.5,
     reviews: 167,
+    isNew: true,
     sizes: ['PP', 'P', 'M', 'G'],
     colors: ['Floral', 'Liso', 'Estampado']
   },
@@ -142,6 +150,7 @@ const SAMPLE_PRODUCTS = [
     category: 'Calças & Shorts', 
     rating: 4.1,
     reviews: 89,
+    isNew: true,
     sizes: ['PP', 'P', 'M', 'G'],
     colors: ['Branco', 'Bege', 'Azul']
   },
@@ -153,11 +162,12 @@ const SAMPLE_PRODUCTS = [
     category: 'Acessórios', 
     rating: 4.6,
     reviews: 234,
+    isNew: true,
     colors: ['Dourado', 'Prateado']
   }
 ];
 
-const ProductCarousel = () => {
+const NewProductsCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
@@ -170,25 +180,25 @@ const ProductCarousel = () => {
   const navigate = useNavigate();
 
   // Obter configurações do CMS
-  const { getCarouselSettings } = useCMS();
-  const carouselSettings = getCarouselSettings();
+  const { getNewProductsSettings } = useCMS();
+  const newProductsSettings = getNewProductsSettings();
 
   // Filtrar produtos baseado nos IDs do CMS
   const products = SAMPLE_PRODUCTS.filter(product => 
-    carouselSettings.productIds.includes(product.id)
+    newProductsSettings.productIds.includes(product.id)
   ).sort((a, b) => {
     // Manter a ordem definida no CMS
-    const indexA = carouselSettings.productIds.indexOf(a.id);
-    const indexB = carouselSettings.productIds.indexOf(b.id);
+    const indexA = newProductsSettings.productIds.indexOf(a.id);
+    const indexB = newProductsSettings.productIds.indexOf(b.id);
     return indexA - indexB;
   });
 
   // Auto-play functionality (usando configurações do CMS)
   useEffect(() => {
-    if (carouselSettings.autoPlay && isAutoPlaying && !isDragging && products.length > 0) {
+    if (newProductsSettings.autoPlay && isAutoPlaying && !isDragging && products.length > 0) {
       autoPlayRef.current = setInterval(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
-      }, carouselSettings.autoPlayInterval || 4000);
+      }, newProductsSettings.autoPlayInterval || 5000);
     }
 
     return () => {
@@ -196,7 +206,7 @@ const ProductCarousel = () => {
         clearInterval(autoPlayRef.current);
       }
     };
-  }, [carouselSettings.autoPlay, carouselSettings.autoPlayInterval, isAutoPlaying, isDragging, products.length]);
+  }, [newProductsSettings.autoPlay, newProductsSettings.autoPlayInterval, isAutoPlaying, isDragging, products.length]);
 
   // Touch/Mouse events for manual scrolling
   const handleMouseDown = (e) => {
@@ -302,23 +312,26 @@ const ProductCarousel = () => {
   };
 
   // Não renderizar se não estiver ativo ou não há produtos
-  if (!carouselSettings.active || !products || products.length === 0) {
+  if (!newProductsSettings.active || !products || products.length === 0) {
     return null;
   }
 
   return (
-    <section className={styles.carouselSection}>
+    <section className={styles.newProductsSection}>
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{carouselSettings.title}</h2>
-          {carouselSettings.subtitle && (
-            <p className={styles.sectionSubtitle}>{carouselSettings.subtitle}</p>
+          <h2 className={styles.sectionTitle}>
+            <FaGift className={styles.titleIcon} />
+            {newProductsSettings.title}
+          </h2>
+          {newProductsSettings.subtitle && (
+            <p className={styles.sectionSubtitle}>{newProductsSettings.subtitle}</p>
           )}
         </div>
 
         <div className={styles.carouselWrapper}>
           {/* Botões de navegação (se habilitados) */}
-          {carouselSettings.showArrows && (
+          {newProductsSettings.showArrows && (
             <>
               <button 
                 className={`${styles.navButton} ${styles.prevButton}`}
@@ -386,10 +399,10 @@ const ProductCarousel = () => {
                       </div>
                     )}
                     
-                    {/* Badge de novo produto */}
-                    {product.isNew && (
-                      <div className={styles.newBadge}>Novo</div>
-                    )}
+                    {/* Badge de novo produto - SEMPRE MOSTRAR */}
+                    <div className={styles.newBadge}>
+                      <FaGift /> Novo
+                    </div>
 
                     {/* Ações do produto */}
                     <div className={styles.productActions}>
@@ -497,7 +510,7 @@ const ProductCarousel = () => {
         </div>
 
         {/* Indicadores (se habilitados) */}
-        {carouselSettings.showIndicators && (
+        {newProductsSettings.showIndicators && (
           <div className={styles.indicators}>
             {products.slice(0, Math.min(products.length, 8)).map((_, index) => (
               <button
@@ -520,4 +533,4 @@ const ProductCarousel = () => {
   );
 };
 
-export default ProductCarousel;
+export default NewProductsCarousel;

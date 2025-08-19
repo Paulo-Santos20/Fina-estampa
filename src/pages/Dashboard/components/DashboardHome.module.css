@@ -1,0 +1,840 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   DASHBOARD HOME
+   =========================================== */
+
+.dashboardHome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ===========================================
+   SEÇÃO DE BOAS-VINDAS
+   =========================================== */
+
+.welcomeSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(135deg, var(--wine-destaque) 0%, var(--preto-secundario) 100%);
+  color: var(--white-principal);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-large);
+  margin-bottom: var(--spacing-lg);
+}
+
+.welcomeContent {
+  flex: 1;
+}
+
+.welcomeTitle {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-bold);
+  margin: 0 0 var(--spacing-sm) 0;
+  font-family: var(--font-secondary);
+}
+
+.welcomeSubtitle {
+  font-size: var(--font-lg);
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.welcomeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.date,
+.time {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-sm);
+  opacity: 0.8;
+}
+
+/* ===========================================
+   ESTATÍSTICAS
+   =========================================== */
+
+.statsSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.statCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-heavy);
+  border-color: var(--wine-destaque);
+}
+
+.statCard.blue {
+  border-left: 4px solid #3B82F6;
+}
+
+.statCard.green {
+  border-left: 4px solid #10B981;
+}
+
+.statCard.purple {
+  border-left: 4px solid #8B5CF6;
+}
+
+.statCard.orange {
+  border-left: 4px solid #F59E0B;
+}
+
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  color: var(--white-principal);
+}
+
+.statCard.blue .statIcon {
+  background: #3B82F6;
+}
+
+.statCard.green .statIcon {
+  background: #10B981;
+}
+
+.statCard.purple .statIcon {
+  background: #8B5CF6;
+}
+
+.statCard.orange .statIcon {
+  background: #F59E0B;
+}
+
+.statChange {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.changeValue {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-small);
+}
+
+.changeValue.increase {
+  background: #DCFCE7;
+  color: #16A34A;
+}
+
+.changeValue.decrease {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.statContent {
+  text-align: left;
+}
+
+.statValue {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0;
+  font-family: var(--font-secondary);
+}
+
+.statLabel {
+  font-size: var(--font-base);
+  color: var(--cinza-medio);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
+/* ===========================================
+   SEÇÃO PRINCIPAL
+   =========================================== */
+
+.mainSection {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* ===========================================
+   GRÁFICO DE VENDAS
+   =========================================== */
+
+.chartSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.chartCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+}
+
+.chartInfo {
+  flex: 1;
+}
+
+.chartTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.chartSubtitle {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: 0;
+}
+
+.chartBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-normal);
+}
+
+.chartBtn:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-1px);
+}
+
+.chartContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.chartArea {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  padding: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--cinza-claro);
+  position: relative;
+}
+
+.chartArea::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--cinza-claro);
+}
+
+.chartBar {
+  background: linear-gradient(to top, var(--wine-destaque), var(--dourado-sutil));
+  border-radius: var(--radius-small) var(--radius-small) 0 0;
+  min-height: 4px;
+  flex: 1;
+  margin: 0 1px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  animation: chartBarGrow 0.8s ease-out forwards;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.chartBar:hover {
+  background: linear-gradient(to top, var(--preto-secundario), var(--wine-destaque));
+  transform: scaleY(1.05);
+}
+
+@keyframes chartBarGrow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.chartLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-xs);
+  color: var(--cinza-medio);
+  padding: 0 var(--spacing-sm);
+}
+
+/* ===========================================
+   PRODUTOS MAIS VENDIDOS
+   =========================================== */
+
+.topProductsSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.topProductsCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topProductsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.topProductsTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0;
+}
+
+.topProductsBtn {
+  background: none;
+  border: 1px solid var(--wine-destaque);
+  color: var(--wine-destaque);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-normal);
+}
+
+.topProductsBtn:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.topProductsList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  overflow-y: auto;
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.productItem:hover {
+  background: var(--rosa-suave);
+  transform: translateX(4px);
+}
+
+.productRank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rankNumber {
+  width: 32px;
+  height: 32px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-bold);
+  font-size: var(--font-sm);
+}
+
+.productImage {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  background: var(--white-principal);
+}
+
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productInfo {
+  flex: 1;
+}
+
+.productName {
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.productStats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.productSales {
+  font-size: var(--font-xs);
+  color: var(--cinza-medio);
+}
+
+.productRevenue {
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--wine-destaque);
+}
+
+.productAction {
+  background: none;
+  border: 1px solid var(--cinza-medio);
+  color: var(--cinza-medio);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.productAction:hover {
+  border-color: var(--wine-destaque);
+  color: var(--wine-destaque);
+  background: var(--rosa-suave);
+}
+
+/* ===========================================
+   PEDIDOS RECENTES
+   =========================================== */
+
+.ordersSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.ordersCard {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.ordersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.ordersTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0;
+}
+
+.ordersBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-normal);
+}
+
+.ordersBtn:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-1px);
+}
+
+.ordersTable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+  font-size: var(--font-sm);
+}
+
+.tableHeaderCell {
+  text-align: left;
+}
+
+.tableBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--white-principal);
+  border: 1px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.tableRow:hover {
+  background: var(--rosa-suave);
+  border-color: var(--wine-destaque);
+  transform: translateY(-1px);
+}
+
+.tableCell {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-sm);
+}
+
+.orderId {
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+}
+
+.customerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.customerName {
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+}
+
+.orderItems {
+  font-size: var(--font-xs);
+  color: var(--cinza-medio);
+}
+
+.orderTotal {
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+}
+
+.status {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-small);
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusPending {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.statusConfirmed {
+  background: #DBEAFE;
+  color: #2563EB;
+}
+
+.statusShipped {
+  background: #E0E7FF;
+  color: #7C3AED;
+}
+
+.statusDelivered {
+  background: #D1FAE5;
+  color: #059669;
+}
+
+.dateTimeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.orderDate {
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+}
+
+.orderTime {
+  font-size: var(--font-xs);
+  color: var(--cinza-medio);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.actionBtn {
+  background: none;
+  border: 1px solid var(--cinza-medio);
+  color: var(--cinza-medio);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: var(--font-sm);
+}
+
+.actionBtn:hover {
+  border-color: var(--wine-destaque);
+  color: var(--wine-destaque);
+  background: var(--rosa-suave);
+}
+
+/* ===========================================
+   AÇÕES RÁPIDAS
+   =========================================== */
+
+.quickActionsSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.quickActionsTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.quickActionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.quickActionCard {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.quickActionCard:hover {
+  border-color: var(--wine-destaque);
+  background: var(--rosa-suave);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-heavy);
+}
+
+.quickActionIcon {
+  width: 64px;
+  height: 64px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-2xl);
+  transition: all var(--transition-normal);
+}
+
+.quickActionCard:hover .quickActionIcon {
+  background: var(--preto-secundario);
+  transform: scale(1.1);
+}
+
+.quickActionContent h4 {
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.quickActionContent p {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1200px) {
+  .mainSection {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .topProductsCard,
+  .chartCard {
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcomeSection {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    text-align: center;
+  }
+  
+  .welcomeTitle {
+    font-size: var(--font-2xl);
+  }
+  
+  .welcomeSubtitle {
+    font-size: var(--font-base);
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .tableHeaderCell {
+    display: none;
+  }
+  
+  .tableCell {
+    justify-content: space-between;
+    border-bottom: 1px solid var(--cinza-claro);
+    padding-bottom: var(--spacing-xs);
+  }
+  
+  .tableCell:last-child {
+    border-bottom: none;
+  }
+  
+  .quickActionsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chartArea {
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardHome {
+    gap: var(--spacing-lg);
+  }
+  
+  .welcomeSection {
+    padding: var(--spacing-xl);
+  }
+  
+  .welcomeTitle {
+    font-size: var(--font-xl);
+  }
+  
+  .statCard {
+    padding: var(--spacing-lg);
+  }
+  
+  .statValue {
+    font-size: var(--font-2xl);
+  }
+  
+  .chartCard,
+  .topProductsCard,
+  .ordersCard {
+    padding: var(--spacing-lg);
+  }
+  
+  .quickActionCard {
+    padding: var(--spacing-lg);
+  }
+  
+  .quickActionIcon {
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-xl);
+  }
+}

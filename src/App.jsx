@@ -1,10 +1,9 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { CMSProvider } from './contexts/CMSContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
-import { ToastProvider } from './contexts/ToastContext.jsx';
+import { ToastProvider } from './components/ui/Toast'; // Toast do UI
 import Layout from './components/common/Layout/Layout.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute/ProtectedRoute.jsx';
 
@@ -28,7 +27,7 @@ const App = () => {
       <AuthProvider>
         <CMSProvider>
           <CartProvider>
-            <ToastProvider>
+            <ToastProvider position="top-right">
               <Layout>
                 <Routes>
                   {/* Rotas públicas */}

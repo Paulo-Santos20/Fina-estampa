@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { 
   FaUsers, 
-  FaUserPlus, 
-  FaSearch, 
+  FaPlus,
+  FaSearch,
   FaFilter,
   FaEye,
   FaEdit,
@@ -12,208 +12,243 @@ import {
   FaMapMarkerAlt,
   FaCalendarAlt,
   FaShoppingBag,
-  FaDollarSign,
-  FaStar,
-  FaDownload,
-  FaUserCheck,
-  FaUserTimes
+  FaChartLine,
+  FaSave,
+  FaTimes,
+  FaUser,
+  FaIdCard,
+  FaVenusMars
 } from 'react-icons/fa';
+import { useCustomers } from '../../../hooks/useCustomers';
+import { useToast } from '../../../components/ui/Toast';
 import styles from './CustomersPage.module.css';
 
 const CustomersPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
-  const [showModal, setShowModal] = useState(false);
+  const { 
+    customers, 
+    loading, 
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    searchCustomers,
+    getCustomerStats 
+  } = useCustomers();
+
+  const { showSuccess, showError, showWarning } = useToast();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterSegment, setFilterSegment] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Dados simulados de clientes
-  const allCustomers = useMemo(() => [
-    {
-      id: 1,
-      name: 'Maria Silva',
-      email: 'maria.silva@email.com',
-      phone: '(11) 99999-1234',
-      address: 'Rua das Flores, 123 - Vila Madalena, São Paulo - SP',
-      registeredAt: '2024-01-15',
-      lastOrder: '2024-12-20',
-      totalOrders: 8,
-      totalSpent: 1450.80,
-      status: 'active',
-      rating: 4.8,
-      segment: 'VIP'
-    },
-    {
-      id: 2,
-      name: 'Ana Costa',
-      email: 'ana.costa@email.com',
-      phone: '(11) 98888-5678',
-      address: 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
-      registeredAt: '2024-02-20',
-      lastOrder: '2024-12-18',
-      totalOrders: 5,
-      totalSpent: 890.50,
-      status: 'active',
-      rating: 4.5,
-      segment: 'Regular'
-    },
-    {
-      id: 3,
-      name: 'Julia Santos',
-      email: 'julia.santos@email.com',
-      phone: '(11) 97777-9012',
-      address: 'Rua Augusta, 500 - Consolação, São Paulo - SP',
-      registeredAt: '2024-03-10',
-      lastOrder: '2024-12-15',
-      totalOrders: 12,
-      totalSpent: 2340.90,
-      status: 'active',
-      rating: 5.0,
-      segment: 'VIP'
-    },
-    {
-      id: 4,
-      name: 'Carla Lima',
-      email: 'carla.lima@email.com',
-      phone: '(11) 96666-3456',
-      address: 'Rua Oscar Freire, 200 - Jardins, São Paulo - SP',
-      registeredAt: '2024-04-05',
-      lastOrder: '2024-11-30',
-      totalOrders: 3,
-      totalSpent: 456.70,
-      status: 'inactive',
-      rating: 4.2,
-      segment: 'Regular'
-    },
-    {
-      id: 5,
-      name: 'Fernanda Oliveira',
-      email: 'fernanda.oliveira@email.com',
-      phone: '(11) 95555-7890',
-      address: 'Rua da Consolação, 800 - Centro, São Paulo - SP',
-      registeredAt: '2024-05-12',
-      lastOrder: '2024-12-19',
-      totalOrders: 6,
-      totalSpent: 1120.30,
-      status: 'active',
-      rating: 4.6,
-      segment: 'Regular'
-    },
-    {
-      id: 6,
-      name: 'Beatriz Alves',
-      email: 'beatriz.alves@email.com',
-      phone: '(11) 94444-2468',
-      address: 'Av. Faria Lima, 1500 - Itaim Bibi, São Paulo - SP',
-      registeredAt: '2024-06-18',
-      lastOrder: '2024-10-15',
-      totalOrders: 2,
-      totalSpent: 298.90,
-      status: 'inactive',
-      rating: 3.8,
-      segment: 'Novo'
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    gender: '',
+    cpf: '',
+    address: {
+      street: '',
+      neighborhood: '',
+      city: '',
+      state: '',
+      zipCode: ''
     }
-  ], []);
+  });
 
-  const statusOptions = [
-    { value: 'all', label: 'Todos os Status' },
-    { value: 'active', label: 'Ativos' },
-    { value: 'inactive', label: 'Inativos' }
-  ];
-
-  const segmentOptions = [
-    { value: 'all', label: 'Todos os Segmentos' },
-    { value: 'VIP', label: 'VIP' },
-    { value: 'Regular', label: 'Regular' },
-    { value: 'Novo', label: 'Novo' }
-  ];
-
-  const filteredCustomers = useMemo(() => {
-    let filtered = [...allCustomers];
-
-    // Filtro por busca
-    if (searchTerm) {
-      filtered = filtered.filter(customer =>
-        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.phone.includes(searchTerm)
-      );
-    }
-
-    // Filtro por status
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(customer => customer.status === filterStatus);
-    }
-
-    // Ordenação
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'totalSpent':
-          return b.totalSpent - a.totalSpent;
-        case 'totalOrders':
-          return b.totalOrders - a.totalOrders;
-        case 'lastOrder':
-          return new Date(b.lastOrder) - new Date(a.lastOrder);
-        case 'registeredAt':
-          return new Date(b.registeredAt) - new Date(a.registeredAt);
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [allCustomers, searchTerm, filterStatus, sortBy]);
-
-  // Estatísticas dos clientes
-  const customerStats = useMemo(() => {
-    const total = allCustomers.length;
-    const active = allCustomers.filter(c => c.status === 'active').length;
-    const vip = allCustomers.filter(c => c.segment === 'VIP').length;
-    const totalRevenue = allCustomers.reduce((sum, c) => sum + c.totalSpent, 0);
-    const avgOrderValue = totalRevenue / allCustomers.reduce((sum, c) => sum + c.totalOrders, 0);
-
-    return { total, active, vip, totalRevenue, avgOrderValue };
-  }, [allCustomers]);
+  // MOVER A FUNÇÃO PARA ANTES DE SEU USO
+  const getCustomerSegment = (totalSpent) => {
+    if (totalSpent >= 1000) return { label: 'VIP', color: '#722F37' };
+    if (totalSpent >= 500) return { label: 'Premium', color: '#8B5CF6' };
+    if (totalSpent >= 200) return { label: 'Regular', color: '#3B82F6' };
+    return { label: 'Novo', color: '#10B981' };
+  };
 
   const formatCurrency = (value) => {
-    return value.toLocaleString('pt-BR', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
-    });
+    }).format(value);
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
-  const getSegmentColor = (segment) => {
-    switch (segment) {
-      case 'VIP': return '#D4AF37';
-      case 'Regular': return '#10B981';
-      case 'Novo': return '#3B82F6';
-      default: return '#6B7280';
+  const stats = getCustomerStats();
+
+  // Filtrar clientes
+  const filteredCustomers = customers.filter(customer => {
+    const matchesSearch = !searchQuery || 
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.phone.includes(searchQuery);
+    
+    const segment = getCustomerSegment(customer.totalSpent);
+    const matchesSegment = !filterSegment || segment.label === filterSegment;
+    
+    return matchesSearch && matchesSegment;
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    if (name.startsWith('address.')) {
+      const addressField = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [addressField]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
     }
   };
 
-  const getStatusColor = (status) => {
-    return status === 'active' ? '#10B981' : '#EF4444';
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      birthDate: '',
+      gender: '',
+      cpf: '',
+      address: {
+        street: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+        zipCode: ''
+      }
+    });
   };
 
-  const handleViewCustomer = (customer) => {
+  const openAddModal = () => {
+    resetForm();
+    setEditingCustomer(null);
+    setShowAddModal(true);
+  };
+
+  const openEditModal = (customer) => {
+    setFormData({
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      birthDate: customer.birthDate,
+      gender: customer.gender,
+      cpf: customer.cpf || '',
+      address: {
+        street: customer.address.street,
+        neighborhood: customer.address.neighborhood,
+        city: customer.address.city,
+        state: customer.address.state,
+        zipCode: customer.address.zipCode
+      }
+    });
+    setEditingCustomer(customer);
+    setShowAddModal(true);
+  };
+
+  const closeAddModal = () => {
+    setShowAddModal(false);
+    setEditingCustomer(null);
+    setIsSubmitting(false);
+    resetForm();
+  };
+
+  const openCustomerModal = (customer) => {
     setSelectedCustomer(customer);
-    setShowModal(true);
+    setShowCustomerModal(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const closeCustomerModal = () => {
     setSelectedCustomer(null);
+    setShowCustomerModal(false);
   };
 
-  const handleExportCustomers = () => {
-    alert('📊 Lista de clientes será exportada!');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+      showError('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showError('Por favor, insira um email válido');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const customerData = {
+        ...formData,
+        status: 'Ativo',
+        totalOrders: 0,
+        totalSpent: 0,
+        lastOrder: null,
+        createdAt: new Date().toISOString()
+      };
+
+      if (editingCustomer) {
+        const success = updateCustomer(editingCustomer.id, customerData);
+        if (success) {
+          showSuccess('Cliente atualizado com sucesso!');
+          closeAddModal();
+        } else {
+          showError('Erro ao atualizar cliente');
+        }
+      } else {
+        const newCustomer = addCustomer(customerData);
+        if (newCustomer) {
+          showSuccess('Cliente cadastrado com sucesso!');
+          closeAddModal();
+        } else {
+          showError('Erro ao cadastrar cliente');
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao salvar cliente:', err);
+      showError('Erro ao salvar cliente');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const handleDelete = (customerId, customerName) => {
+    if (window.confirm(`Tem certeza que deseja excluir o cliente "${customerName}"?`)) {
+      const success = deleteCustomer(customerId);
+      if (success) {
+        showSuccess('Cliente excluído com sucesso!');
+      } else {
+        showError('Erro ao excluir cliente');
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.loadingState}>
+          <FaUsers className={styles.loadingIcon} />
+          <h3>Carregando clientes...</h3>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pageContainer}>
@@ -222,106 +257,91 @@ const CustomersPage = () => {
         <div className={styles.headerContent}>
           <h2 className={styles.pageTitle}>
             <FaUsers />
-            Gerenciar Clientes ({customerStats.total})
+            Gerenciar Clientes ({filteredCustomers.length})
           </h2>
           <p className={styles.pageSubtitle}>
-            Visualize e gerencie informações dos seus clientes
+            Visualize, cadastre e gerencie sua base de clientes
           </p>
         </div>
         
         <div className={styles.headerActions}>
           <button 
-            onClick={handleExportCustomers}
-            className={styles.secondaryBtn}
+            onClick={openAddModal}
+            className={styles.primaryBtn}
           >
-            <FaDownload /> Exportar
-          </button>
-          
-          <button className={styles.primaryBtn}>
-            <FaUserPlus /> Novo Cliente
+            <FaPlus /> Novo Cliente
           </button>
         </div>
       </div>
 
       {/* Estatísticas */}
-      <div className={styles.statsGrid}>
+      <div className={styles.statsSection}>
         <div className={styles.statCard}>
           <div className={styles.statIcon}>
             <FaUsers />
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>{customerStats.total}</div>
-            <div className={styles.statLabel}>Total de Clientes</div>
+            <span className={styles.statValue}>{stats.total}</span>
+            <span className={styles.statLabel}>Total de Clientes</span>
           </div>
         </div>
         
-        <div className={`${styles.statCard} ${styles.statCardGreen}`}>
+        <div className={styles.statCard}>
           <div className={styles.statIcon}>
-            <FaUserCheck />
+            <FaChartLine />
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>{customerStats.active}</div>
-            <div className={styles.statLabel}>Clientes Ativos</div>
+            <span className={styles.statValue}>{stats.active}</span>
+            <span className={styles.statLabel}>Clientes Ativos</span>
           </div>
         </div>
-
-        <div className={`${styles.statCard} ${styles.statCardGold}`}>
+        
+        <div className={styles.statCard}>
           <div className={styles.statIcon}>
-            <FaStar />
+            <FaShoppingBag />
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>{customerStats.vip}</div>
-            <div className={styles.statLabel}>Clientes VIP</div>
+            <span className={styles.statValue}>{formatCurrency(stats.totalRevenue)}</span>
+            <span className={styles.statLabel}>Receita Total</span>
           </div>
         </div>
-
-        <div className={`${styles.statCard} ${styles.statCardBlue}`}>
+        
+        <div className={styles.statCard}>
           <div className={styles.statIcon}>
-            <FaDollarSign />
+            <FaChartLine />
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>{formatCurrency(customerStats.totalRevenue)}</div>
-            <div className={styles.statLabel}>Receita Total</div>
+            <span className={styles.statValue}>{formatCurrency(stats.averageSpent)}</span>
+            <span className={styles.statLabel}>Ticket Médio</span>
           </div>
         </div>
       </div>
 
       {/* Filtros */}
       <div className={styles.filtersSection}>
-        <div className={styles.filtersRow}>
-          <div className={styles.searchContainer}>
-            <FaSearch className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Buscar por nome, email ou telefone..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={styles.searchInput}
-            />
-          </div>
-          
+        <div className={styles.searchContainer}>
+          <FaSearch className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Buscar por nome, email ou telefone..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+          />
+        </div>
+        
+        <div className={styles.filterContainer}>
+          <FaFilter className={styles.filterIcon} />
           <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
+            value={filterSegment}
+            onChange={(e) => setFilterSegment(e.target.value)}
             className={styles.filterSelect}
           >
-            {statusOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className={styles.filterSelect}
-          >
-            <option value="name">Nome (A-Z)</option>
-            <option value="totalSpent">Maior Gasto</option>
-            <option value="totalOrders">Mais Pedidos</option>
-            <option value="lastOrder">Último Pedido</option>
-            <option value="registeredAt">Mais Recentes</option>
+            <option value="">Todos os segmentos</option>
+            <option value="VIP">VIP</option>
+            <option value="Premium">Premium</option>
+            <option value="Regular">Regular</option>
+            <option value="Novo">Novo</option>
           </select>
         </div>
       </div>
@@ -329,223 +349,531 @@ const CustomersPage = () => {
       {/* Lista de Clientes */}
       <div className={styles.customersSection}>
         {filteredCustomers.length > 0 ? (
-          <div className={styles.customersList}>
-            {filteredCustomers.map((customer) => (
-              <div key={customer.id} className={styles.customerCard}>
-                <div className={styles.customerHeader}>
-                  <div className={styles.customerBasicInfo}>
+          <div className={styles.customersGrid}>
+            {filteredCustomers.map((customer) => {
+              const segment = getCustomerSegment(customer.totalSpent);
+              return (
+                <div key={customer.id} className={styles.customerCard}>
+                  <div className={styles.customerHeader}>
                     <div className={styles.customerAvatar}>
-                      {customer.name.charAt(0).toUpperCase()}
+                      <span>{customer.name.charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div className={styles.customerInfo}>
+                      <h4 className={styles.customerName}>{customer.name}</h4>
+                      <span 
+                        className={styles.customerSegment}
+                        style={{ backgroundColor: segment.color }}
+                      >
+                        {segment.label}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.customerDetails}>
+                    <div className={styles.customerField}>
+                      <FaEnvelope className={styles.fieldIcon} />
+                      <span className={styles.fieldValue}>{customer.email}</span>
                     </div>
                     
-                    <div className={styles.customerInfo}>
-                      <div className={styles.customerNameRow}>
-                        <h4 className={styles.customerName}>{customer.name}</h4>
-                        <div className={styles.customerBadges}>
-                          <span 
-                            className={styles.segmentBadge}
-                            style={{ backgroundColor: getSegmentColor(customer.segment) }}
-                          >
-                            {customer.segment}
-                          </span>
-                          <span 
-                            className={styles.statusBadge}
-                            style={{ backgroundColor: getStatusColor(customer.status) }}
-                          >                            {customer.status === 'active' ? 'Ativo' : 'Inativo'}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className={styles.customerContact}>
-                        <span className={styles.contactItem}>
-                          <FaEnvelope /> {customer.email}
-                        </span>
-                        <span className={styles.contactItem}>
-                          <FaPhone /> {customer.phone}
-                        </span>
-                      </div>
+                    <div className={styles.customerField}>
+                      <FaPhone className={styles.fieldIcon} />
+                      <span className={styles.fieldValue}>{customer.phone}</span>
+                    </div>
+                    
+                    <div className={styles.customerField}>
+                      <FaMapMarkerAlt className={styles.fieldIcon} />
+                      <span className={styles.fieldValue}>
+                        {customer.address.city} - {customer.address.state}
+                      </span>
                     </div>
                   </div>
-
+                  
                   <div className={styles.customerStats}>
                     <div className={styles.statItem}>
-                      <div className={styles.statValue}>{customer.totalOrders}</div>
-                      <div className={styles.statLabel}>Pedidos</div>
+                      <span className={styles.statValue}>{customer.totalOrders}</span>
+                      <span className={styles.statLabel}>Pedidos</span>
                     </div>
                     <div className={styles.statItem}>
-                      <div className={styles.statValue}>{formatCurrency(customer.totalSpent)}</div>
-                      <div className={styles.statLabel}>Total Gasto</div>
+                      <span className={styles.statValue}>{formatCurrency(customer.totalSpent)}</span>
+                      <span className={styles.statLabel}>Total Gasto</span>
                     </div>
                     <div className={styles.statItem}>
-                      <div className={styles.statValue}>
-                        <div className={styles.rating}>
-                          <FaStar /> {customer.rating}
-                        </div>
-                      </div>
-                      <div className={styles.statLabel}>Avaliação</div>
+                      <span className={styles.statValue}>{formatDate(customer.lastOrder)}</span>
+                      <span className={styles.statLabel}>Último Pedido</span>
                     </div>
                   </div>
-                </div>
-
-                <div className={styles.customerDetails}>
-                  <div className={styles.detailItem}>
-                    <FaMapMarkerAlt />
-                    <span>{customer.address}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <FaCalendarAlt />
-                    <span>Cliente desde {formatDate(customer.registeredAt)}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <FaShoppingBag />
-                    <span>Último pedido: {formatDate(customer.lastOrder)}</span>
-                  </div>
-                </div>
-
-                <div className={styles.customerActions}>
-                  <button
-                    onClick={() => handleViewCustomer(customer)}
-                    className={styles.actionBtn}
-                  >
-                    <FaEye /> Ver Detalhes
-                  </button>
                   
-                  <button className={styles.actionBtn}>
-                    <FaEdit /> Editar
-                  </button>
-                  
-                  <button className={`${styles.actionBtn} ${styles.contactBtn}`}>
-                    <FaEnvelope /> Contatar
-                  </button>
+                  <div className={styles.customerActions}>
+                    <button
+                      onClick={() => openCustomerModal(customer)}
+                      className={`${styles.actionBtn} ${styles.viewBtn}`}
+                      title="Ver detalhes"
+                    >
+                      <FaEye />
+                    </button>
+                    <button
+                      onClick={() => openEditModal(customer)}
+                      className={`${styles.actionBtn} ${styles.editBtn}`}
+                      title="Editar cliente"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(customer.id, customer.name)}
+                      className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                      title="Excluir cliente"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className={styles.emptyState}>
             <FaUsers className={styles.emptyIcon} />
             <h3>Nenhum cliente encontrado</h3>
             <p>
-              {searchTerm || filterStatus !== 'all'
+              {searchQuery || filterSegment
                 ? 'Tente ajustar os filtros de busca'
-                : 'Nenhum cliente cadastrado ainda'
+                : 'Comece cadastrando seu primeiro cliente'
               }
             </p>
+            {!searchQuery && !filterSegment && (
+              <button 
+                onClick={openAddModal}
+                className={styles.primaryBtn}
+                style={{ marginTop: 'var(--spacing-lg)' }}
+              >
+                <FaPlus /> Cadastrar Cliente
+              </button>
+            )}
           </div>
         )}
       </div>
 
-      {/* Modal de Detalhes do Cliente */}
-      {showModal && selectedCustomer && (
+      {/* Modal de Cadastro/Edição */}
+      {showAddModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContainer}>
             <div className={styles.modalHeader}>
               <h3 className={styles.modalTitle}>
-                Detalhes do Cliente
+                {editingCustomer ? '✏️ Editar Cliente' : '➕ Novo Cliente'}
               </h3>
               <button
-                onClick={handleCloseModal}
+                onClick={closeAddModal}
                 className={styles.modalCloseBtn}
+                disabled={isSubmitting}
               >
-                ×
+                <FaTimes />
               </button>
             </div>
-            
-            <div className={styles.modalContent}>
-              <div className={styles.customerProfile}>
-                <div className={styles.profileAvatar}>
-                  {selectedCustomer.name.charAt(0).toUpperCase()}
-                </div>
-                <div className={styles.profileInfo}>
-                  <h4 className={styles.profileName}>{selectedCustomer.name}</h4>
-                  <div className={styles.profileBadges}>
-                    <span 
-                      className={styles.segmentBadge}
-                      style={{ backgroundColor: getSegmentColor(selectedCustomer.segment) }}
-                    >
-                      {selectedCustomer.segment}
-                    </span>
-                    <span 
-                      className={styles.statusBadge}
-                      style={{ backgroundColor: getStatusColor(selectedCustomer.status) }}
-                    >
-                      {selectedCustomer.status === 'active' ? 'Ativo' : 'Inativo'}
-                    </span>
-                  </div>
-                </div>
-              </div>
 
-              <div className={styles.detailsGrid}>
-                <div className={styles.detailsSection}>
-                  <h5 className={styles.sectionTitle}>Informações de Contato</h5>
-                  <div className={styles.detailsList}>
-                    <div className={styles.detailRow}>
-                      <FaEnvelope />
-                      <span>{selectedCustomer.email}</span>
-                    </div>
-                    <div className={styles.detailRow}>
-                      <FaPhone />
-                      <span>{selectedCustomer.phone}</span>
-                    </div>
-                    <div className={styles.detailRow}>
-                      <FaMapMarkerAlt />
-                      <span>{selectedCustomer.address}</span>
-                    </div>
+            <form onSubmit={handleSubmit} className={styles.modalForm}>
+              <div className={styles.formGrid}>
+                {/* Informações Pessoais */}
+                <div className={styles.formSection}>
+                  <h4 className={styles.sectionTitle}>
+                    <FaUser /> Informações Pessoais
+                  </h4>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Nome Completo *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isSubmitting}
+                      className={styles.formInput}
+                      placeholder="Ex: Maria Silva Santos"
+                    />
                   </div>
-                </div>
 
-                <div className={styles.detailsSection}>
-                  <h5 className={styles.sectionTitle}>Estatísticas</h5>
-                  <div className={styles.statsModalGrid}>
-                    <div className={styles.modalStatItem}>
-                      <div className={styles.modalStatValue}>{selectedCustomer.totalOrders}</div>
-                      <div className={styles.modalStatLabel}>Total de Pedidos</div>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        disabled={isSubmitting}
+                        className={styles.formInput}
+                        placeholder="maria@email.com"
+                      />
                     </div>
-                    <div className={styles.modalStatItem}>
-                      <div className={styles.modalStatValue}>{formatCurrency(selectedCustomer.totalSpent)}</div>
-                      <div className={styles.modalStatLabel}>Total Gasto</div>
-                    </div>
-                    <div className={styles.modalStatItem}>
-                      <div className={styles.modalStatValue}>
-                        {formatCurrency(selectedCustomer.totalSpent / selectedCustomer.totalOrders)}
-                      </div>
-                      <div className={styles.modalStatLabel}>Ticket Médio</div>
-                    </div>
-                    <div className={styles.modalStatItem}>
-                      <div className={styles.modalStatValue}>
-                        <FaStar /> {selectedCustomer.rating}
-                      </div>
-                      <div className={styles.modalStatLabel}>Avaliação</div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Telefone *</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                        disabled={isSubmitting}
+                        className={styles.formInput}
+                        placeholder="(11) 99999-9999"
+                      />
                     </div>
                   </div>
+
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Data de Nascimento</label>
+                      <input
+                        type="date"
+                        name="birthDate"
+                        value={formData.birthDate}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={styles.formInput}
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Gênero</label>
+                      <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={styles.formSelect}
+                      >
+                        <option value="">Selecione</option>
+                        <option value="Feminino">Feminino</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Outro">Outro</option>
+                        <option value="Prefiro não informar">Prefiro não informar</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>CPF</label>
+                    <input
+                      type="text"
+                      name="cpf"
+                      value={formData.cpf}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={styles.formInput}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
                 </div>
 
-                <div className={styles.detailsSection}>
-                  <h5 className={styles.sectionTitle}>Histórico</h5>
-                  <div className={styles.detailsList}>
-                    <div className={styles.detailRow}>
-                      <FaCalendarAlt />
-                      <span>Cliente desde {formatDate(selectedCustomer.registeredAt)}</span>
+                {/* Endereço */}
+                <div className={styles.formSection}>
+                  <h4 className={styles.sectionTitle}>
+                    <FaMapMarkerAlt /> Endereço
+                  </h4>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Rua/Avenida</label>
+                    <input
+                      type="text"
+                      name="address.street"
+                      value={formData.address.street}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={styles.formInput}
+                      placeholder="Rua das Flores, 123"
+                    />
+                  </div>
+
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Bairro</label>
+                      <input
+                        type="text"
+                        name="address.neighborhood"
+                        value={formData.address.neighborhood}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={styles.formInput}
+                        placeholder="Centro"
+                      />
                     </div>
-                    <div className={styles.detailRow}>
-                      <FaShoppingBag />
-                      <span>Último pedido: {formatDate(selectedCustomer.lastOrder)}</span>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>CEP</label>
+                      <input
+                        type="text"
+                        name="address.zipCode"
+                        value={formData.address.zipCode}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={styles.formInput}
+                        placeholder="00000-000"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Cidade</label>
+                      <input
+                        type="text"
+                        name="address.city"
+                        value={formData.address.city}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={styles.formInput}
+                        placeholder="São Paulo"
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Estado</label>
+                      <select
+                        name="address.state"
+                        value={formData.address.state}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={styles.formSelect}
+                      >
+                        <option value="">Selecione</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                      </select>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className={styles.modalActions}>
-                <button className={styles.modalActionBtn}>
-                  <FaEdit /> Editar Cliente
+                <button
+                  type="button"
+                  onClick={closeAddModal}
+                  disabled={isSubmitting}
+                  className={styles.cancelBtn}
+                >
+                  ❌ Cancelar
                 </button>
-                <button className={`${styles.modalActionBtn} ${styles.contactModalBtn}`}>
-                  <FaEnvelope /> Enviar Email
-                </button>
-                <button className={styles.modalActionBtn}>
-                  <FaShoppingBag /> Ver Pedidos
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={styles.submitBtn}
+                >
+                  <FaSave /> {isSubmitting ? 'Salvando...' : (editingCustomer ? 'Atualizar' : 'Cadastrar')}
                 </button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Detalhes do Cliente */}
+      {showCustomerModal && selectedCustomer && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContainer}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>
+                👤 Detalhes do Cliente
+              </h3>
+              <button
+                onClick={closeCustomerModal}
+                className={styles.modalCloseBtn}
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className={styles.modalContent}>
+              {/* Informações Pessoais */}
+              <div className={styles.customerSection}>
+                <h4 className={styles.sectionTitle}>
+                  <FaUsers /> Informações Pessoais
+                </h4>
+                <div className={styles.customerProfile}>
+                  <div className={styles.profileAvatar}>
+                    <span>{selectedCustomer.name.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div className={styles.profileInfo}>
+                    <h5 className={styles.profileName}>{selectedCustomer.name}</h5>
+                    <span 
+                      className={styles.profileSegment}
+                      style={{ backgroundColor: getCustomerSegment(selectedCustomer.totalSpent).color }}
+                    >
+                      Cliente {getCustomerSegment(selectedCustomer.totalSpent).label}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className={styles.personalDetails}>
+                  <div className={styles.detailField}>
+                    <FaEnvelope className={styles.detailIcon} />
+                    <div className={styles.detailContent}>
+                      <span className={styles.detailLabel}>Email:</span>
+                      <span className={styles.detailValue}>{selectedCustomer.email}</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.detailField}>
+                    <FaPhone className={styles.detailIcon} />
+                    <div className={styles.detailContent}>
+                      <span className={styles.detailLabel}>Telefone:</span>
+                      <span className={styles.detailValue}>{selectedCustomer.phone}</span>
+                    </div>
+                  </div>
+                  
+                  {selectedCustomer.birthDate && (
+                    <div className={styles.detailField}>
+                      <FaCalendarAlt className={styles.detailIcon} />
+                      <div className={styles.detailContent}>
+                        <span className={styles.detailLabel}>Data de Nascimento:</span>
+                        <span className={styles.detailValue}>{formatDate(selectedCustomer.birthDate)}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedCustomer.gender && (
+                    <div className={styles.detailField}>
+                      <FaVenusMars className={styles.detailIcon} />
+                      <div className={styles.detailContent}>
+                        <span className={styles.detailLabel}>Gênero:</span>
+                        <span className={styles.detailValue}>{selectedCustomer.gender}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedCustomer.cpf && (
+                    <div className={styles.detailField}>
+                      <FaIdCard className={styles.detailIcon} />
+                      <div className={styles.detailContent}>
+                        <span className={styles.detailLabel}>CPF:</span>
+                        <span className={styles.detailValue}>{selectedCustomer.cpf}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Endereço */}
+              <div className={styles.customerSection}>
+                <h4 className={styles.sectionTitle}>
+                  <FaMapMarkerAlt /> Endereço
+                </h4>
+                <div className={styles.addressInfo}>
+                  <p className={styles.addressLine}>{selectedCustomer.address.street}</p>
+                  <p className={styles.addressLine}>{selectedCustomer.address.neighborhood}</p>
+                  <p className={styles.addressLine}>
+                    {selectedCustomer.address.city} - {selectedCustomer.address.state}
+                  </p>
+                  <p className={styles.addressLine}>CEP: {selectedCustomer.address.zipCode}</p>
+                </div>
+              </div>
+
+              {/* Estatísticas de Compras */}
+              <div className={styles.customerSection}>
+                <h4 className={styles.sectionTitle}>
+                  <FaShoppingBag /> Histórico de Compras
+                </h4>
+                <div className={styles.purchaseStats}>
+                  <div className={styles.purchaseStat}>
+                    <div className={styles.purchaseIcon}>
+                      <FaShoppingBag />
+                    </div>
+                    <div className={styles.purchaseContent}>
+                      <span className={styles.purchaseValue}>{selectedCustomer.totalOrders}</span>
+                      <span className={styles.purchaseLabel}>Total de Pedidos</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.purchaseStat}>
+                    <div className={styles.purchaseIcon}>
+                      <FaChartLine />
+                    </div>
+                    <div className={styles.purchaseContent}>
+                      <span className={styles.purchaseValue}>{formatCurrency(selectedCustomer.totalSpent)}</span>
+                      <span className={styles.purchaseLabel}>Total Gasto</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.purchaseStat}>
+                    <div className={styles.purchaseIcon}>
+                      <FaCalendarAlt />
+                    </div>
+                    <div className={styles.purchaseContent}>
+                      <span className={styles.purchaseValue}>{formatDate(selectedCustomer.lastOrder)}</span>
+                      <span className={styles.purchaseLabel}>Último Pedido</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.purchaseStat}>
+                    <div className={styles.purchaseIcon}>
+                      <FaChartLine />
+                    </div>
+                    <div className={styles.purchaseContent}>
+                      <span className={styles.purchaseValue}>
+                        {selectedCustomer.totalOrders > 0 
+                          ? formatCurrency(selectedCustomer.totalSpent / selectedCustomer.totalOrders)
+                          : formatCurrency(0)
+                        }
+                      </span>
+                      <span className={styles.purchaseLabel}>Ticket Médio</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Informações de Cadastro */}
+              <div className={styles.customerSection}>
+                <h4 className={styles.sectionTitle}>
+                  <FaCalendarAlt /> Informações de Cadastro
+                </h4>
+                <div className={styles.registrationInfo}>
+                  <div className={styles.registrationField}>
+                    <span className={styles.registrationLabel}>Cliente desde:</span>
+                    <span className={styles.registrationValue}>{formatDate(selectedCustomer.createdAt)}</span>
+                  </div>
+                  <div className={styles.registrationField}>
+                    <span className={styles.registrationLabel}>Status:</span>
+                    <span className={`${styles.registrationValue} ${styles.statusActive}`}>
+                      {selectedCustomer.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button
+                onClick={closeCustomerModal}
+                className={styles.closeBtn}
+              >
+                Fechar
+              </button>
             </div>
           </div>
         </div>

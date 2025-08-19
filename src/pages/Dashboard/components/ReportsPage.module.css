@@ -1,0 +1,625 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER PRINCIPAL
+   =========================================== */
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 300px;
+}
+
+.pageTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-3xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0 0 var(--spacing-sm) 0;
+  font-family: var(--font-secondary);
+}
+
+.pageSubtitle {
+  margin: 0;
+  color: var(--cinza-medio);
+  font-size: var(--font-base);
+  line-height: 1.5;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.downloadBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: var(--font-semibold);
+  font-size: var(--font-base);
+  transition: all var(--transition-normal);
+}
+
+.downloadBtn:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===========================================
+   FILTROS
+   =========================================== */
+
+.filtersSection {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  flex-wrap: wrap;
+  background: var(--white-principal);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.filterIcon {
+  color: var(--wine-destaque);
+  font-size: var(--font-base);
+}
+
+.filterSelect {
+  padding: var(--spacing-md);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: var(--font-base);
+  color: var(--preto-secundario);
+  background: var(--white-principal);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  outline: none;
+  min-width: 180px;
+}
+
+.filterSelect:focus {
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+.dateRange {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.dateGroup label {
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+}
+
+.dateInput {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: var(--font-sm);
+  color: var(--preto-secundario);
+  background: var(--white-principal);
+  transition: all var(--transition-normal);
+  outline: none;
+}
+
+.dateInput:focus {
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+/* ===========================================
+   ESTATÍSTICAS PRINCIPAIS
+   =========================================== */
+
+.statsSection {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.sectionTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.statCard {
+  background: var(--cinza-claro);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard:hover {
+  border-color: var(--wine-destaque);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.statIcon {
+  width: 60px;
+  height: 60px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.statContent {
+  text-align: left;
+}
+
+.statValue {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+  font-family: var(--font-secondary);
+}
+
+.statLabel {
+  font-size: var(--font-base);
+  color: var(--cinza-medio);
+  margin: 0;
+}
+
+.statTrend {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+}
+
+.trendUp {
+  color: #10B981;
+  font-size: var(--font-lg);
+}
+
+.trendDown {
+  color: #EF4444;
+  font-size: var(--font-lg);
+}
+
+/* ===========================================
+   GRÁFICO DE VENDAS
+   =========================================== */
+
+.chartSection {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.chartCard {
+  width: 100%;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+}
+
+.chartTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0;
+}
+
+.chartSubtitle {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
+.chartBtn {
+  background: none;
+  border: 2px solid var(--wine-destaque);
+  color: var(--wine-destaque);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-normal);
+}
+
+.chartBtn:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.chartContainer {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  padding: var(--spacing-lg);
+  position: relative;
+}
+
+.chartArea {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  gap: 2px;
+}
+
+.chartBar {
+  background: linear-gradient(to top, var(--wine-destaque), var(--dourado-sutil));
+  border-radius: var(--radius-small) var(--radius-small) 0 0;
+  min-height: 4px;
+  flex: 1;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  animation: chartBarGrow 1s ease-out forwards;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.chartBar:hover {
+  background: linear-gradient(to top, var(--preto-secundario), var(--wine-destaque));
+  transform: scaleY(1.05);
+}
+
+@keyframes chartBarGrow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.noChartData {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--cinza-medio);
+  font-size: var(--font-lg);
+  text-align: center;
+}
+
+/* ===========================================
+   PRODUTOS MAIS VENDIDOS
+   =========================================== */
+
+.topProductsSection {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.topProductsCard {
+  width: 100%;
+}
+
+.topProductsHeader {
+  margin-bottom: var(--spacing-xl);
+}
+
+.topProductsTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0;
+}
+
+.topProductsSubtitle {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
+.topProductsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.topProductItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  border: 2px solid transparent;
+  transition: all var(--transition-normal);
+}
+
+.topProductItem:hover {
+  border-color: var(--wine-destaque);
+  background: var(--rosa-suave);
+  transform: translateX(4px);
+}
+
+.productRank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rankNumber {
+  width: 40px;
+  height: 40px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-bold);
+  font-size: var(--font-lg);
+}
+
+.productInfo {
+  flex: 1;
+}
+
+.productName {
+  font-size: var(--font-base);
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.productStats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.productQuantity {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.productRevenue {
+  font-size: var(--font-sm);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0;
+}
+
+.productPercentage {
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  text-align: right;
+}
+
+.noProducts {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--cinza-medio);
+  font-size: var(--font-lg);
+}
+
+/* ===========================================
+   RESUMO DETALHADO
+   =========================================== */
+
+.summarySection {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.summaryCard {
+  width: 100%;
+}
+
+.summaryTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  border: 2px solid transparent;
+  transition: all var(--transition-normal);
+}
+
+.summaryItem:hover {
+  border-color: var(--wine-destaque);
+  background: var(--rosa-suave);
+}
+
+.summaryLabel {
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+  font-size: var(--font-base);
+}
+
+.summaryValue {
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  font-size: var(--font-base);
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .filtersSection {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+  }
+
+  .filterSelect {
+    min-width: auto;
+  }
+
+  .dateRange {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .chartHeader {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: flex-start;
+  }
+
+  .chartContainer {
+    height: 250px;
+  }
+
+  .topProductItem {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryItem {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: var(--font-2xl);
+  }
+
+  .statCard {
+    padding: var(--spacing-lg);
+  }
+
+  .statValue {
+    font-size: var(--font-2xl);
+  }
+
+  .statIcon {
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-lg);
+  }
+
+  .chartContainer {
+    height: 200px;
+    padding: var(--spacing-md);
+  }
+
+  .topProductItem {
+    padding: var(--spacing-md);
+  }
+
+  .rankNumber {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-base);
+  }
+}

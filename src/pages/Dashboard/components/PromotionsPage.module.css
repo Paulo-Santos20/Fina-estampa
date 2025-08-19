@@ -1,16 +1,26 @@
+/* Importar variáveis CSS globais */
 @import '../../../styles/variables.css';
 
+/* ===========================================
+   CONTAINER PRINCIPAL
+   =========================================== */
+
 .pageContainer {
-  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
 }
+
+/* ===========================================
+   HEADER
+   =========================================== */
 
 .pageHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-xl);
   flex-wrap: wrap;
-  gap: var(--space-lg);
+  gap: var(--spacing-lg);
 }
 
 .headerContent {
@@ -21,144 +31,759 @@
 .pageTitle {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  font-size: var(--text-3xl);
+  gap: var(--spacing-md);
+  font-size: var(--font-3xl);
   font-weight: var(--font-bold);
   color: var(--wine-destaque);
-  margin: 0 0 var(--space-sm) 0;
+  margin: 0 0 var(--spacing-sm) 0;
+  font-family: var(--font-secondary);
 }
 
 .pageSubtitle {
   margin: 0;
   color: var(--cinza-medio);
-  font-size: var(--text-base);
+  font-size: var(--font-base);
+  line-height: 1.5;
+}
+
+/* ===========================================
+   TABS
+   =========================================== */
+
+.tabsContainer {
+  display: flex;
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--cinza-claro);
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: var(--font-base);
+  font-weight: var(--font-semibold);
+  color: var(--cinza-medio);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.tab:hover {
+  background: var(--rosa-suave);
+  color: var(--wine-destaque);
+}
+
+.activeTab {
+  background: var(--wine-destaque) !important;
+  color: var(--white-principal) !important;
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===========================================
+   CONTEÚDO DAS ABAS
+   =========================================== */
+
+.tabContent {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+}
+
+/* ===========================================
+   SEÇÃO HEADER
+   =========================================== */
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid var(--cinza-claro);
+  background: var(--cinza-claro);
+}
+
+.sectionTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0;
+}
+
+.sectionSubtitle {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: var(--spacing-xs) 0 0 0;
 }
 
 .primaryBtn {
   background: var(--wine-destaque);
   color: var(--white-principal);
   border: none;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-medium);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--spacing-sm);
   font-weight: var(--font-semibold);
+  font-size: var(--font-base);
   transition: all var(--transition-normal);
 }
 
 .primaryBtn:hover {
   background: var(--preto-secundario);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
-.promotionsGrid {
+/* ===========================================
+   CUPONS
+   =========================================== */
+
+.couponsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: var(--space-xl);
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
 }
 
-.promoCard {
+.couponCard {
   background: var(--white-principal);
   border: 2px solid var(--cinza-claro);
   border-radius: var(--radius-large);
-  padding: var(--space-xl);
+  overflow: hidden;
   transition: all var(--transition-normal);
+  position: relative;
 }
 
-.promoCard:hover {
+.couponCard:hover {
   border-color: var(--wine-destaque);
-  box-shadow: var(--shadow-large);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-heavy);
 }
 
-.promoHeader {
+.couponHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
-}
-
-.promoTitle {
-  margin: 0;
-  color: var(--preto-secundario);
-  font-size: var(--text-lg);
-}
-
-.promoStatus {
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-pill);
-  font-size: var(--text-xs);
-  font-weight: var(--font-bold);
-  text-transform: uppercase;
-}
-
-.promoStatus.active {
-  background: #10B981;
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--wine-destaque) 0%, var(--preto-secundario) 100%);
   color: var(--white-principal);
 }
 
-.promoDescription {
-  color: var(--cinza-medio);
-  margin-bottom: var(--space-lg);
+.couponCode {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
 }
 
-.promoDetails {
+.couponActions {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  gap: var(--spacing-xs);
 }
 
-.promoStat {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--text-sm);
-  color: var(--preto-secundario);
+.actionBtn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white-principal);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: var(--font-sm);
 }
 
-.promoActions {
-  display: flex;
-  gap: var(--space-sm);
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.activeBtn {
+  background: rgba(16, 185, 129, 0.8);
+  border-color: rgba(16, 185, 129, 1);
+}
+
+.inactiveBtn {
+  background: rgba(107, 114, 128, 0.8);
+  border-color: rgba(107, 114, 128, 1);
 }
 
 .editBtn {
-  flex: 1;
-  background: var(--dourado-sutil);
-  color: var(--preto-secundario);
-  border: none;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-medium);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  font-weight: var(--font-medium);
-  transition: all var(--transition-normal);
-}
-
-.editBtn:hover {
-  background: #B8860B;
+  background: rgba(59, 130, 246, 0.8);
+  border-color: rgba(59, 130, 246, 1);
 }
 
 .deleteBtn {
-  flex: 1;
-  background: #EF4444;
-  color: var(--white-principal);
-  border: none;
-  padding: var(--space-sm) var(--space-md);
+  background: rgba(239, 68, 68, 0.8);
+  border-color: rgba(239, 68, 68, 1);
+}
+
+.couponContent {
+  padding: var(--spacing-lg);
+}
+
+.couponDescription {
+  font-size: var(--font-base);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-lg) 0;
+  line-height: 1.5;
+}
+
+.couponDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.couponValue {
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  padding: var(--spacing-md);
+  background: var(--rosa-suave);
   border-radius: var(--radius-medium);
-  cursor: pointer;
+  text-align: center;
+}
+
+.couponCondition {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-small);
+  text-align: center;
+}
+
+.couponUsage {
+  margin-bottom: var(--spacing-lg);
+}
+
+.usageInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+}
+
+.usageBar {
+  width: 100%;
+  height: 8px;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+}
+
+.usageProgress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--wine-destaque), var(--dourado-sutil));
+  border-radius: var(--radius-small);
+  transition: width var(--transition-normal);
+}
+
+.couponFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--cinza-claro);
+}
+
+.couponExpiry {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  font-weight: var(--font-medium);
+  gap: var(--spacing-xs);
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+}
+
+.couponStatus {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-small);
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.couponStatus.active {
+  background: #D1FAE5;
+  color: #059669;
+}
+
+.couponStatus.inactive {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* ===========================================
+   TAGS DOS PRODUTOS
+   =========================================== */
+
+.productsTagsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+.productTagCard {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-lg);
   transition: all var(--transition-normal);
 }
 
-.deleteBtn:hover {
-  background: #DC2626;
+.productTagCard:hover {
+  border-color: var(--wine-destaque);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.productTagImage {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+  background: var(--cinza-claro);
+}
+
+.productTagImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productTagInfo {
+  margin-bottom: var(--spacing-lg);
+}
+
+.productTagName {
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.productTagCategory {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.productTagPrice {
+  font-size: var(--font-base);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0;
+}
+
+.productTagControls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.tagControl {
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  padding: var(--spacing-md);
+}
+
+.tagLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.tagLabel:hover {
+  color: var(--wine-destaque);
+}
+
+.tagCheckbox {
+  accent-color: var(--wine-destaque);
+  transform: scale(1.2);
+}
+
+.tagText {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+}
+
+.tagIcon {
+  font-size: var(--font-base);
+}
+
+.productTagStatus {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.activeTag {
+  background: #10B981;
+  color: var(--white-principal);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-small);
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.saleTag {
+  background: #EF4444;
+  color: var(--white-principal);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-small);
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.noTags {
+  background: var(--cinza-medio);
+  color: var(--white-principal);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-small);
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===========================================
+   EMPTY STATE
+   =========================================== */
+
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  color: var(--cinza-medio);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+  color: var(--cinza-claro);
+}
+
+.emptyState h3 {
+  font-size: var(--font-2xl);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.emptyState p {
+  font-size: var(--font-lg);
+  margin: 0 0 var(--spacing-xl) 0;
+  line-height: 1.5;
+}
+
+/* ===========================================
+   MODAL
+   =========================================== */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: var(--spacing-lg);
+}
+
+.modalContainer {
+  background: var(--white-principal);
+  border-radius: var(--radius-large);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--cinza-claro);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xl);
+  border-bottom: 2px solid var(--cinza-claro);
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: var(--font-xl);
+  font-weight: var(--font-semibold);
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  color: var(--white-principal);
+  font-size: var(--font-xl);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+}
+
+.modalCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modalForm {
+  padding: var(--spacing-xl);
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.formGroup {
+  margin-bottom: var(--spacing-lg);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-semibold);
+  color: var(--preto-secundario);
+  font-size: var(--font-base);
+}
+
+.formInput,
+.formSelect {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: var(--font-base);
+  color: var(--preto-secundario);
+  background: var(--white-principal);
+  transition: all var(--transition-normal);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.formInput:focus,
+.formSelect:focus {
+  border-color: var(--wine-destaque);
+  box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
+}
+
+.formHint {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-xs);
+  color: var(--cinza-medio);
+  font-style: italic;
+}
+
+.optionLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  padding: var(--spacing-md);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  border: 2px solid transparent;
+  transition: all var(--transition-normal);
+}
+
+.optionLabel:hover {
+  border-color: var(--wine-destaque);
+  background: var(--rosa-suave);
+}
+
+.checkbox {
+  accent-color: var(--wine-destaque);
+  transform: scale(1.2);
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--spacing-lg);
+  justify-content: flex-end;
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--cinza-claro);
+}
+
+.cancelBtn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--cinza-claro);
+  border: 2px solid var(--cinza-claro);
+  color: var(--preto-secundario);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-weight: var(--font-semibold);
+  font-size: var(--font-base);
+  transition: all var(--transition-normal);
+}
+
+.cancelBtn:hover {
+  background: var(--cinza-medio);
+  color: var(--white-principal);
+}
+
+.submitBtn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--wine-destaque);
+  border: 2px solid var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-weight: var(--font-semibold);
+  font-size: var(--font-base);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-normal);
+}
+
+.submitBtn:hover {
+  background: var(--preto-secundario);
+  border-color: var(--preto-secundario);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+  }
+
+  .tabsContainer {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .tab {
+    justify-content: flex-start;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .couponsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .productsTagsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .couponHeader {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+
+  .couponActions {
+    justify-content: center;
+  }
+
+  .modalContainer {
+    margin: var(--spacing-md);
+    max-width: none;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: var(--font-2xl);
+  }
+
+  .couponCard {
+    border-radius: var(--radius-medium);
+  }
+
+  .couponCode {
+    font-size: var(--font-lg);
+  }
+
+  .productTagCard {
+    padding: var(--spacing-md);
+  }
+
+  .productTagImage {
+    height: 100px;
+  }
+
+  .modalHeader {
+    padding: var(--spacing-lg);
+  }
+
+  .modalForm {
+    padding: var(--spacing-lg);
+  }
 }

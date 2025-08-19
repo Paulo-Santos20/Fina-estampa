@@ -1,84 +1,201 @@
 import React, { useState } from 'react';
 import { 
   FaCog, 
-  FaSave, 
-  FaStore, 
-  FaCreditCard, 
-  FaTruck, 
-  FaEnvelope, 
-  FaWhatsapp,
+  FaStore,
+  FaCreditCard,
+  FaTruck,
+  FaEnvelope,
+  FaSave,
   FaEdit,
-  FaEye,
-  FaEyeSlash,
-  FaShieldAlt,
+  FaPlus,
+  FaTrash,
+  FaMapMarkerAlt,
+  FaPhone,
   FaGlobe,
-  FaPalette
+  FaInstagram,
+  FaWhatsapp
 } from 'react-icons/fa';
 import styles from './SettingsPage.module.css';
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('store');
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    // Configurações da Loja
-    storeName: 'Fina Estampa',
-    storeDescription: 'Moda feminina elegante e sofisticada',
-    storeEmail: 'contato@finaestampa.com.br',
-    storePhone: '(11) 99999-9999',
-    storeWhatsapp: '5511999999999',
-    storeAddress: 'Rua das Flores, 123 - Vila Madalena, São Paulo - SP',
-    storeCNPJ: '12.345.678/0001-90',
-    
-    // Configurações de Pagamento
-    pixKey: 'contato@finaestampa.com.br',
-    pixKeyType: 'email',
-    bankAccount: '12345-6',
-    bankAgency: '1234',
-    bankName: 'Banco do Brasil',
-    
-    // Configurações de Frete
-    freeShippingValue: 250.00,
-    defaultShippingCost: 15.00,
-    shippingDays: '5-10',
-    
-    // Configurações de Email
-    emailHost: 'smtp.gmail.com',
-    emailPort: '587',
-    emailUser: 'contato@finaestampa.com.br',
-    emailPassword: '',
-    
-    // Configurações Gerais
-    siteName: 'Fina Estampa',
-    siteUrl: 'https://finaestampa.com.br',
-    primaryColor: '#722F37',
-    secondaryColor: '#D4AF37',
-    
-    // Configurações de Segurança
-    enableTwoFactor: false,
-    sessionTimeout: 60,
-    maxLoginAttempts: 5
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Configurações da loja
+  const [storeSettings, setStoreSettings] = useState({
+    name: 'Fina Estampa',
+    description: 'Moda feminina com elegância e sofisticação',
+    email: 'contato@finaestampa.com.br',
+    phone: '(11) 99999-9999',
+    whatsapp: '5511999999999',
+    instagram: '@finaestampa',
+    website: 'https://finaestampa.com.br',
+    address: {
+      street: 'Rua das Flores, 123',
+      neighborhood: 'Centro',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01234-567'
+    },
+    businessHours: {
+      monday: { open: '09:00', close: '18:00', closed: false },
+      tuesday: { open: '09:00', close: '18:00', closed: false },
+      wednesday: { open: '09:00', close: '18:00', closed: false },
+      thursday: { open: '09:00', close: '18:00', closed: false },
+      friday: { open: '09:00', close: '18:00', closed: false },
+      saturday: { open: '09:00', close: '16:00', closed: false },
+      sunday: { open: '10:00', close: '14:00', closed: false }
+    }
   });
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+  // Formas de pagamento
+  const [paymentMethods, setPaymentMethods] = useState([
+    { id: 'pix', name: 'PIX', enabled: true, description: 'Pagamento instantâneo' },
+    { id: 'credit', name: 'Cartão de Crédito', enabled: true, description: 'Visa, Mastercard, Elo' },
+    { id: 'debit', name: 'Cartão de Débito', enabled: true, description: 'Débito online' },
+    { id: 'boleto', name: 'Boleto Bancário', enabled: false, description: 'Vencimento em 3 dias' }
+  ]);
+
+  // Formas de envio
+  const [shippingMethods, setShippingMethods] = useState([
+    { 
+      id: 'correios', 
+      name: 'Correios PAC', 
+      enabled: true, 
+      price: 15.00, 
+      estimatedDays: '5-8 dias úteis',
+      description: 'Entrega padrão dos Correios'
+    },
+    { 
+      id: 'sedex', 
+      name: 'Correios SEDEX', 
+      enabled: true, 
+      price: 25.00, 
+      estimatedDays: '1-3 dias úteis',
+      description: 'Entrega expressa dos Correios'
+    },
+    { 
+      id: 'local', 
+      name: 'Retirada na Loja', 
+      enabled: true, 
+      price: 0.00, 
+      estimatedDays: 'Imediato',
+      description: 'Retire em nossa loja física'
+    }
+  ]);
+
+  // Configurações de email
+  const [emailSettings, setEmailSettings] = useState({
+    smtpHost: 'smtp.gmail.com',
+    smtpPort: '587',
+    smtpUser: 'contato@finaestampa.com.br',
+    smtpPassword: '',
+    fromName: 'Fina Estampa',
+    fromEmail: 'contato@finaestampa.com.br',
+    replyTo: 'contato@finaestampa.com.br'
+  });
+
+  const handleStoreInputChange = (field, value) => {
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
+      setStoreSettings(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }));
+    } else {
+      setStoreSettings(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const handleBusinessHoursChange = (day, field, value) => {
+    setStoreSettings(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      businessHours: {
+        ...prev.businessHours,
+        [day]: {
+          ...prev.businessHours[day],
+          [field]: value
+        }
+      }
     }));
   };
 
-  const handleSave = (section) => {
-    alert(`✅ Configurações de ${section} salvas com sucesso!`);
+  const handlePaymentToggle = (paymentId) => {
+    setPaymentMethods(prev => prev.map(method => 
+      method.id === paymentId 
+        ? { ...method, enabled: !method.enabled }
+        : method
+    ));
   };
 
-  const tabs = [
-    { id: 'store', label: 'Loja', icon: FaStore },
-    { id: 'payment', label: 'Pagamento', icon: FaCreditCard },
-    { id: 'shipping', label: 'Frete', icon: FaTruck },
-    { id: 'email', label: 'Email', icon: FaEnvelope },
-    { id: 'general', label: 'Geral', icon: FaGlobe },
-    { id: 'security', label: 'Segurança', icon: FaShieldAlt }
-  ];
+  const handleShippingToggle = (shippingId) => {
+    setShippingMethods(prev => prev.map(method => 
+      method.id === shippingId 
+        ? { ...method, enabled: !method.enabled }
+        : method
+    ));
+  };
+
+  const handleShippingPriceChange = (shippingId, price) => {
+    setShippingMethods(prev => prev.map(method => 
+      method.id === shippingId 
+        ? { ...method, price: parseFloat(price) || 0 }
+        : method
+    ));
+  };
+
+  const handleEmailInputChange = (field, value) => {
+    setEmailSettings(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    
+    try {
+      // Simular salvamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Salvar no localStorage
+      localStorage.setItem('storeSettings', JSON.stringify(storeSettings));
+      localStorage.setItem('paymentMethods', JSON.stringify(paymentMethods));
+      localStorage.setItem('shippingMethods', JSON.stringify(shippingMethods));
+      localStorage.setItem('emailSettings', JSON.stringify(emailSettings));
+      
+      alert('✅ Configurações salvas com sucesso!');
+      setIsEditing(false);
+    } catch (error) {
+      alert('❌ Erro ao salvar configurações');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  const dayLabels = {
+    monday: 'Segunda-feira',
+    tuesday: 'Terça-feira',
+    wednesday: 'Quarta-feira',
+    thursday: 'Quinta-feira',
+    friday: 'Sexta-feira',
+    saturday: 'Sábado',
+    sunday: 'Domingo'
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -90,525 +207,486 @@ const SettingsPage = () => {
             Configurações do Sistema
           </h2>
           <p className={styles.pageSubtitle}>
-            Configure todas as opções da sua loja
+            Configure as informações gerais da sua loja
           </p>
+        </div>
+        
+        <div className={styles.headerActions}>
+          {!isEditing ? (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className={styles.editBtn}
+            >
+              <FaEdit /> Editar Configurações
+            </button>
+          ) : (
+            <div className={styles.editActions}>
+              <button 
+                onClick={() => setIsEditing(false)}
+                className={styles.cancelBtn}
+                disabled={isSaving}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleSave}
+                className={styles.saveBtn}
+                disabled={isSaving}
+              >
+                <FaSave /> {isSaving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Tabs */}
       <div className={styles.tabsContainer}>
-        <div className={styles.tabsList}>
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
-            >
-              <tab.icon />
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={() => setActiveTab('store')}
+          className={`${styles.tab} ${activeTab === 'store' ? styles.activeTab : ''}`}
+        >
+          <FaStore /> Dados da Loja
+        </button>
+        <button
+          onClick={() => setActiveTab('payment')}
+          className={`${styles.tab} ${activeTab === 'payment' ? styles.activeTab : ''}`}
+        >
+          <FaCreditCard /> Formas de Pagamento
+        </button>
+        <button
+          onClick={() => setActiveTab('shipping')}
+          className={`${styles.tab} ${activeTab === 'shipping' ? styles.activeTab : ''}`}
+        >
+          <FaTruck /> Formas de Envio
+        </button>
+        <button
+          onClick={() => setActiveTab('email')}
+          className={`${styles.tab} ${activeTab === 'email' ? styles.activeTab : ''}`}
+        >
+          <FaEnvelope /> Configurações de Email
+        </button>
       </div>
 
-      {/* Tab Content */}
+      {/* Conteúdo das Abas */}
       <div className={styles.tabContent}>
-        {/* Configurações da Loja */}
         {activeTab === 'store' && (
-          <div className={styles.settingsSection}>
-            <div className={styles.sectionHeader}>
+          <div className={styles.storeSettings}>
+            {/* Informações Básicas */}
+            <div className={styles.settingsSection}>
               <h3 className={styles.sectionTitle}>
-                <FaStore /> Informações da Loja
+                <FaStore /> Informações Básicas
               </h3>
-              <button 
-                onClick={() => handleSave('Loja')}
-                className={styles.saveBtn}
-              >
-                <FaSave /> Salvar
-              </button>
+              
+              <div className={styles.formGrid}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Nome da Loja</label>
+                  <input
+                    type="text"
+                    value={storeSettings.name}
+                    onChange={(e) => handleStoreInputChange('name', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Descrição</label>
+                  <textarea
+                    value={storeSettings.description}
+                    onChange={(e) => handleStoreInputChange('description', e.target.value)}
+                    disabled={!isEditing}
+                    rows="3"
+                    className={styles.formTextarea}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Nome da Loja</label>
-                <input
-                  type="text"
-                  name="storeName"
-                  value={formData.storeName}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
+            {/* Contato */}
+            <div className={styles.settingsSection}>
+              <h3 className={styles.sectionTitle}>
+                <FaPhone /> Informações de Contato
+              </h3>
+              
+              <div className={styles.formGrid}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    <FaEnvelope /> Email
+                  </label>
+                  <input
+                    type="email"
+                    value={storeSettings.email}
+                    onChange={(e) => handleStoreInputChange('email', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Email de Contato</label>
-                <input
-                  type="email"
-                  name="storeEmail"
-                  value={formData.storeEmail}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    <FaPhone /> Telefone
+                  </label>
+                  <input
+                    type="tel"
+                    value={storeSettings.phone}
+                    onChange={(e) => handleStoreInputChange('phone', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Telefone</label>
-                <input
-                  type="tel"
-                  name="storePhone"
-                  value={formData.storePhone}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    <FaWhatsapp /> WhatsApp
+                  </label>
+                  <input
+                    type="text"
+                    value={storeSettings.whatsapp}
+                    onChange={(e) => handleStoreInputChange('whatsapp', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                    placeholder="5511999999999"
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>WhatsApp (com código do país)</label>
-                <input
-                  type="text"
-                  name="storeWhatsapp"
-                  value={formData.storeWhatsapp}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  placeholder="5511999999999"
-                />
-              </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    <FaInstagram /> Instagram
+                  </label>
+                  <input
+                    type="text"
+                    value={storeSettings.instagram}
+                    onChange={(e) => handleStoreInputChange('instagram', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                    placeholder="@usuario"
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>CNPJ</label>
-                <input
-                  type="text"
-                  name="storeCNPJ"
-                  value={formData.storeCNPJ}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    <FaGlobe /> Website
+                  </label>
+                  <input
+                    type="url"
+                    value={storeSettings.website}
+                    onChange={(e) => handleStoreInputChange('website', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
               </div>
+            </div>
 
-              <div className={styles.formGroupFull}>
-                <label className={styles.formLabel}>Descrição da Loja</label>
-                <textarea
-                  name="storeDescription"
-                  value={formData.storeDescription}
-                  onChange={handleInputChange}
-                  className={styles.formTextarea}
-                  rows="3"
-                />
+            {/* Endereço */}
+            <div className={styles.settingsSection}>
+              <h3 className={styles.sectionTitle}>
+                <FaMapMarkerAlt /> Endereço da Loja
+              </h3>
+              
+              <div className={styles.formGrid}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Rua e Número</label>
+                  <input
+                    type="text"
+                    value={storeSettings.address.street}
+                    onChange={(e) => handleStoreInputChange('address.street', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Bairro</label>
+                  <input
+                    type="text"
+                    value={storeSettings.address.neighborhood}
+                    onChange={(e) => handleStoreInputChange('address.neighborhood', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Cidade</label>
+                  <input
+                    type="text"
+                    value={storeSettings.address.city}
+                    onChange={(e) => handleStoreInputChange('address.city', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Estado</label>
+                  <input
+                    type="text"
+                    value={storeSettings.address.state}
+                    onChange={(e) => handleStoreInputChange('address.state', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                    maxLength="2"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>CEP</label>
+                  <input
+                    type="text"
+                    value={storeSettings.address.zipCode}
+                    onChange={(e) => handleStoreInputChange('address.zipCode', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
               </div>
+            </div>
 
-              <div className={styles.formGroupFull}>
-                <label className={styles.formLabel}>Endereço Completo</label>
-                <textarea
-                  name="storeAddress"
-                  value={formData.storeAddress}
-                  onChange={handleInputChange}
-                  className={styles.formTextarea}
-                  rows="2"
-                />
+            {/* Horário de Funcionamento */}
+            <div className={styles.settingsSection}>
+              <h3 className={styles.sectionTitle}>
+                �� Horário de Funcionamento
+              </h3>
+              
+              <div className={styles.businessHours}>
+                {Object.entries(storeSettings.businessHours).map(([day, hours]) => (
+                  <div key={day} className={styles.daySchedule}>
+                    <div className={styles.dayName}>
+                      {dayLabels[day]}
+                    </div>
+                    
+                    <div className={styles.dayControls}>
+                      <label className={styles.closedLabel}>
+                        <input
+                          type="checkbox"
+                          checked={hours.closed}
+                          onChange={(e) => handleBusinessHoursChange(day, 'closed', e.target.checked)}
+                          disabled={!isEditing}
+                        />
+                        Fechado
+                      </label>
+                      
+                      {!hours.closed && (
+                        <>
+                          <input
+                            type="time"
+                            value={hours.open}
+                            onChange={(e) => handleBusinessHoursChange(day, 'open', e.target.value)}
+                            disabled={!isEditing}
+                            className={styles.timeInput}
+                          />
+                          <span>às</span>
+                          <input
+                            type="time"
+                            value={hours.close}
+                            onChange={(e) => handleBusinessHoursChange(day, 'close', e.target.value)}
+                            disabled={!isEditing}
+                            className={styles.timeInput}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* Configurações de Pagamento */}
         {activeTab === 'payment' && (
-          <div className={styles.settingsSection}>
-            <div className={styles.sectionHeader}>
+          <div className={styles.paymentSettings}>
+            <div className={styles.settingsSection}>
               <h3 className={styles.sectionTitle}>
-                <FaCreditCard /> Configurações de Pagamento
+                <FaCreditCard /> Formas de Pagamento Aceitas
               </h3>
-              <button 
-                onClick={() => handleSave('Pagamento')}
-                className={styles.saveBtn}
-              >
-                <FaSave /> Salvar
-              </button>
-            </div>
-
-            <div className={styles.paymentSections}>
-              <div className={styles.paymentCard}>
-                <h4 className={styles.cardTitle}>PIX</h4>
-                <div className={styles.formGrid}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Tipo de Chave PIX</label>
-                    <select
-                      name="pixKeyType"
-                      value={formData.pixKeyType}
-                      onChange={handleInputChange}
-                      className={styles.formSelect}
-                    >
-                      <option value="email">Email</option>
-                      <option value="phone">Telefone</option>
-                      <option value="cpf">CPF</option>
-                      <option value="cnpj">CNPJ</option>
-                      <option value="random">Chave Aleatória</option>
-                    </select>
+              
+              <div className={styles.paymentMethods}>
+                {paymentMethods.map((method) => (
+                  <div key={method.id} className={styles.paymentMethod}>
+                    <div className={styles.methodInfo}>
+                      <h4 className={styles.methodName}>{method.name}</h4>
+                      <p className={styles.methodDescription}>{method.description}</p>
+                    </div>
+                    
+                    <div className={styles.methodControls}>
+                      <label className={styles.toggleLabel}>
+                        <input
+                          type="checkbox"
+                          checked={method.enabled}
+                          onChange={() => handlePaymentToggle(method.id)}
+                          disabled={!isEditing}
+                          className={styles.toggleInput}
+                        />
+                        <span className={styles.toggleSlider}></span>
+                      </label>
+                      <span className={styles.toggleText}>
+                        {method.enabled ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </div>
                   </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Chave PIX</label>
-                    <input
-                      type="text"
-                      name="pixKey"
-                      value={formData.pixKey}
-                      onChange={handleInputChange}
-                      className={styles.formInput}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.paymentCard}>
-                <h4 className={styles.cardTitle}>Dados Bancários</h4>
-                <div className={styles.formGrid}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Banco</label>
-                    <input
-                      type="text"
-                      name="bankName"
-                      value={formData.bankName}
-                      onChange={handleInputChange}
-                      className={styles.formInput}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Agência</label>
-                    <input
-                      type="text"
-                      name="bankAgency"
-                      value={formData.bankAgency}
-                      onChange={handleInputChange}
-                      className={styles.formInput}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Conta</label>
-                    <input
-                      type="text"
-                      name="bankAccount"
-                      value={formData.bankAccount}
-                      onChange={handleInputChange}
-                      className={styles.formInput}
-                    />
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* Configurações de Frete */}
         {activeTab === 'shipping' && (
-          <div className={styles.settingsSection}>
-            <div className={styles.sectionHeader}>
+          <div className={styles.shippingSettings}>
+            <div className={styles.settingsSection}>
               <h3 className={styles.sectionTitle}>
-                <FaTruck /> Configurações de Frete
+                <FaTruck /> Formas de Envio Disponíveis
               </h3>
-              <button 
-                onClick={() => handleSave('Frete')}
-                className={styles.saveBtn}
-              >
-                <FaSave /> Salvar
-              </button>
-            </div>
-
-            <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Valor para Frete Grátis (R\$)</label>
-                <input
-                  type="number"
-                  name="freeShippingValue"
-                  value={formData.freeShippingValue}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  min="0"
-                  step="0.01"
-                />
+              
+              <div className={styles.shippingMethods}>
+                {shippingMethods.map((method) => (
+                                   <div key={method.id} className={styles.shippingMethod}>
+                    <div className={styles.methodHeader}>
+                      <div className={styles.methodInfo}>
+                        <h4 className={styles.methodName}>{method.name}</h4>
+                        <p className={styles.methodDescription}>{method.description}</p>
+                      </div>
+                      
+                      <div className={styles.methodControls}>
+                        <label className={styles.toggleLabel}>
+                          <input
+                            type="checkbox"
+                            checked={method.enabled}
+                            onChange={() => handleShippingToggle(method.id)}
+                            disabled={!isEditing}
+                            className={styles.toggleInput}
+                          />
+                          <span className={styles.toggleSlider}></span>
+                        </label>
+                        <span className={styles.toggleText}>
+                          {method.enabled ? 'Ativo' : 'Inativo'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className={styles.methodDetails}>
+                      <div className={styles.methodField}>
+                        <label className={styles.fieldLabel}>Preço:</label>
+                        <input
+                          type="number"
+                          value={method.price}
+                          onChange={(e) => handleShippingPriceChange(method.id, e.target.value)}
+                          disabled={!isEditing}
+                          step="0.01"
+                          min="0"
+                          className={styles.priceInput}
+                        />
+                        <span className={styles.currency}>R$</span>
+                      </div>
+                      
+                      <div className={styles.methodField}>
+                        <label className={styles.fieldLabel}>Prazo:</label>
+                        <span className={styles.fieldValue}>{method.estimatedDays}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Custo Padrão de Frete (R\$)</label>
-                <input
-                  type="number"
-                  name="defaultShippingCost"
-                  value={formData.defaultShippingCost}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  min="0"
-                  step="0.01"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Prazo de Entrega (dias)</label>
-                <input
-                  type="text"
-                  name="shippingDays"
-                  value={formData.shippingDays}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  placeholder="5-10"
-                />
-              </div>
-            </div>
-
-            <div className={styles.infoCard}>
-              <h4>ℹ️ Informações sobre Frete</h4>
-              <ul>
-                <li>Pedidos acima de R\$ {formData.freeShippingValue?.toFixed(2)} têm frete grátis</li>
-                <li>Custo padrão: R\$ {formData.defaultShippingCost?.toFixed(2)}</li>
-                <li>Prazo de entrega: {formData.shippingDays} dias úteis</li>
-              </ul>
             </div>
           </div>
         )}
 
-        {/* Configurações de Email */}
         {activeTab === 'email' && (
-          <div className={styles.settingsSection}>
-            <div className={styles.sectionHeader}>
+          <div className={styles.emailSettings}>
+            <div className={styles.settingsSection}>
               <h3 className={styles.sectionTitle}>
                 <FaEnvelope /> Configurações de Email
               </h3>
-              <button 
-                onClick={() => handleSave('Email')}
-                className={styles.saveBtn}
-              >
-                <FaSave /> Salvar
-              </button>
-            </div>
-
-            <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Servidor SMTP</label>
-                <input
-                  type="text"
-                  name="emailHost"
-                  value={formData.emailHost}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Porta</label>
-                <input
-                  type="text"
-                  name="emailPort"
-                  value={formData.emailPort}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Email de Envio</label>
-                <input
-                  type="email"
-                  name="emailUser"
-                  value={formData.emailUser}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Senha do Email</label>
-                <div className={styles.passwordGroup}>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="emailPassword"
-                    value={formData.emailPassword}
-                    onChange={handleInputChange}
-                    className={styles.formInput}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className={styles.passwordToggle}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.testEmailSection}>
-              <button className={styles.testBtn}>
-                <FaEnvelope /> Testar Configuração de Email
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Configurações Gerais */}
-        {activeTab === 'general' && (
-          <div className={styles.settingsSection}>
-            <div className={styles.sectionHeader}>
-              <h3 className={styles.sectionTitle}>
-                <FaGlobe /> Configurações Gerais
-              </h3>
-              <button 
-                onClick={() => handleSave('Geral')}
-                className={styles.saveBtn}
-              >
-                <FaSave /> Salvar
-              </button>
-            </div>
-
-            <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Nome do Site</label>
-                <input
-                  type="text"
-                  name="siteName"
-                  value={formData.siteName}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>URL do Site</label>
-                <input
-                  type="url"
-                  name="siteUrl"
-                  value={formData.siteUrl}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Cor Primária</label>
-                <div className={styles.colorGroup}>
-                  <input
-                    type="color"
-                    name="primaryColor"
-                    value={formData.primaryColor}
-                    onChange={handleInputChange}
-                    className={styles.colorInput}
-                  />
-                  <input
-                    type="text"
-                    name="primaryColor"
-                    value={formData.primaryColor}
-                    onChange={handleInputChange}
-                    className={styles.formInput}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Cor Secundária</label>
-                <div className={styles.colorGroup}>
-                  <input
-                    type="color"
-                    name="secondaryColor"
-                    value={formData.secondaryColor}
-                    onChange={handleInputChange}
-                    className={styles.colorInput}
-                  />
-                  <input
-                    type="text"
-                    name="secondaryColor"
-                    value={formData.secondaryColor}
-                    onChange={handleInputChange}
-                    className={styles.formInput}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.previewSection}>
-              <h4>🎨 Preview das Cores</h4>
-              <div className={styles.colorPreview}>
-                <div 
-                  className={styles.colorSample}
-                  style={{ backgroundColor: formData.primaryColor }}
-                >
-                  Cor Primária
-                </div>
-                <div 
-                  className={styles.colorSample}
-                  style={{ backgroundColor: formData.secondaryColor }}
-                >
-                  Cor Secundária
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Configurações de Segurança */}
-        {activeTab === 'security' && (
-          <div className={styles.settingsSection}>
-            <div className={styles.sectionHeader}>
-              <h3 className={styles.sectionTitle}>
-                <FaShieldAlt /> Configurações de Segurança
-              </h3>
-              <button 
-                onClick={() => handleSave('Segurança')}
-                className={styles.saveBtn}
-              >
-                <FaSave /> Salvar
-              </button>
-            </div>
-
-            <div className={styles.securityOptions}>
-              <div className={styles.securityCard}>
-                <div className={styles.securityHeader}>
-                  <h4>🔐 Autenticação de Dois Fatores</h4>
-                  <label className={styles.switch}>
-                    <input
-                      type="checkbox"
-                      name="enableTwoFactor"
-                      checked={formData.enableTwoFactor}
-                      onChange={handleInputChange}
-                    />
-                    <span className={styles.slider}></span>
-                  </label>
-                </div>
-                <p>Adicione uma camada extra de segurança à sua conta</p>
-              </div>
-
+              
               <div className={styles.formGrid}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Timeout de Sessão (minutos)</label>
+                  <label className={styles.formLabel}>Servidor SMTP</label>
                   <input
-                    type="number"
-                    name="sessionTimeout"
-                    value={formData.sessionTimeout}
-                    onChange={handleInputChange}
+                    type="text"
+                    value={emailSettings.smtpHost}
+                    onChange={(e) => handleEmailInputChange('smtpHost', e.target.value)}
+                    disabled={!isEditing}
                     className={styles.formInput}
-                    min="5"
-                    max="480"
+                    placeholder="smtp.gmail.com"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Máximo de Tentativas de Login</label>
+                  <label className={styles.formLabel}>Porta SMTP</label>
                   <input
                     type="number"
-                    name="maxLoginAttempts"
-                    value={formData.maxLoginAttempts}
-                    onChange={handleInputChange}
+                    value={emailSettings.smtpPort}
+                    onChange={(e) => handleEmailInputChange('smtpPort', e.target.value)}
+                    disabled={!isEditing}
                     className={styles.formInput}
-                    min="3"
-                    max="10"
+                    placeholder="587"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Usuário SMTP</label>
+                  <input
+                    type="email"
+                    value={emailSettings.smtpUser}
+                    onChange={(e) => handleEmailInputChange('smtpUser', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Senha SMTP</label>
+                  <input
+                    type="password"
+                    value={emailSettings.smtpPassword}
+                    onChange={(e) => handleEmailInputChange('smtpPassword', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Nome do Remetente</label>
+                  <input
+                    type="text"
+                    value={emailSettings.fromName}
+                    onChange={(e) => handleEmailInputChange('fromName', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Email do Remetente</label>
+                  <input
+                    type="email"
+                    value={emailSettings.fromEmail}
+                    onChange={(e) => handleEmailInputChange('fromEmail', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Email de Resposta</label>
+                  <input
+                    type="email"
+                    value={emailSettings.replyTo}
+                    onChange={(e) => handleEmailInputChange('replyTo', e.target.value)}
+                    disabled={!isEditing}
+                    className={styles.formInput}
                   />
                 </div>
               </div>
 
-              <div className={styles.securityActions}>
-                <button className={styles.dangerBtn}>
-                  🔄 Forçar Logout em Todos os Dispositivos
-                </button>
-                <button className={styles.dangerBtn}>
-                  🗑️ Limpar Logs de Segurança
-                </button>
+              <div className={styles.emailNote}>
+                <h4>📝 Importante:</h4>
+                <p>
+                  Essas configurações são usadas para envio de emails automáticos como:
+                  confirmação de pedidos, recuperação de senha, newsletters, etc.
+                </p>
               </div>
             </div>
           </div>

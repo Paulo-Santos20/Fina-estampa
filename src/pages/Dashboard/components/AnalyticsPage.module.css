@@ -1,0 +1,583 @@
+/* Importar variáveis CSS globais */
+@import '../../../styles/variables.css';
+
+/* ===========================================
+   CONTAINER PRINCIPAL
+   =========================================== */
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 300px;
+}
+
+.pageTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-3xl);
+  font-weight: var(--font-bold);
+  color: var(--wine-destaque);
+  margin: 0 0 var(--spacing-sm) 0;
+  font-family: var(--font-secondary);
+}
+
+.pageSubtitle {
+  margin: 0;
+  color: var(--cinza-medio);
+  font-size: var(--font-base);
+  line-height: 1.5;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.dateSelect {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  font-size: var(--font-sm);
+  color: var(--preto-secundario);
+  background: var(--white-principal);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-normal);
+}
+
+.dateSelect:focus {
+  border-color: var(--wine-destaque);
+}
+
+.exportBtn {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: var(--font-semibold);
+  font-size: var(--font-sm);
+  transition: all var(--transition-normal);
+}
+
+.exportBtn:hover {
+  background: var(--preto-secundario);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===========================================
+   ESTATÍSTICAS
+   =========================================== */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.statCard {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  transition: all var(--transition-normal);
+}
+
+.statCard:hover {
+  border-color: var(--wine-destaque);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.statIcon {
+  width: 60px;
+  height: 60px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: var(--radius-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  flex-shrink: 0;
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statValue {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.statLabel {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.statChange {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+}
+
+.statChange.up {
+  color: #10B981;
+}
+
+.statChange.down {
+  color: #EF4444;
+}
+
+/* ===========================================
+   GRÁFICOS
+   =========================================== */
+
+.chartsSection {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+.chartCard {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-lg);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.chartTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0;
+}
+
+.chartControls {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.metricBtn {
+  background: var(--cinza-claro);
+  color: var(--cinza-medio);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-normal);
+}
+
+.metricBtn:hover {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.metricBtn.active {
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+}
+
+.chartContainer {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartMockup {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.chartBars {
+  display: flex;
+  align-items: end;
+  gap: var(--spacing-md);
+  height: 100%;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.chartBarContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  max-width: 60px;
+}
+
+.chartBar {
+  background: linear-gradient(to top, var(--wine-destaque), var(--rosa-suave));
+  border-radius: var(--radius-small) var(--radius-small) 0 0;
+  width: 100%;
+  min-height: 20px;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.chartBar:hover {
+  background: linear-gradient(to top, var(--preto-secundario), var(--wine-destaque));
+  transform: scaleY(1.05);
+}
+
+.chartLabel {
+  font-size: var(--font-xs);
+  color: var(--cinza-medio);
+  font-weight: var(--font-semibold);
+}
+
+/* ===========================================
+   PRODUTOS MAIS VENDIDOS
+   =========================================== */
+
+.topProductsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+}
+
+.productItem:hover {
+  background: var(--rosa-suave);
+  transform: translateX(4px);
+}
+
+.productRank {
+  width: 30px;
+  height: 30px;
+  background: var(--wine-destaque);
+  color: var(--white-principal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sm);
+  font-weight: var(--font-bold);
+  flex-shrink: 0;
+}
+
+.productInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.productName {
+  font-size: var(--font-sm);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-xs) 0;
+  line-height: 1.3;
+}
+
+.productStats {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: var(--font-xs);
+}
+
+.productSales {
+  color: var(--cinza-medio);
+}
+
+.productRevenue {
+  color: var(--wine-destaque);
+  font-weight: var(--font-semibold);
+}
+
+.productProgress {
+  width: 60px;
+  height: 4px;
+  background: var(--white-principal);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--wine-destaque);
+  border-radius: var(--radius-small);
+  transition: width var(--transition-normal);
+}
+
+/* ===========================================
+   MÉTRICAS ADICIONAIS
+   =========================================== */
+
+.additionalMetrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.metricCard {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-lg);
+}
+
+.metricTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.metricsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.metricItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.metricItem:last-child {
+  border-bottom: none;
+}
+
+.metricLabel {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+}
+
+.metricValue {
+  font-size: var(--font-sm);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+}
+
+/* ===========================================
+   INSIGHTS
+   =========================================== */
+
+.insightsSection {
+  background: var(--white-principal);
+  border: 2px solid var(--cinza-claro);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.insightsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.insightCard {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--cinza-claro);
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+}
+
+.insightCard:hover {
+  background: var(--rosa-suave);
+  transform: translateY(-2px);
+}
+
+.insightIcon {
+  font-size: var(--font-2xl);
+  flex-shrink: 0;
+}
+
+.insightContent h4 {
+  font-size: var(--font-base);
+  font-weight: var(--font-bold);
+  color: var(--preto-secundario);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.insightContent p {
+  font-size: var(--font-sm);
+  color: var(--cinza-medio);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ===========================================
+   RESPONSIVIDADE
+   =========================================== */
+
+@media (max-width: 1024px) {
+  .chartsSection {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .chartHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .chartControls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .additionalMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .insightsList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: var(--font-2xl);
+  }
+
+  .statCard {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-md);
+  }
+
+  .chartContainer {
+    height: 200px;
+  }
+
+  .productItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .productStats {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* ===========================================
+   ANIMAÇÕES
+   =========================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statCard,
+.chartCard,
+.metricCard,
+.insightCard {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.chartBar {
+  animation: chartGrow 0.8s ease-out;
+}
+
+@keyframes chartGrow {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--final-height);
+  }
+}

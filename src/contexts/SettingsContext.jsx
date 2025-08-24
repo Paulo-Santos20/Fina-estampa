@@ -1,256 +1,180 @@
-// src/contexts/SettingsContext.jsx
-// Contexto de Configurações (CMS) para controlar Header, WhatsApp, Busca, Menu etc.
-// - Persistência em localStorage
-// - API simples de atualização por seções (header, promoBar, logo, menu...)
-// - Funções utilitárias para editar categorias e posição do header
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-
-const STORAGE_KEY = 'fe_settings_v1';
-
-const defaultSettings = {
+// Configurações padrão
+const DEFAULT_SETTINGS = {
+  brand: {
+    name: 'Fina Estampa',
+    logoUrl: '',
+    description: 'Boutique de moda feminina com elegância e sofisticação'
+  },
   header: {
-    enabled: true,
-    position: 'bottom', // 'top' | 'bottom'
-    style: {
-      background: '#FFFFFF',
-      textColor: '#000000',
-      accent: '#722F37',
-      borderColor: 'rgba(0,0,0,0.06)',
-    },
     promoBar: {
       enabled: true,
-      text: 'Frete grátis a partir de R$ 300 em todo o Brasil!',
-      bgColor: '#F8E8E9',
-      textColor: '#722F37',
-      closable: true,
-    },
-    logo: {
-      type: 'text', // 'text' | 'image'
-      text: 'Fina Estampa',
-      url: '',
-      alt: 'Fina Estampa - Boutique Eleganza',
-      height: 36,
+      text: '🎉 Frete Grátis para todo Brasil em compras acima de R$ 200!'
     },
     search: {
       enabled: true,
-      placeholder: 'Busque por vestidos, blusas, calças...',
+      placeholder: 'Buscar produtos...'
     },
     whatsapp: {
       enabled: true,
-      number: '+55 (11) 99999-9999',
-      message: 'Olá! Gostaria de saber mais sobre os produtos da Fina Estampa.',
+      number: '5511999999999',
+      message: 'Olá! Gostaria de saber mais sobre os produtos da Fina Estampa.'
     },
     menu: {
       categories: [
-        { id: 'cat-vestidos', label: 'Vestidos', slug: '/catalog?cat=vestidos' },
-        { id: 'cat-blusas', label: 'Blusas & Camisas', slug: '/catalog?cat=blusas' },
-        { id: 'cat-calcas', label: 'Calças & Shorts', slug: '/catalog?cat=calcas' },
-        { id: 'cat-saias', label: 'Saias & Macacões', slug: '/catalog?cat=saias' },
-        { id: 'cat-acessorios', label: 'Acessórios', slug: '/catalog?cat=acessorios' },
-        { id: 'cat-colecoes', label: 'Coleções Especiais', slug: '/catalog?cat=colecoes' },
-      ],
-    },
+        {
+          name: 'Vestidos',
+          slug: 'vestidos',
+          label: 'Vestidos',
+          children: ['Casuais', 'Festa', 'Trabalho']
+        },
+        {
+          name: 'Blusas',
+          slug: 'blusas',
+          label: 'Blusas & Camisas',
+          children: ['Sociais', 'Casuais', 'Regatas']
+        },
+        {
+          name: 'Calças',
+          slug: 'calcas',
+          label: 'Calças & Shorts',
+          children: ['Jeans', 'Sociais', 'Shorts']
+        },
+        {
+          name: 'Saias',
+          slug: 'saias',
+          label: 'Saias & Macacões',
+          children: ['Curtas', 'Longas', 'Macacões']
+        },
+        {
+          name: 'Acessórios',
+          slug: 'acessorios',
+          label: 'Acessórios',
+          children: ['Bolsas', 'Joias', 'Sapatos']
+        }
+      ]
+    }
   },
+  footer: {
+    enabled: true,
+    social: {
+      instagram: '@finaestampa',
+      facebook: 'finaestampa',
+      whatsapp: '5511999999999'
+    },
+    contact: {
+      email: 'contato@finaestampa.com',
+      phone: '(11) 99999-9999',
+      address: 'São Paulo, SP'
+    }
+  },
+  theme: {
+    primaryColor: '#722F37',
+    secondaryColor: '#F8E8E9',
+    accentColor: '#D4AF37'
+  },
+  seo: {
+    title: 'Fina Estampa - Boutique Eleganza',
+    description: 'Descubra a elegância em cada peça da nossa coleção exclusiva de moda feminina.',
+    keywords: 'moda feminina, roupas, vestidos, blusas, elegância'
+  }
 };
 
-function loadSettings() {
-  if (typeof window === 'undefined') return defaultSettings;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultSettings;
-    const parsed = JSON.parse(raw);
-    // Mescla com defaults para evitar campos ausentes
-    return deepMerge(defaultSettings, parsed);
-  } catch {
-    return defaultSettings;
-  }
-}
+// Criar contexto
+const SettingsContext = createContext();
 
-function saveSettings(settings) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-}
+// Provider do contexto
+export const SettingsProvider = ({ children }) => {
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [loading, setLoading] = useState(true);
 
-function deepMerge(base, override) {
-  if (Array.isArray(base)) return Array.isArray(override) ? override : base;
-  if (typeof base === 'object' && base !== null) {
-    const out = { ...base };
-    for (const k of Object.keys(override || {})) {
-      out[k] = deepMerge(base[k], override[k]);
-    }
-    return out;
-  }
-  return typeof override === 'undefined' ? base : override;
-}
-
-const SettingsContext = createContext(null);
-
-export function SettingsProvider({ children }) {
-  const [settings, setSettings] = useState(() => loadSettings());
-  const [isSaving, setIsSaving] = useState(false);
-  const [lastSavedAt, setLastSavedAt] = useState(null);
-
-  // Persist automático com debounce leve
+  // Carregar configurações do localStorage
   useEffect(() => {
-    const id = setTimeout(() => {
-      try {
-        saveSettings(settings);
-        setLastSavedAt(Date.now());
-      } catch {
-        // noop
-      }
-    }, 250);
-    return () => clearTimeout(id);
-  }, [settings]);
-
-  // Ações genéricas
-  const updateSettings = useCallback((updater) => {
-    setSettings((prev) => {
-      const next = typeof updater === 'function' ? updater(prev) : deepMerge(prev, updater);
-      return next;
-    });
-  }, []);
-
-  const saveNow = useCallback(async () => {
-    setIsSaving(true);
     try {
-      saveSettings(settings);
-      setLastSavedAt(Date.now());
+      const savedSettings = localStorage.getItem('siteSettings');
+      if (savedSettings) {
+        const parsedSettings = JSON.parse(savedSettings);
+        setSettings(prevSettings => ({
+          ...prevSettings,
+          ...parsedSettings
+        }));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações:', error);
     } finally {
-      setIsSaving(false);
+      setLoading(false);
     }
-  }, [settings]);
-
-  const resetToDefaults = useCallback(() => {
-    setSettings(defaultSettings);
-    saveSettings(defaultSettings);
-    setLastSavedAt(Date.now());
   }, []);
 
-  // Ações específicas do header
-  const setHeader = useCallback((partial) => {
-    updateSettings((prev) => ({
-      ...prev,
-      header: deepMerge(prev.header, partial),
-    }));
-  }, [updateSettings]);
+  // Salvar configurações no localStorage
+  const updateSettings = (newSettings) => {
+    try {
+      const updatedSettings = {
+        ...settings,
+        ...newSettings
+      };
+      setSettings(updatedSettings);
+      localStorage.setItem('siteSettings', JSON.stringify(updatedSettings));
+      return true;
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      return false;
+    }
+  };
 
-  const setHeaderPosition = useCallback((position) => {
-    setHeader({ position });
-  }, [setHeader]);
+  // Função para obter link do WhatsApp
+  const getWhatsAppLink = (customMessage = '') => {
+    const whatsappConfig = settings?.header?.whatsapp;
+    if (!whatsappConfig?.enabled || !whatsappConfig?.number) {
+      return '#';
+    }
 
-  const setPromoBar = useCallback((partial) => {
-    setHeader({ promoBar: partial });
-  }, [setHeader]);
+    const message = customMessage || whatsappConfig.message || 'Olá!';
+    const encodedMessage = encodeURIComponent(message);
+    return `https://wa.me/${whatsappConfig.number}?text=${encodedMessage}`;
+  };
 
-  const setLogo = useCallback((partial) => {
-    setHeader({ logo: partial });
-  }, [setHeader]);
+  // Função para obter configurações de uma seção específica
+  const getSectionSettings = (section) => {
+    return settings?.[section] || {};
+  };
 
-  const setSearch = useCallback((partial) => {
-    setHeader({ search: partial });
-  }, [setHeader]);
+  // Função para atualizar uma seção específica
+  const updateSectionSettings = (section, sectionSettings) => {
+    const newSettings = {
+      ...settings,
+      [section]: {
+        ...settings[section],
+        ...sectionSettings
+      }
+    };
+    return updateSettings(newSettings);
+  };
 
-  const setWhatsapp = useCallback((partial) => {
-    setHeader({ whatsapp: partial });
-  }, [setHeader]);
-
-  const setHeaderStyle = useCallback((partial) => {
-    setHeader({ style: partial });
-  }, [setHeader]);
-
-  // Menu (categorias)
-  const addCategory = useCallback((cat) => {
-    setHeader({
-      menu: {
-        categories: [
-          ...(settings.header.menu?.categories || []),
-          {
-            id: cat.id || `cat-${Date.now()}`,
-            label: cat.label || 'Nova categoria',
-            slug: cat.slug || '/catalog',
-          },
-        ],
-      },
-    });
-  }, [setHeader, settings.header.menu]);
-
-  const updateCategory = useCallback((id, partial) => {
-    const list = settings.header.menu?.categories || [];
-    const idx = list.findIndex((c) => c.id === id);
-    if (idx < 0) return;
-    const next = [...list];
-    next[idx] = { ...next[idx], ...partial };
-    setHeader({ menu: { categories: next } });
-  }, [settings.header.menu, setHeader]);
-
-  const removeCategory = useCallback((id) => {
-    const list = settings.header.menu?.categories || [];
-    const next = list.filter((c) => c.id !== id);
-    setHeader({ menu: { categories: next } });
-  }, [settings.header.menu, setHeader]);
-
-  const moveCategory = useCallback((id, direction) => {
-    const list = settings.header.menu?.categories || [];
-    const idx = list.findIndex((c) => c.id === id);
-    if (idx < 0) return;
-    const next = [...list];
-    const newIndex = direction === 'up' ? Math.max(0, idx - 1) : Math.min(next.length - 1, idx + 1);
-    const [item] = next.splice(idx, 1);
-    next.splice(newIndex, 0, item);
-    setHeader({ menu: { categories: next } });
-  }, [settings.header.menu, setHeader]);
-
-  const value = useMemo(() => ({
+  const value = {
     settings,
-    isSaving,
-    lastSavedAt,
-
-    // ações
+    loading,
     updateSettings,
-    saveNow,
-    resetToDefaults,
+    getWhatsAppLink,
+    getSectionSettings,
+    updateSectionSettings
+  };
 
-    // header
-    setHeader,
-    setHeaderPosition,
-    setPromoBar,
-    setLogo,
-    setSearch,
-    setWhatsapp,
-    setHeaderStyle,
+  return (
+    <SettingsContext.Provider value={value}>
+      {children}
+    </SettingsContext.Provider>
+  );
+};
 
-    // menu
-    addCategory,
-    updateCategory,
-    removeCategory,
-    moveCategory,
-  }), [
-    settings,
-    isSaving,
-    lastSavedAt,
-    updateSettings,
-    saveNow,
-    resetToDefaults,
-    setHeader,
-    setHeaderPosition,
-    setPromoBar,
-    setLogo,
-    setSearch,
-    setWhatsapp,
-    setHeaderStyle,
-    addCategory,
-    updateCategory,
-    removeCategory,
-    moveCategory,
-  ]);
+// Hook para usar o contexto
+export const useSettings = () => {
+  const context = useContext(SettingsContext);
+  if (!context) {
+    throw new Error('useSettings deve ser usado dentro de <SettingsProvider>');
+  }
+  return context;
+};
 
-  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
-}
-
-export function useSettings() {
-  const ctx = useContext(SettingsContext);
-  if (!ctx) throw new Error('useSettings deve ser usado dentro de <SettingsProvider>');
-  return ctx;
-}
+export default SettingsContext;

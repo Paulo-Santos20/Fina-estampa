@@ -5,33 +5,35 @@ import {
   FaSave,
   FaTimes,
   FaCamera,
-  FaEnvelope,
-  FaPhone,
-  FaCalendarAlt,
-  FaLock,
   FaEye,
-  FaEyeSlash
+  FaEyeSlash,
+  FaKey,
+  FaBell,
+  FaUserCog
 } from 'react-icons/fa';
 import { useAuth } from '../../../contexts/AuthContext';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
-  const { user, updateUser } = useAuth();
-  
+  const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    birthDate: user?.birthDate || '',
+    role: user?.role || 'user',
+    avatar: user?.avatar || '',
     bio: user?.bio || '',
-    avatar: user?.avatar || ''
+    notifications: {
+      email: true,
+      push: true,
+      sms: false
+    }
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -40,127 +42,116 @@ const ProfilePage = () => {
     confirmPassword: ''
   });
 
-  const handleProfileInputChange = (field, value) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setProfileData(prev => ({
       ...prev,
-      [field]: value
+      [name]: value
     }));
   };
 
-  const handlePasswordInputChange = (field, value) => {
+  const handleNotificationChange = (type) => {
+    setProfileData(prev => ({
+      ...prev,
+      notifications: {
+        ...prev.notifications,
+        [type]: !prev.notifications[type]
+      }
+    }));
+  };
+
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
     setPasswordData(prev => ({
       ...prev,
-      [field]: value
+      [name]: value
     }));
   };
 
-  const handleSaveProfile = async () => {
-    setIsSaving(true);
-    
-    try {
-      // Validações básicas
-      if (!profileData.name.trim()) {
-        alert('❌ Nome é obrigatório');
-        return;
-      }
-      
-      if (!profileData.email.trim()) {
-        alert('❌ Email é obrigatório');
-        return;
-      }
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-      // Simular salvamento
+    try {
+      // Simular atualização
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Atualizar usuário no contexto
-      if (updateUser) {
-        updateUser({
-          ...user,
-          ...profileData
-        });
+      if (updateProfile) {
+        updateProfile(profileData);
       }
       
-      alert('✅ Perfil atualizado com sucesso!');
       setIsEditing(false);
+      alert('Perfil atualizado com sucesso!');
     } catch (error) {
-      alert('❌ Erro ao atualizar perfil');
+      alert('Erro ao atualizar perfil');
     } finally {
-      setIsSaving(false);
+      setIsSubmitting(false);
     }
   };
 
-  const handleChangePassword = async () => {
-    setIsSaving(true);
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
     
-    try {
-      // Validações
-      if (!passwordData.currentPassword) {
-        alert('❌ Senha atual é obrigatória');
-        return;
-      }
-      
-      if (!passwordData.newPassword) {
-        alert('❌ Nova senha é obrigatória');
-        return;
-      }
-      
-      if (passwordData.newPassword.length < 6) {
-        alert('❌ Nova senha deve ter pelo menos 6 caracteres');
-        return;
-      }
-      
-      if (passwordData.newPassword !== passwordData.confirmPassword) {
-        alert('❌ Confirmação de senha não confere');
-        return;
-      }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('As senhas não coincidem');
+      return;
+    }
 
+    if (passwordData.newPassword.length < 6) {
+      alert('A nova senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
       // Simular mudança de senha
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      alert('✅ Senha alterada com sucesso!');
-      setIsChangingPassword(false);
       setPasswordData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
+      setShowPasswordForm(false);
+      alert('Senha alterada com sucesso!');
     } catch (error) {
-      alert('❌ Erro ao alterar senha');
+      alert('Erro ao alterar senha');
     } finally {
-      setIsSaving(false);
+      setIsSubmitting(false);
     }
   };
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        handleProfileInputChange('avatar', e.target.result);
+        setProfileData(prev => ({
+          ...prev,
+          avatar: e.target.result
+        }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const cancelEdit = () => {
-    setIsEditing(false);
-    setProfileData({
-      name: user?.name || '',
-      email: user?.email || '',
-      phone: user?.phone || '',
-      birthDate: user?.birthDate || '',
-      bio: user?.bio || '',
-      avatar: user?.avatar || ''
-    });
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case 'admin': return 'Administrador';
+      case 'manager': return 'Gerente';
+      case 'user': return 'Usuário';
+      default: return role;
+    }
   };
 
-  const cancelPasswordChange = () => {
-    setIsChangingPassword(false);
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
+  const getRoleBadgeClass = (role) => {
+    switch (role) {
+      case 'admin': return styles.adminBadge;
+      case 'manager': return styles.managerBadge;
+      case 'user': return styles.userBadge;
+      default: return styles.userBadge;
+    }
   };
 
   return (
@@ -173,7 +164,7 @@ const ProfilePage = () => {
             Meu Perfil
           </h2>
           <p className={styles.pageSubtitle}>
-            Gerencie suas informações pessoais e configurações de conta
+            Gerencie suas informações pessoais e configurações
           </p>
         </div>
       </div>
@@ -182,36 +173,6 @@ const ProfilePage = () => {
         {/* Card do Perfil */}
         <div className={styles.profileCard}>
           <div className={styles.profileHeader}>
-            <h3 className={styles.cardTitle}>👤 Informações Pessoais</h3>
-            {!isEditing ? (
-              <button 
-                onClick={() => setIsEditing(true)}
-                className={styles.editBtn}
-              >
-                <FaEdit /> Editar
-              </button>
-            ) : (
-              <div className={styles.editActions}>
-                <button 
-                  onClick={cancelEdit}
-                  className={styles.cancelBtn}
-                  disabled={isSaving}
-                >
-                  <FaTimes /> Cancelar
-                </button>
-                <button 
-                  onClick={handleSaveProfile}
-                  className={styles.saveBtn}
-                  disabled={isSaving}
-                >
-                  <FaSave /> {isSaving ? 'Salvando...' : 'Salvar'}
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className={styles.profileBody}>
-            {/* Avatar */}
             <div className={styles.avatarSection}>
               <div className={styles.avatarContainer}>
                 {profileData.avatar ? (
@@ -225,260 +186,290 @@ const ProfilePage = () => {
                     <FaUser />
                   </div>
                 )}
-                
                 {isEditing && (
                   <label className={styles.avatarUpload}>
+                    <FaCamera />
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={handleAvatarChange}
-                      className={styles.avatarInput}
+                      onChange={handleAvatarUpload}
+                      style={{ display: 'none' }}
                     />
-                    <div className={styles.avatarUploadIcon}>
-                      <FaCamera />
-                    </div>
                   </label>
                 )}
               </div>
-              
-              <div className={styles.userInfo}>
-                <h4 className={styles.userName}>{user?.name || 'Usuário'}</h4>
-                <span className={styles.userRole}>
-                  {user?.role === 'admin' ? 'Administradora' : 'Usuária'}
-                </span>
-              </div>
             </div>
 
-            {/* Formulário */}
-            <div className={styles.profileForm}>
-              <div className={styles.formGrid}>
+            <div className={styles.profileInfo}>
+              <h3 className={styles.profileName}>{profileData.name}</h3>
+              <p className={styles.profileEmail}>{profileData.email}</p>
+              <span className={`${styles.roleBadge} ${getRoleBadgeClass(profileData.role)}`}>
+                <FaUserCog /> {getRoleLabel(profileData.role)}
+              </span>
+            </div>
+
+            <div className={styles.profileActions}>
+              {!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className={styles.editBtn}
+                >
+                  <FaEdit /> Editar Perfil
+                </button>
+              ) : (
+                <div className={styles.editActions}>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className={styles.cancelBtn}
+                    disabled={isSubmitting}
+                  >
+                    <FaTimes /> Cancelar
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Formulário de Perfil */}
+          <form onSubmit={handleProfileSubmit} className={styles.profileForm}>
+            <div className={styles.formSection}>
+              <h4 className={styles.sectionTitle}>Informações Pessoais</h4>
+              
+              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>
-                    <FaUser /> Nome Completo
-                  </label>
+                  <label className={styles.formLabel}>Nome Completo</label>
                   <input
                     type="text"
+                    name="name"
                     value={profileData.name}
-                    onChange={(e) => handleProfileInputChange('name', e.target.value)}
-                    disabled={!isEditing}
+                    onChange={handleInputChange}
+                    disabled={!isEditing || isSubmitting}
                     className={styles.formInput}
                     placeholder="Seu nome completo"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>
-                    <FaEnvelope /> Email
-                  </label>
+                  <label className={styles.formLabel}>E-mail</label>
                   <input
                     type="email"
+                    name="email"
                     value={profileData.email}
-                    onChange={(e) => handleProfileInputChange('email', e.target.value)}
-                    disabled={!isEditing}
+                    onChange={handleInputChange}
+                    disabled={!isEditing || isSubmitting}
                     className={styles.formInput}
                     placeholder="seu@email.com"
                   />
                 </div>
+              </div>
 
+              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>
-                    <FaPhone /> Telefone
-                  </label>
+                  <label className={styles.formLabel}>Telefone</label>
                   <input
                     type="tel"
+                    name="phone"
                     value={profileData.phone}
-                    onChange={(e) => handleProfileInputChange('phone', e.target.value)}
-                    disabled={!isEditing}
+                    onChange={handleInputChange}
+                    disabled={!isEditing || isSubmitting}
                     className={styles.formInput}
                     placeholder="(11) 99999-9999"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>
-                    <FaCalendarAlt /> Data de Nascimento
-                  </label>
+                  <label className={styles.formLabel}>Função</label>
                   <input
-                    type="date"
-                    value={profileData.birthDate}
-                    onChange={(e) => handleProfileInputChange('birthDate', e.target.value)}
-                    disabled={!isEditing}
+                    type="text"
+                    value={getRoleLabel(profileData.role)}
+                    disabled
                     className={styles.formInput}
                   />
                 </div>
+              </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Bio</label>
-                  <textarea
-                    value={profileData.bio}
-                    onChange={(e) => handleProfileInputChange('bio', e.target.value)}
-                    disabled={!isEditing}
-                    rows="3"
-                    className={styles.formTextarea}
-                    placeholder="Conte um pouco sobre você..."
-                  />
-                </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Biografia</label>
+                <textarea
+                  name="bio"
+                  value={profileData.bio}
+                  onChange={handleInputChange}
+                  disabled={!isEditing || isSubmitting}
+                  rows="3"
+                  className={styles.formTextarea}
+                  placeholder="Conte um pouco sobre você..."
+                />
               </div>
             </div>
-          </div>
+
+            {isEditing && (
+              <div className={styles.formActions}>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={styles.saveBtn}
+                >
+                  <FaSave /> {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
+                </button>
+              </div>
+            )}
+          </form>
         </div>
 
         {/* Card de Segurança */}
         <div className={styles.securityCard}>
-          <div className={styles.securityHeader}>
-            <h3 className={styles.cardTitle}>🔒 Segurança da Conta</h3>
-            {!isChangingPassword ? (
-              <button 
-                onClick={() => setIsChangingPassword(true)}
-                className={styles.changePasswordBtn}
-              >
-                <FaLock /> Alterar Senha
-              </button>
-            ) : (
-              <div className={styles.editActions}>
-                <button 
-                  onClick={cancelPasswordChange}
+          <div className={styles.cardHeader}>
+            <h4 className={styles.cardTitle}>
+              <FaKey /> Segurança
+            </h4>
+          </div>
+
+          <div className={styles.securityActions}>
+            <button
+              onClick={() => setShowPasswordForm(!showPasswordForm)}
+              className={styles.securityBtn}
+            >
+              <FaKey /> Alterar Senha
+            </button>
+          </div>
+
+          {showPasswordForm && (
+            <form onSubmit={handlePasswordSubmit} className={styles.passwordForm}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Senha Atual</label>
+                <div className={styles.passwordInput}>
+                  <input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    required
+                    disabled={isSubmitting}
+                    className={styles.formInput}
+                    placeholder="Digite sua senha atual"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className={styles.passwordToggle}
+                  >
+                    {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Nova Senha</label>
+                <div className={styles.passwordInput}>
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    required
+                    disabled={isSubmitting}
+                    className={styles.formInput}
+                    placeholder="Digite a nova senha"
+                    minLength="6"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className={styles.passwordToggle}
+                  >
+                    {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Confirmar Nova Senha</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={passwordData.confirmPassword}
+                  onChange={handlePasswordChange}
+                  required
+                  disabled={isSubmitting}
+                  className={styles.formInput}
+                  placeholder="Confirme a nova senha"
+                  minLength="6"
+                />
+              </div>
+
+              <div className={styles.passwordActions}>
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordForm(false)}
                   className={styles.cancelBtn}
-                  disabled={isSaving}
+                  disabled={isSubmitting}
                 >
-                  <FaTimes /> Cancelar
+                  Cancelar
                 </button>
-                <button 
-                  onClick={handleChangePassword}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
                   className={styles.saveBtn}
-                  disabled={isSaving}
                 >
-                  <FaSave /> {isSaving ? 'Alterando...' : 'Alterar Senha'}
+                  {isSubmitting ? 'Alterando...' : 'Alterar Senha'}
                 </button>
               </div>
-            )}
-          </div>
-
-          <div className={styles.securityBody}>
-            {!isChangingPassword ? (
-              <div className={styles.securityInfo}>
-                <div className={styles.securityItem}>
-                  <FaLock className={styles.securityIcon} />
-                  <div className={styles.securityContent}>
-                    <h4>Senha</h4>
-                    <p>Última alteração há 30 dias</p>
-                  </div>
-                </div>
-                
-                <div className={styles.securityItem}>
-                  <FaEnvelope className={styles.securityIcon} />
-                  <div className={styles.securityContent}>
-                    <h4>Email Verificado</h4>
-                    <p>Seu email está verificado e seguro</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.passwordForm}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Senha Atual</label>
-                  <div className={styles.passwordInput}>
-                    <input
-                      type={showCurrentPassword ? 'text' : 'password'}
-                      value={passwordData.currentPassword}
-                      onChange={(e) => handlePasswordInputChange('currentPassword', e.target.value)}
-                      className={styles.formInput}
-                      placeholder="Digite sua senha atual"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className={styles.passwordToggle}
-                    >
-                      {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Nova Senha</label>
-                  <div className={styles.passwordInput}>
-                    <input
-                      type={showNewPassword ? 'text' : 'password'}
-                      value={passwordData.newPassword}
-                      onChange={(e) => handlePasswordInputChange('newPassword', e.target.value)}
-                      className={styles.formInput}
-                      placeholder="Digite sua nova senha"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className={styles.passwordToggle}
-                    >
-                      {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                  <small className={styles.passwordHint}>
-                    A senha deve ter pelo menos 6 caracteres
-                  </small>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Confirmar Nova Senha</label>
-                  <div className={styles.passwordInput}>
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={passwordData.confirmPassword}
-                      onChange={(e) => handlePasswordInputChange('confirmPassword', e.target.value)}
-                      className={styles.formInput}
-                      placeholder="Confirme sua nova senha"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className={styles.passwordToggle}
-                    >
-                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+            </form>
+          )}
         </div>
 
-        {/* Card de Estatísticas */}
-        <div className={styles.statsCard}>
-          <h3 className={styles.cardTitle}>📊 Suas Estatísticas</h3>
-          
-          <div className={styles.statsGrid}>
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}>
-                <FaCalendarAlt />
+        {/* Card de Notificações */}
+        <div className={styles.notificationsCard}>
+          <div className={styles.cardHeader}>
+            <h4 className={styles.cardTitle}>
+              <FaBell /> Notificações
+            </h4>
+          </div>
+
+          <div className={styles.notificationsList}>
+            <div className={styles.notificationItem}>
+              <div className={styles.notificationInfo}>
+                <h5>Notificações por E-mail</h5>
+                <p>Receba atualizações importantes por e-mail</p>
               </div>
-              <div className={styles.statContent}>
-                <span className={styles.statValue}>
-                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('pt-BR') : 'N/A'}
-                </span>
-                <span className={styles.statLabel}>Membro desde</span>
-              </div>
+              <label className={styles.toggleSwitch}>
+                <input
+                  type="checkbox"
+                  checked={profileData.notifications.email}
+                  onChange={() => handleNotificationChange('email')}
+                />
+                <span className={styles.toggleSlider}></span>
+              </label>
             </div>
 
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}>
-                <FaUser />
+            <div className={styles.notificationItem}>
+              <div className={styles.notificationInfo}>
+                <h5>Notificações Push</h5>
+                <p>Receba notificações no navegador</p>
               </div>
-              <div className={styles.statContent}>
-                <span className={styles.statValue}>
-                  {user?.role === 'admin' ? 'Administradora' : 'Usuária'}
-                </span>
-                <span className={styles.statLabel}>Nível de acesso</span>
-              </div>
+              <label className={styles.toggleSwitch}>
+                <input
+                  type="checkbox"
+                  checked={profileData.notifications.push}
+                  onChange={() => handleNotificationChange('push')}
+                />
+                <span className={styles.toggleSlider}></span>
+              </label>
             </div>
 
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}>
-                <FaEnvelope />
+            <div className={styles.notificationItem}>
+              <div className={styles.notificationInfo}>
+                <h5>Notificações por SMS</h5>
+                <p>Receba alertas importantes por SMS</p>
               </div>
-              <div className={styles.statContent}>
-                <span className={styles.statValue}>Verificado</span>
-                <span className={styles.statLabel}>Status do email</span>
-              </div>
+              <label className={styles.toggleSwitch}>
+                <input
+                  type="checkbox"
+                  checked={profileData.notifications.sms}
+                  onChange={() => handleNotificationChange('sms')}
+                />
+                <span className={styles.toggleSlider}></span>
+              </label>
             </div>
           </div>
         </div>

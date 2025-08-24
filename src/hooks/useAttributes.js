@@ -1,21 +1,34 @@
 import { useState, useEffect } from 'react';
 
-// Dados iniciais de cores
-const INITIAL_COLORS = [
-  { id: 'c1', name: 'Preto', hexCode: '#000000', description: 'Cor clássica e elegante', isActive: true },
-  { id: 'c2', name: 'Branco', hexCode: '#FFFFFF', description: 'Cor neutra e versátil', isActive: true },
-  { id: 'c3', name: 'Vinho', hexCode: '#722F37', description: 'Cor da marca Fina Estampa', isActive: true },
-  { id: 'c4', name: 'Rosa', hexCode: '#F8E8E9', description: 'Cor suave e feminina', isActive: true },
-  { id: 'c5', name: 'Azul Marinho', hexCode: '#1E3A8A', description: 'Azul escuro elegante', isActive: true }
+// Cores baseadas nos produtos
+const MOCK_COLORS = [
+  { id: 'pink', name: 'Rosa', hexCode: '#FF69B4' },
+  { id: 'purple', name: 'Roxo', hexCode: '#8A2BE2' },
+  { id: 'black', name: 'Preto', hexCode: '#000000' },
+  { id: 'white', name: 'Branco', hexCode: '#FFFFFF' },
+  { id: 'blue', name: 'Azul', hexCode: '#4169E1' },
+  { id: 'navy', name: 'Azul Marinho', hexCode: '#000080' },
+  { id: 'lightblue', name: 'Azul Claro', hexCode: '#87CEEB' },
+  { id: 'hotpink', name: 'Rosa Pink', hexCode: '#FF1493' },
+  { id: 'green', name: 'Verde', hexCode: '#32CD32' },
+  { id: 'gold', name: 'Dourado', hexCode: '#FFD700' },
+  { id: 'brown', name: 'Marrom', hexCode: '#8B4513' },
+  { id: 'red', name: 'Vermelho', hexCode: '#DC143C' }
 ];
 
-// Dados iniciais de tamanhos
-const INITIAL_SIZES = [
-  { id: 's1', name: 'Extra Pequeno', abbreviation: 'PP', description: 'Tamanho extra pequeno', order: 0, isActive: true },
-  { id: 's2', name: 'Pequeno', abbreviation: 'P', description: 'Tamanho pequeno', order: 1, isActive: true },
-  { id: 's3', name: 'Médio', abbreviation: 'M', description: 'Tamanho médio', order: 2, isActive: true },
-  { id: 's4', name: 'Grande', abbreviation: 'G', description: 'Tamanho grande', order: 3, isActive: true },
-  { id: 's5', name: 'Extra Grande', abbreviation: 'GG', description: 'Tamanho extra grande', order: 4, isActive: true }
+// Tamanhos baseados nos produtos
+const MOCK_SIZES = [
+  { id: 'pp', name: 'Extra Pequeno', abbreviation: 'PP', order: 1 },
+  { id: 'p', name: 'Pequeno', abbreviation: 'P', order: 2 },
+  { id: 'm', name: 'Médio', abbreviation: 'M', order: 3 },
+  { id: 'g', name: 'Grande', abbreviation: 'G', order: 4 },
+  { id: 'gg', name: 'Extra Grande', abbreviation: 'GG', order: 5 },
+  { id: '36', name: 'Tamanho 36', abbreviation: '36', order: 6 },
+  { id: '38', name: 'Tamanho 38', abbreviation: '38', order: 7 },
+  { id: '40', name: 'Tamanho 40', abbreviation: '40', order: 8 },
+  { id: '42', name: 'Tamanho 42', abbreviation: '42', order: 9 },
+  { id: '44', name: 'Tamanho 44', abbreviation: '44', order: 10 },
+  { id: 'unico', name: 'Tamanho Único', abbreviation: 'Único', order: 11 }
 ];
 
 export const useAttributes = () => {
@@ -24,34 +37,62 @@ export const useAttributes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Carregar atributos do localStorage
   useEffect(() => {
-    try {
-      // Carregar cores
-      const savedColors = localStorage.getItem('colors');
-      if (savedColors) {
-        const parsedColors = JSON.parse(savedColors);
-        if (parsedColors.length === 0) {
-          setColors(INITIAL_COLORS);
-          localStorage.setItem('colors', JSON.stringify(INITIAL_COLORS));
+    const loadAttributes = async () => {
+      try {
+        setLoading(true);
+        
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Verificar se há atributos salvos no localStorage (CMS)
+        const savedColors = localStorage.getItem('cmsColors');
+        const savedSizes = localStorage.getItem('cmsSizes');
+        
+        if (savedColors) {
+          const parsedColors = JSON.parse(savedColors);
+          setColors([...MOCK_COLORS, ...parsedColors]);
         } else {
-          setColors(parsedColors);
+          setColors(MOCK_COLORS);
         }
-      } else {
-        setColors(INITIAL_COLORS);
-        localStorage.setItem('colors', JSON.stringify(INITIAL_COLORS));
+        
+        if (savedSizes) {
+          const parsedSizes = JSON.parse(savedSizes);
+          setSizes([...MOCK_SIZES, ...parsedSizes]);
+        } else {
+          setSizes(MOCK_SIZES);
+        }
+        
+      } catch (err) {
+        setError('Erro ao carregar atributos');
+        console.error('Erro ao carregar atributos:', err);
+        // Em caso de erro, usar dados mockados
+        setColors(MOCK_COLORS);
+        setSizes(MOCK_SIZES);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // Carregar tamanhos
-      const savedSizes = localStorage.getItem('sizes');
-      if (savedSizes) {
-        const parsedSizes = JSON.parse(savedSizes);
-        if (parsedSizes.length === 0) {
-          setSizes(INITIAL_SIZES);
-          localStorage.setItem('sizes', JSON.stringify(INITIAL_SIZES));
-        } else {
-          setSizes(parsedSizes);
-        }
-      } else {
-        setSizes(INITIAL_SIZES);
-        localStorage.setItem('sizes
+    loadAttributes();
+  }, []);
+
+  // Função para obter cor por ID
+  const getColorById = (id) => {
+    return colors.find(color => color.id === id);
+  };
+
+  // Função para obter tamanho por ID
+  const getSizeById = (id) => {
+    return sizes.find(size => size.id === id);
+  };
+
+  return {
+    colors,
+    sizes,
+    loading,
+    error,
+    getColorById,
+    getSizeById
+  };
+};

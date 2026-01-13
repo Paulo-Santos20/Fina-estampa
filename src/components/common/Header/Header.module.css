@@ -57,7 +57,7 @@
   font-weight: 500;
   letter-spacing: 0.5px;
 }
-.navLink:hover { opacity: 0.8; }
+.navLink:hover { opacity: 0.7; }
 
 /* CENTER */
 .centerSection { display: flex; justify-content: center; }
@@ -74,7 +74,7 @@
 .rightSection { display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
 .desktopOnly { display: block; }
 
-/* ICON BUTTONS */
+/* ICON BUTTONS (Minimalista) */
 .iconButton {
   background: none;
   border: none;
@@ -85,9 +85,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s ease;
   overflow: visible; 
 }
-.iconButton:hover { opacity: 0.7; }
+/* Apenas opacidade, sem movimento */
+.iconButton:hover { opacity: 0.6; transform: none; background: none; }
 
 /* CART BADGE */
 .cartBadge {
@@ -108,7 +110,7 @@
   z-index: 10;
 }
 
-/* LOGIN / USER */
+/* LOGIN / USER (Minimalista) */
 .loginButton {
   background-color: var(--sana-dark-brown);
   color: #fff;
@@ -120,8 +122,9 @@
   letter-spacing: 0.5px;
   cursor: pointer;
   text-transform: uppercase;
+  transition: opacity 0.2s ease;
 }
-.loginButton:hover { opacity: 0.9; }
+.loginButton:hover { opacity: 0.8; transform: none; background-color: var(--sana-dark-brown); }
 
 .userButton {
   background: none;
@@ -133,8 +136,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  transition: opacity 0.2s;
 }
-.userButton:hover { opacity: 0.8; }
+.userButton:hover { opacity: 0.7; transform: none; }
 
 /* DROPDOWN */
 .dropdownMenu {
@@ -388,7 +392,7 @@
   border-radius: 4px;
 }
 
-/* SEARCH OVERLAY */
+/* SEARCH OVERLAY (COM IMAGENS) */
 .searchOverlayBackdrop {
   position: fixed;
   top: 0;
@@ -429,7 +433,14 @@
 }
 .searchResults { padding: 40px; flex: 1; overflow-y: auto; }
 .productGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
-.productImage img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+
+/* Grid de Produtos na Busca */
+.productCard { cursor: pointer; }
+.productImage { width: 100%; aspect-ratio: 3/4; background: #eee; margin-bottom: 8px; overflow: hidden; }
+.productImage img { width: 100%; height: 100%; object-fit: cover; }
+.productInfo p { margin: 0; color: var(--sana-text); }
+.productName { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.productPrice { font-size: 13px; color: #666; }
 
 /* MOBILE */
 .mobileDrawer {

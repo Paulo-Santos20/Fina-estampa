@@ -39,7 +39,7 @@ const TopBar = () => {
   );
 };
 
-// --- SEARCH OVERLAY ---
+// --- SEARCH OVERLAY (CORRIGIDO: IMAGENS) ---
 const SearchOverlay = ({ isOpen, onClose }) => {
   const { products } = useProducts();
   const { getActiveHeaderCategories } = useCMS();
@@ -96,17 +96,26 @@ const SearchOverlay = ({ isOpen, onClose }) => {
         </div>
         <div className={styles.searchResults}>
           <div className={styles.productGrid}>
-            {suggestions.products.map(product => (
-              <div key={product.id} className={styles.productCard} onClick={() => { navigate(`/product/${product.id}`); onClose(); }}>
-                <div className={styles.productImage}>
-                  <img src={product.image || '/placeholder.jpg'} alt={product.name} />
+            {suggestions.products.map(product => {
+              // Correção de Imagem para a Busca
+              const imgSource = product.image || (product.images && product.images[0]) || '/placeholder.jpg';
+              
+              return (
+                <div key={product.id} className={styles.productCard} onClick={() => { navigate(`/product/${product.id}`); onClose(); }}>
+                  <div className={styles.productImage}>
+                    <img 
+                      src={imgSource} 
+                      alt={product.name} 
+                      onError={(e) => e.target.src = "https://via.placeholder.com/100x120?text=Foto"}
+                    />
+                  </div>
+                  <div className={styles.productInfo}>
+                    <p className={styles.productName}>{product.name}</p>
+                    <p className={styles.productPrice}>R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
+                  </div>
                 </div>
-                <div className={styles.productInfo}>
-                  <p className={styles.productName}>{product.name}</p>
-                  <p className={styles.productPrice}>R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -114,7 +123,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
   );
 };
 
-// --- CART DRAWER CORRIGIDO ---
+// --- CART DRAWER (MANTIDO CORRIGIDO) ---
 const CartDrawer = ({ isOpen, onClose }) => {
   const context = useCart();
   const { isLoggedIn } = useAuth();
@@ -123,28 +132,12 @@ const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, incrementItem, decrementItem, removeItem, subtotal } = context;
   const cartItems = cart || [];
 
-  // Formatação de moeda
-  const formatMoney = (val) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val) || 0);
-  };
+  const formatMoney = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val) || 0);
 
-  // Funções de controle
-  const handleIncrement = (e, id) => {
-    e.preventDefault(); e.stopPropagation();
-    incrementItem(id);
-  };
+  const handleIncrement = (e, id) => { e.preventDefault(); e.stopPropagation(); if(incrementItem) incrementItem(id); };
+  const handleDecrement = (e, id) => { e.preventDefault(); e.stopPropagation(); if(decrementItem) decrementItem(id); };
+  const handleRemove = (e, id) => { e.preventDefault(); e.stopPropagation(); if(removeItem) removeItem(id); };
 
-  const handleDecrement = (e, id) => {
-    e.preventDefault(); e.stopPropagation();
-    decrementItem(id);
-  };
-
-  const handleRemove = (e, id) => {
-    e.preventDefault(); e.stopPropagation();
-    removeItem(id);
-  };
-
-  // Recalcular quantidade total para o badge do drawer
   const totalCount = cartItems.reduce((acc, item) => {
     const qty = item.quantity || item.qty || 1;
     return acc + Number(qty);
@@ -156,116 +149,54 @@ const CartDrawer = ({ isOpen, onClose }) => {
     <>
       <div className={styles.backdrop} onClick={onClose} />
       <div className={`${styles.cartDrawer} ${isOpen ? styles.open : ''}`}>
-        
         <div className={styles.cartHeader}>
-          <button className={styles.closeDrawerButton} onClick={onClose}>
-            <ChevronRightIcon />
-          </button>
+          <button className={styles.closeDrawerButton} onClick={onClose}><ChevronRightIcon /></button>
           {totalCount > 0 && <span className={styles.cartCountText}>Sacola ({totalCount})</span>}
         </div>
-
         <div className={styles.cartContent}>
           {cartItems.length === 0 ? (
             <div className={styles.emptyCartState}>
-              <h2 className={styles.emptyTitle}>SUA SACOLA ESTÁ VAZIA.</h2>
-              {!isLoggedIn() && (
-                <p className={styles.emptySubtitle}>
-                  Tem uma conta? <Link to="/login" onClick={onClose} className={styles.loginLink}>Entre</Link> para finalizar mais rápido.
-                </p>
-              )}
-              <button className={styles.continueButton} onClick={() => { onClose(); navigate('/catalog'); }}>
-                CONTINUAR COMPRANDO
-              </button>
+              <h2 className={styles.emptyTitle}>SUA SACOLA ESTÁ VAZIA</h2>
+              {!isLoggedIn() && <p className={styles.emptySubtitle}>Tem uma conta? <Link to="/login" onClick={onClose} className={styles.loginLink}>Entre</Link> para finalizar mais rápido.</p>}
+              <button className={styles.continueButton} onClick={() => { onClose(); navigate('/catalog'); }}>CONTINUAR COMPRANDO</button>
             </div>
           ) : (
             <div className={styles.cartItemsList}>
               {cartItems.map((item, index) => {
-                // LÓGICA DE DADOS "DEFENSIVA"
-                // Tenta pegar o dado da raiz ou de .product
-                const productId = item.id || item.product?.id || index;
-                const productName = item.name || item.product?.name || item.title || 'Produto sem nome';
-                
-                // Preço e Quantidade seguros
-                const price = Number(item.price || item.product?.price || 0);
+                const itemId = item.id || (item.product ? item.product.id : index);
+                const productName = item.name || item.title || (item.product ? (item.product.name || item.product.title) : 'Produto');
+                const imgSource = item.image || (item.images && item.images[0]) || (item.product ? (item.product.image || (item.product.images && item.product.images[0])) : null);
+                const price = Number(item.price || (item.product ? item.product.price : 0));
                 const qty = Number(item.quantity || item.qty || 1);
-                
-                // Imagem segura
-                const imgSource = item.image || item.product?.image || item.images?.[0] || item.product?.images?.[0];
-
-                // Total desta linha específica
                 const totalLinePrice = price * qty;
 
                 return (
-                  <div key={productId} className={styles.cartItemRow}>
-                    <img 
-                      src={imgSource} 
-                      alt={productName} 
-                      className={styles.cartItemImage}
-                      onError={(e) => e.target.src = "https://via.placeholder.com/100x120?text=Foto"}
-                    />
-                    
+                  <div key={itemId} className={styles.cartItemRow}>
+                    <img src={imgSource} alt={productName} className={styles.cartItemImage} onError={(e) => e.target.src = "https://via.placeholder.com/100x120?text=Foto"} />
                     <div className={styles.cartItemInfo}>
                       <p className={styles.cartItemName}>{productName}</p>
-                      
                       <div className={styles.cartItemDetails}>
-                        {/* Exibe se houver tamanho/cor */}
                         {(item.selectedSize || item.size) && <span>Tam: {item.selectedSize || item.size} </span>}
-                        
-                        {/* Preço Unitário para referência */}
-                        <div className={styles.unitPriceDisplay}>
-                          Unitário: {formatMoney(price)}
-                        </div>
+                        <div className={styles.unitPriceDisplay}>Unitário: {formatMoney(price)}</div>
                       </div>
-
                       <div className={styles.cartItemControls}>
-                        {/* SELETOR DE QUANTIDADE */}
                         <div className={styles.qtySelector}>
-                          <button 
-                            className={styles.qtyBtn} 
-                            onClick={(e) => handleDecrement(e, item.id)}
-                            disabled={qty <= 1}
-                            type="button"
-                          >
-                            -
-                          </button>
-                          
-                          {/* Exibe a quantidade atual do item */}
+                          <button className={styles.qtyBtn} onClick={(e) => handleDecrement(e, item.id)} disabled={qty <= 1} type="button">-</button>
                           <span className={styles.qtyValue}>{qty}</span>
-                          
-                          <button 
-                            className={styles.qtyBtn} 
-                            onClick={(e) => handleIncrement(e, item.id)}
-                            type="button"
-                          >
-                            +
-                          </button>
+                          <button className={styles.qtyBtn} onClick={(e) => handleIncrement(e, item.id)} type="button">+</button>
                         </div>
-
-                        {/* PREÇO TOTAL DA LINHA (Calculado agora) */}
                         <div style={{textAlign: 'right'}}>
                           <div className={styles.cartItemTotal}>{formatMoney(totalLinePrice)}</div>
-                          <button 
-                            className={styles.removeItemBtn} 
-                            onClick={(e) => handleRemove(e, item.id)}
-                            type="button"
-                          >
-                            Remover
-                          </button>
+                          <button className={styles.removeItemBtn} onClick={(e) => handleRemove(e, item.id)} type="button">Remover</button>
                         </div>
                       </div>
                     </div>
                   </div>
                 );
               })}
-
               <div className={styles.cartFooter}>
-                <div className={styles.cartTotalRow}>
-                  <span>Subtotal</span>
-                  <span>{formatMoney(subtotal)}</span>
-                </div>
-                <button className={styles.checkoutButton} onClick={() => { onClose(); navigate('/checkout'); }}>
-                  FINALIZAR COMPRA
-                </button>
+                <div className={styles.cartTotalRow}><span>Subtotal</span><span>{formatMoney(subtotal)}</span></div>
+                <button className={styles.checkoutButton} onClick={() => { onClose(); navigate('/checkout'); }}>FINALIZAR COMPRA</button>
               </div>
             </div>
           )}
@@ -281,14 +212,12 @@ const MainHeader = () => {
   const { user, isLoggedIn, logout } = useAuth();
   const { getActiveHeaderCategories } = useCMS();
   const navigate = useNavigate();
-  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Calcula badge com segurança (soma quantidades)
   const cartItems = context.cart || [];
   const badgeCount = cartItems.reduce((acc, item) => acc + (item.quantity || item.qty || 1), 0);
 
@@ -319,19 +248,15 @@ const MainHeader = () => {
               ))}
             </nav>
           </div>
-
           <div className={styles.centerSection}>
             <Link to="/" className={styles.logo}>Fina Estampa.</Link>
           </div>
-
           <div className={styles.rightSection}>
             <button className={`${styles.iconButton} ${styles.desktopOnly}`} onClick={() => setSearchOpen(true)}><SearchIcon /></button>
-            
             <button className={styles.iconButton} onClick={() => setCartOpen(true)}>
               <BagIcon />
               {badgeCount > 0 && <span className={styles.cartBadge}>{badgeCount}</span>}
             </button>
-
             <div className={styles.userContainer} ref={dropdownRef}>
               {isLoggedIn() ? (
                 <div className={styles.loggedInWrapper}>
@@ -353,10 +278,8 @@ const MainHeader = () => {
           </div>
         </div>
       </div>
-
       <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-
       <div className={`${styles.mobileDrawer} ${mobileMenuOpen ? styles.open : ''}`}>
         <div className={styles.drawerHeader}>
           <button className={styles.closeDrawerButton} onClick={() => setMobileMenuOpen(false)}><CloseIcon /></button>

@@ -1,31 +1,24 @@
 import React, { useState } from 'react';
 import { 
-  FaPercent, 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaEye,
-  FaEyeSlash,
-  FaTag,
-  FaTags,
-  FaCalendarAlt,
-  FaSave,
-  FaTimes,
-  FaGift,
-  FaTicketAlt
+  FaPercent, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, 
+  FaTag, FaTags, FaCalendarAlt, FaSave, FaTimes, 
+  FaTicketAlt, FaSearch, FaFilter
 } from 'react-icons/fa';
 import { useProducts } from '../../../hooks/useProducts';
+import { useToast } from '../../../components/ui/Toast'; // Assuming you have this
 import styles from './PromotionsPage.module.css';
 
 const PromotionsPage = () => {
   const { products, updateProduct } = useProducts();
+  const { showSuccess, showError } = useToast();
   
   const [activeTab, setActiveTab] = useState('coupons');
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
-  // Estados para cupons
+  // Mock Coupons (Ideally this should come from a usePromotions hook)
   const [coupons, setCoupons] = useState([
     {
       id: 'coupon-1',
@@ -56,50 +49,36 @@ const PromotionsPage = () => {
   ]);
 
   const [formData, setFormData] = useState({
-    code: '',
-    description: '',
-    type: 'percentage',
-    value: '',
-    minValue: '',
-    maxUses: '',
-    expiresAt: '',
-    isActive: true
+    code: '', description: '', type: 'percentage', value: '',
+    minValue: '', maxUses: '', expiresAt: '', isActive: true
   });
+
+  // Filter Products for Tags Tab
+  const filteredProducts = products.filter(p => 
+    !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const openModal = (item = null, type = 'coupon') => {
+  const openModal = (item = null) => {
     if (item) {
-      setEditingItem({ ...item, type });
-      if (type === 'coupon') {
-        setFormData({
-          code: item.code,
-          description: item.description,
-          type: item.type,
-          value: item.value.toString(),
-          minValue: item.minValue?.toString() || '',
-          maxUses: item.maxUses?.toString() || '',
-          expiresAt: item.expiresAt,
-          isActive: item.isActive
-        });
-      }
+      setEditingItem(item);
+      setFormData({
+        code: item.code, description: item.description, type: item.type,
+        value: item.value.toString(),
+        minValue: item.minValue?.toString() || '',
+        maxUses: item.maxUses?.toString() || '',
+        expiresAt: item.expiresAt,
+        isActive: item.isActive
+      });
     } else {
       setEditingItem(null);
       setFormData({
-        code: '',
-        description: '',
-        type: 'percentage',
-        value: '',
-        minValue: '',
-        maxUses: '',
-        expiresAt: '',
-        isActive: true
+        code: '', description: '', type: 'percentage', value: '',
+        minValue: '', maxUses: '', expiresAt: '', isActive: true
       });
     }
     setShowModal(true);
@@ -113,14 +92,12 @@ const PromotionsPage = () => {
 
   const handleSubmitCoupon = async (e) => {
     e.preventDefault();
-    
     if (!formData.code.trim() || !formData.value) {
-      alert('❌ Por favor, preencha todos os campos obrigatórios');
+      showError('Preencha os campos obrigatórios');
       return;
     }
 
     setIsSubmitting(true);
-
     try {
       const couponData = {
         ...formData,
@@ -131,481 +108,272 @@ const PromotionsPage = () => {
       };
 
       if (editingItem) {
-        setCoupons(prev => prev.map(coupon => 
-          coupon.id === editingItem.id 
-            ? { ...coupon, ...couponData, updatedAt: new Date().toISOString() }
-            : coupon
-        ));
-        alert('✅ Cupom atualizado com sucesso!');
+        setCoupons(prev => prev.map(c => c.id === editingItem.id ? { ...c, ...couponData } : c));
+        showSuccess('Cupom atualizado!');
       } else {
-        const newCoupon = {
-          id: `coupon-${Date.now()}`,
-          ...couponData,
-          usedCount: 0,
-          createdAt: new Date().toISOString()
-        };
+        const newCoupon = { id: `coupon-${Date.now()}`, ...couponData, usedCount: 0, createdAt: new Date().toISOString() };
         setCoupons(prev => [...prev, newCoupon]);
-        alert('✅ Cupom criado com sucesso!');
+        showSuccess('Cupom criado!');
       }
-      
       closeModal();
     } catch (err) {
-      console.error('Erro ao salvar cupom:', err);
-      alert('❌ Erro ao salvar cupom');
+      console.error(err);
+      showError('Erro ao salvar.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDeleteCoupon = (couponId, couponCode) => {
-    if (window.confirm(`⚠️ Tem certeza que deseja excluir o cupom "${couponCode}"?`)) {
-      setCoupons(prev => prev.filter(coupon => coupon.id !== couponId));
-      alert('✅ Cupom excluído com sucesso!');
+  const handleDeleteCoupon = (id, code) => {
+    if (window.confirm(`Excluir cupom "${code}"?`)) {
+      setCoupons(prev => prev.filter(c => c.id !== id));
+      showSuccess('Cupom excluído.');
     }
   };
 
-  const handleToggleCouponStatus = (couponId) => {
-    setCoupons(prev => prev.map(coupon => 
-      coupon.id === couponId 
-        ? { ...coupon, isActive: !coupon.isActive }
-        : coupon
-    ));
+  const handleToggleCouponStatus = (id) => {
+    setCoupons(prev => prev.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c));
   };
 
   const handleToggleProductTag = (productId, tag) => {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    const currentTags = product.tags || [];
-    const hasTag = currentTags.includes(tag);
-    
-    const newTags = hasTag 
-      ? currentTags.filter(t => t !== tag)
-      : [...currentTags, tag];
-
+    // Simulate tag logic based on existing fields
     const updateData = { 
-      tags: newTags,
-      isNew: tag === 'novo' ? !hasTag : product.isNew,
-      isOnSale: tag === 'desconto' ? !hasTag : product.isOnSale
+      isNew: tag === 'novo' ? !product.isNew : product.isNew,
+      isPromo: tag === 'desconto' ? !product.isPromo : product.isPromo
     };
 
     updateProduct(productId, updateData);
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
-  const getUsagePercentage = (used, max) => {
-    if (!max) return 0;
-    return Math.min((used / max) * 100, 100);
-  };
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+  const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR');
+  const getUsagePercentage = (used, max) => !max ? 0 : Math.min((used / max) * 100, 100);
 
   return (
     <div className={styles.pageContainer}>
       {/* Header */}
       <div className={styles.pageHeader}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.pageTitle}>
-            <FaPercent />
-            Gerenciar Promoções
-          </h2>
-          <p className={styles.pageSubtitle}>
-            Crie cupons de desconto e gerencie tags promocionais dos produtos
-          </p>
+        <div>
+          <h2 className={styles.pageTitle}>Gerenciar Promoções</h2>
+          <p className={styles.pageSubtitle}>Crie cupons e gerencie tags promocionais.</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className={styles.tabsContainer}>
-        <button
-          onClick={() => setActiveTab('coupons')}
-          className={`${styles.tab} ${activeTab === 'coupons' ? styles.activeTab : ''}`}
+      <div className={styles.tabsWrapper}>
+        <button 
+          onClick={() => setActiveTab('coupons')} 
+          className={`${styles.tabBtn} ${activeTab === 'coupons' ? styles.activeTab : ''}`}
         >
-          <FaTicketAlt /> Cupons de Desconto
+          <FaTicketAlt /> Cupons
         </button>
-        <button
-          onClick={() => setActiveTab('tags')}
-          className={`${styles.tab} ${activeTab === 'tags' ? styles.activeTab : ''}`}
+        <button 
+          onClick={() => setActiveTab('tags')} 
+          className={`${styles.tabBtn} ${activeTab === 'tags' ? styles.activeTab : ''}`}
         >
-          <FaTags /> Tags dos Produtos
+          <FaTags /> Tags de Produto
         </button>
       </div>
 
-      {/* Conteúdo das Abas */}
+      {/* --- ABA DE CUPONS --- */}
       {activeTab === 'coupons' && (
         <div className={styles.tabContent}>
-          {/* Header dos Cupons */}
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>
-              🎫 Cupons de Desconto ({coupons.length})
-            </h3>
-            <button 
-              onClick={() => openModal()}
-              className={styles.primaryBtn}
-            >
+          <div className={styles.tabHeader}>
+            <h3>Cupons Ativos ({coupons.length})</h3>
+            <button onClick={() => openModal()} className={styles.primaryBtn}>
               <FaPlus /> Novo Cupom
             </button>
           </div>
 
-          {/* Lista de Cupons */}
           <div className={styles.couponsGrid}>
             {coupons.map((coupon) => (
-              <div key={coupon.id} className={styles.couponCard}>
-                <div className={styles.couponHeader}>
-                  <div className={styles.couponCode}>{coupon.code}</div>
-                  <div className={styles.couponActions}>
-                    <button
-                      onClick={() => handleToggleCouponStatus(coupon.id)}
-                      className={`${styles.actionBtn} ${coupon.isActive ? styles.activeBtn : styles.inactiveBtn}`}
-                      title={coupon.isActive ? 'Desativar cupom' : 'Ativar cupom'}
-                    >
-                      {coupon.isActive ? <FaEye /> : <FaEyeSlash />}
-                    </button>
-                    <button
-                      onClick={() => openModal(coupon, 'coupon')}
-                      className={`${styles.actionBtn} ${styles.editBtn}`}
-                      title="Editar cupom"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCoupon(coupon.id, coupon.code)}
-                      className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                      title="Excluir cupom"
-                    >
-                      <FaTrash />
-                    </button>
+              <div key={coupon.id} className={`${styles.couponCard} ${!coupon.isActive ? styles.inactiveCard : ''}`}>
+                <div className={styles.couponTop}>
+                  <div className={styles.codeBadge}>{coupon.code}</div>
+                  <div className={`${styles.statusBadge} ${coupon.isActive ? styles.statusActive : styles.statusInactive}`}>
+                    {coupon.isActive ? 'Ativo' : 'Inativo'}
                   </div>
                 </div>
-                
-                <div className={styles.couponContent}>
-                  <p className={styles.couponDescription}>{coupon.description}</p>
-                  
-                  <div className={styles.couponDetails}>
-                    <div className={styles.couponValue}>
-                      {coupon.type === 'percentage' 
-                        ? `${coupon.value}% de desconto`
-                        : `${formatCurrency(coupon.value)} de desconto`
-                      }
-                    </div>
-                    
-                    {coupon.minValue > 0 && (
-                      <div className={styles.couponCondition}>
-                        Pedido mínimo: {formatCurrency(coupon.minValue)}
-                      </div>
-                    )}
+
+                <div className={styles.couponBody}>
+                  <div className={styles.discountValue}>
+                    {coupon.type === 'percentage' ? `${coupon.value}% OFF` : `R$ ${coupon.value} OFF`}
                   </div>
+                  <p className={styles.couponDesc}>{coupon.description}</p>
                   
+                  {coupon.minValue > 0 && (
+                    <div className={styles.condition}>Mínimo: {formatCurrency(coupon.minValue)}</div>
+                  )}
+
                   {coupon.maxUses && (
-                    <div className={styles.couponUsage}>
-                      <div className={styles.usageInfo}>
+                    <div className={styles.usageContainer}>
+                      <div className={styles.usageLabels}>
                         <span>Uso: {coupon.usedCount}/{coupon.maxUses}</span>
                         <span>{getUsagePercentage(coupon.usedCount, coupon.maxUses).toFixed(0)}%</span>
                       </div>
-                      <div className={styles.usageBar}>
-                        <div 
-                          className={styles.usageProgress}
-                          style={{ width: `${getUsagePercentage(coupon.usedCount, coupon.maxUses)}%` }}
-                        />
+                      <div className={styles.progressBar}>
+                        <div className={styles.progressFill} style={{ width: `${getUsagePercentage(coupon.usedCount, coupon.maxUses)}%` }} />
                       </div>
                     </div>
                   )}
-                  
-                  <div className={styles.couponFooter}>
-                    <div className={styles.couponExpiry}>
-                      <FaCalendarAlt />
-                      Expira em: {formatDate(coupon.expiresAt)}
-                    </div>
-                    <div className={`${styles.couponStatus} ${coupon.isActive ? styles.active : styles.inactive}`}>
-                      {coupon.isActive ? 'Ativo' : 'Inativo'}
-                    </div>
+
+                  <div className={styles.expiry}>
+                    <FaCalendarAlt /> Expira em: {formatDate(coupon.expiresAt)}
                   </div>
+                </div>
+
+                <div className={styles.cardActions}>
+                  <button 
+                    onClick={() => handleToggleCouponStatus(coupon.id)} 
+                    className={styles.iconBtn}
+                    title={coupon.isActive ? 'Desativar' : 'Ativar'}
+                  >
+                    {coupon.isActive ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                  <button onClick={() => openModal(coupon)} className={styles.iconBtn} title="Editar">
+                    <FaEdit />
+                  </button>
+                  <button onClick={() => handleDeleteCoupon(coupon.id, coupon.code)} className={`${styles.iconBtn} ${styles.deleteBtn}`} title="Excluir">
+                    <FaTrash />
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-
-          {coupons.length === 0 && (
-            <div className={styles.emptyState}>
-              <FaTicketAlt className={styles.emptyIcon} />
-              <h3>Nenhum cupom criado</h3>
-              <p>Comece criando seu primeiro cupom de desconto</p>
-              <button 
-                onClick={() => openModal()}
-                className={styles.primaryBtn}
-              >
-                <FaPlus /> Criar Primeiro Cupom
-              </button>
-            </div>
-          )}
         </div>
       )}
 
+      {/* --- ABA DE TAGS --- */}
       {activeTab === 'tags' && (
         <div className={styles.tabContent}>
-          {/* Header das Tags */}
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>
-              🏷️ Tags dos Produtos ({products.length})
-            </h3>
-            <p className={styles.sectionSubtitle}>
-              Gerencie as tags "Novo" e "Desconto" dos seus produtos
-            </p>
+          <div className={styles.tabHeader}>
+            <h3>Tags dos Produtos</h3>
+            <div className={styles.searchBox}>
+              <FaSearch />
+              <input 
+                type="text" 
+                placeholder="Buscar produto..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
 
-          {/* Lista de Produtos */}
-          <div className={styles.productsTagsGrid}>
-            {products.map((product) => (
-                         <div key={product.id} className={styles.productTagCard}>
-                <div className={styles.productTagImage}>
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    onError={(e) => {
-                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIzMCIgZmlsbD0iIzcyMkYzNyI+8J+RlzwvdGV4dD4KPC9zdmc+';
-                    }}
-                  />
+          <div className={styles.productsGrid}>
+            {filteredProducts.map((product) => (
+              <div key={product.id} className={styles.productTagCard}>
+                <div className={styles.productImage}>
+                  <img src={product.image} alt={product.name} onError={(e) => e.target.style.display='none'} />
                 </div>
                 
-                <div className={styles.productTagInfo}>
-                  <h4 className={styles.productTagName}>{product.name}</h4>
-                  <p className={styles.productTagCategory}>{product.category}</p>
-                  <p className={styles.productTagPrice}>{formatCurrency(product.price)}</p>
+                <div className={styles.productInfo}>
+                  <h4 className={styles.productName}>{product.name}</h4>
+                  <span className={styles.productPrice}>{formatCurrency(product.price)}</span>
                 </div>
-                
-                <div className={styles.productTagControls}>
-                  <div className={styles.tagControl}>
-                    <label className={styles.tagLabel}>
-                      <input
-                        type="checkbox"
-                        checked={product.tags?.includes('novo') || product.isNew}
-                        onChange={() => handleToggleProductTag(product.id, 'novo')}
-                        className={styles.tagCheckbox}
-                      />
-                      <span className={styles.tagText}>
-                        <FaTag className={styles.tagIcon} />
-                        Novo
-                      </span>
-                    </label>
-                  </div>
+
+                <div className={styles.tagControls}>
+                  <label className={`${styles.tagOption} ${product.isNew ? styles.tagActive : ''}`}>
+                    <input 
+                      type="checkbox" 
+                      checked={product.isNew || false} 
+                      onChange={() => handleToggleProductTag(product.id, 'novo')}
+                    />
+                    <FaTag /> Novo
+                  </label>
                   
-                  <div className={styles.tagControl}>
-                    <label className={styles.tagLabel}>
-                      <input
-                        type="checkbox"
-                        checked={product.tags?.includes('desconto') || product.isOnSale}
-                        onChange={() => handleToggleProductTag(product.id, 'desconto')}
-                        className={styles.tagCheckbox}
-                      />
-                      <span className={styles.tagText}>
-                        <FaPercent className={styles.tagIcon} />
-                        Desconto
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div className={styles.productTagStatus}>
-                  {(product.tags?.includes('novo') || product.isNew) && (
-                    <span className={styles.activeTag}>Novo</span>
-                  )}
-                  {(product.tags?.includes('desconto') || product.isOnSale) && (
-                    <span className={styles.saleTag}>Desconto</span>
-                  )}
-                  {(!product.tags?.length && !product.isNew && !product.isOnSale) && (
-                    <span className={styles.noTags}>Sem tags</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {products.length === 0 && (
-            <div className={styles.emptyState}>
-              <FaTags className={styles.emptyIcon} />
-              <h3>Nenhum produto encontrado</h3>
-              <p>Adicione produtos para gerenciar suas tags promocionais</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Modal de Cupom */}
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>
-                {editingItem ? '✏️ Editar Cupom' : '🎫 Novo Cupom'}
-              </h3>
-              <button
-                onClick={closeModal}
-                className={styles.modalCloseBtn}
-                disabled={isSubmitting}
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmitCoupon} className={styles.modalForm}>
-              <div className={styles.formGrid}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Código do Cupom *</label>
-                  <input
-                    type="text"
-                    name="code"
-                    value={formData.code}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isSubmitting}
-                    className={styles.formInput}
-                    placeholder="Ex: DESCONTO10"
-                    style={{ textTransform: 'uppercase' }}
-                  />
-                  <small className={styles.formHint}>
-                    Use apenas letras e números, sem espaços
-                  </small>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Descrição *</label>
-                  <input
-                    type="text"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isSubmitting}
-                    className={styles.formInput}
-                    placeholder="Ex: Desconto de 10% em toda loja"
-                  />
-                </div>
-
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Tipo de Desconto *</label>
-                    <select
-                      name="type"
-                      value={formData.type}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isSubmitting}
-                      className={styles.formSelect}
-                    >
-                      <option value="percentage">Porcentagem (%)</option>
-                      <option value="fixed">Valor Fixo (R$)</option>
-                    </select>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>
-                      Valor do Desconto * {formData.type === 'percentage' ? '(%)' : '(R$)'}
-                    </label>
-                    <input
-                      type="number"
-                      name="value"
-                      value={formData.value}
-                      onChange={handleInputChange}
-                      step={formData.type === 'percentage' ? '1' : '0.01'}
-                      min="0"
-                      max={formData.type === 'percentage' ? '100' : undefined}
-                      required
-                      disabled={isSubmitting}
-                      className={styles.formInput}
-                      placeholder={formData.type === 'percentage' ? '10' : '15.00'}
+                  <label className={`${styles.tagOption} ${product.isPromo ? styles.tagActive : ''}`}>
+                    <input 
+                      type="checkbox" 
+                      checked={product.isPromo || false} 
+                      onChange={() => handleToggleProductTag(product.id, 'desconto')}
                     />
-                  </div>
-                </div>
-
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Valor Mínimo do Pedido (R$)</label>
-                    <input
-                      type="number"
-                      name="minValue"
-                      value={formData.minValue}
-                      onChange={handleInputChange}
-                      step="0.01"
-                      min="0"
-                      disabled={isSubmitting}
-                      className={styles.formInput}
-                      placeholder="0.00"
-                    />
-                    <small className={styles.formHint}>
-                      Deixe vazio para não ter valor mínimo
-                    </small>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Limite de Usos</label>
-                    <input
-                      type="number"
-                      name="maxUses"
-                      value={formData.maxUses}
-                      onChange={handleInputChange}
-                      min="1"
-                      disabled={isSubmitting}
-                      className={styles.formInput}
-                      placeholder="100"
-                    />
-                    <small className={styles.formHint}>
-                      Deixe vazio para uso ilimitado
-                    </small>
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Data de Expiração *</label>
-                  <input
-                    type="date"
-                    name="expiresAt"
-                    value={formData.expiresAt}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isSubmitting}
-                    className={styles.formInput}
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.optionLabel}>
-                    <input
-                      type="checkbox"
-                      name="isActive"
-                      checked={formData.isActive}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={styles.checkbox}
-                    />
-                    <span>✅ Cupom Ativo</span>
+                    <FaPercent /> Promoção
                   </label>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-              <div className={styles.modalActions}>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  disabled={isSubmitting}
-                  className={styles.cancelBtn}
-                >
-                  ❌ Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={styles.submitBtn}
-                >
-                  <FaSave /> {isSubmitting ? 'Salvando...' : (editingItem ? 'Atualizar' : 'Salvar')}
+      {/* --- MODAL DE CUPOM --- */}
+      {showModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h3>{editingItem ? 'Editar Cupom' : 'Novo Cupom'}</h3>
+              <button onClick={closeModal}><FaTimes /></button>
+            </div>
+            
+            <form onSubmit={handleSubmitCoupon} className={styles.modalBody}>
+              <div className={styles.formGroup}>
+                <label>Código do Cupom *</label>
+                <input 
+                  type="text" 
+                  name="code" 
+                  value={formData.code} 
+                  onChange={handleInputChange} 
+                  placeholder="EX: VERAO2025" 
+                  style={{ textTransform: 'uppercase' }}
+                  required 
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Descrição</label>
+                <input 
+                  type="text" 
+                  name="description" 
+                  value={formData.description} 
+                  onChange={handleInputChange} 
+                  placeholder="Ex: 10% off na primeira compra" 
+                />
+              </div>
+
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <label>Tipo</label>
+                  <select name="type" value={formData.type} onChange={handleInputChange}>
+                    <option value="percentage">Porcentagem (%)</option>
+                    <option value="fixed">Valor Fixo (R$)</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Valor *</label>
+                  <input type="number" name="value" value={formData.value} onChange={handleInputChange} required />
+                </div>
+              </div>
+
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <label>Valor Mín. Pedido</label>
+                  <input type="number" name="minValue" value={formData.minValue} onChange={handleInputChange} placeholder="0.00" />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Limite de Usos</label>
+                  <input type="number" name="maxUses" value={formData.maxUses} onChange={handleInputChange} placeholder="Ilimitado" />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Data de Expiração</label>
+                <input type="date" name="expiresAt" value={formData.expiresAt} onChange={handleInputChange} required />
+              </div>
+
+              <div className={styles.checkboxGroup}>
+                <label className={styles.checkboxLabel}>
+                  <input type="checkbox" name="isActive" checked={formData.isActive} onChange={handleInputChange} />
+                  <span>Cupom Ativo</span>
+                </label>
+              </div>
+
+              <div className={styles.modalFooter}>
+                <button type="button" onClick={closeModal} className={styles.cancelBtn}>Cancelar</button>
+                <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
+                  <FaSave /> Salvar
                 </button>
               </div>
             </form>

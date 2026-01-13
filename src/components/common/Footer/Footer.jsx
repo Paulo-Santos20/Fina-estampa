@@ -10,7 +10,8 @@ import {
   FaHeart,
   FaCreditCard,
   FaTruck,
-  FaShieldAlt
+  FaShieldAlt,
+  FaArrowRight
 } from 'react-icons/fa';
 import styles from './Footer.module.css';
 
@@ -19,220 +20,119 @@ const Footer = () => {
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.container}>
-        {/* Seção Principal do Footer */}
-        <div className={styles.footerMain}>
-          {/* Coluna 1 - Sobre a Loja */}
-          <div className={styles.footerColumn}>
-            <div className={styles.brand}>
-              <h3 className={styles.brandName}>Fina Estampa</h3>
-              <p className={styles.brandTagline}>
-                Moda feminina com elegância e sofisticação
+      {/* Newsletter Miniatura (Opcional, bom para UX) */}
+      <div className={styles.miniNewsletter}>
+        <div className={styles.container}>
+          <div className={styles.newsletterRow}>
+            <span>Cadastre-se para receber novidades e ofertas exclusivas</span>
+            <div className={styles.newsletterInputGroup}>
+              <input type="email" placeholder="Seu e-mail" />
+              <button><FaArrowRight /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.mainContent}>
+        <div className={styles.container}>
+          
+          <div className={styles.topGrid}>
+            
+            {/* 1. Marca & Sobre */}
+            <div className={styles.brandColumn}>
+              <Link to="/" className={styles.brandLogo}>Fina Estampa.</Link>
+              <p className={styles.brandText}>
+                Moda feminina com elegância e sofisticação. Há mais de 10 anos vestindo mulheres autênticas com peças atemporais.
               </p>
-            </div>
-            
-            <p className={styles.brandDescription}>
-              Há mais de 10 anos oferecendo as melhores peças de moda feminina, 
-              sempre priorizando qualidade, estilo e o melhor atendimento para nossas clientes.
-            </p>
-
-            {/* Redes Sociais */}
-            <div className={styles.socialMedia}>
-              <h4>Siga-nos</h4>
-              <div className={styles.socialLinks}>
-                <a 
-                  href="https://instagram.com/finaestampa" 
-                   
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="Instagram"
-                >
-                  <FaInstagram />
-                </a>
-                <a 
-                  href="https://facebook.com/finaestampa" 
-                   
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="Facebook"
-                >
-                  <FaFacebook />
-                </a>
-                <a 
-                  href="https://wa.me/5511999999999" 
-                   
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="WhatsApp"
-                >
-                  <FaWhatsapp />
-                </a>
+              <div className={styles.socialRow}>
+                <a href="#" aria-label="Instagram"><FaInstagram /></a>
+                <a href="#" aria-label="Facebook"><FaFacebook /></a>
+                <a href="#" aria-label="WhatsApp"><FaWhatsapp /></a>
               </div>
             </div>
-          </div>
 
-          {/* Coluna 2 - Links Rápidos */}
-          <div className={styles.footerColumn}>
-            <h4 className={styles.columnTitle}>Links Rápidos</h4>
-            <ul className={styles.linksList}>
-              <li>
-                <Link to="/" className={styles.footerLink}>
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/vestidos" className={styles.footerLink}>
-                  Vestidos
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/blusas" className={styles.footerLink}>
-                  Blusas & Camisas
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/calcas" className={styles.footerLink}>
-                  Calças & Shorts
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/acessorios" className={styles.footerLink}>
-                  Acessórios
-                </Link>
-              </li>
-              <li>
-                <Link to="/ofertas" className={styles.footerLink}>
-                  Ofertas Especiais
-                </Link>
-              </li>
-            </ul>
-          </div>
+            {/* 2. Links Institucionais */}
+            <div className={styles.linksColumn}>
+              <h4>Institucional</h4>
+              <ul>
+                <li><Link to="/sobre">Sobre Nós</Link></li>
+                <li><Link to="/contato">Contato</Link></li>
+                <li><Link to="/blog">Blog de Moda</Link></li>
+                <li><Link to="/trabalhe-conosco">Trabalhe Conosco</Link></li>
+              </ul>
+            </div>
 
-          {/* Coluna 3 - Atendimento */}
-          <div className={styles.footerColumn}>
-            <h4 className={styles.columnTitle}>Atendimento</h4>
-            <ul className={styles.linksList}>
-              <li>
-                <Link to="/sobre" className={styles.footerLink}>
-                  Sobre Nós
-                </Link>
-              </li>
-              <li>
-                <Link to="/contato" className={styles.footerLink}>
-                  Fale Conosco
-                </Link>
-              </li>
-              <li>
-                <Link to="/trocas-devolucoes" className={styles.footerLink}>
-                  Trocas e Devoluções
-                </Link>
-              </li>
-              <li>
-                <Link to="/guia-tamanhos" className={styles.footerLink}>
-                  Guia de Tamanhos
-                </Link>
-              </li>
-              <li>
-                <Link to="/perguntas-frequentes" className={styles.footerLink}>
-                  Perguntas Frequentes
-                </Link>
-              </li>
-              <li>
-                <Link to="/politica-privacidade" className={styles.footerLink}>
-                  Política de Privacidade
-                </Link>
-              </li>
-            </ul>
-          </div>
+            {/* 3. Ajuda & Suporte */}
+            <div className={styles.linksColumn}>
+              <h4>Ajuda</h4>
+              <ul>
+                <li><Link to="/trocas">Trocas e Devoluções</Link></li>
+                <li><Link to="/entregas">Prazos e Entregas</Link></li>
+                <li><Link to="/tamanhos">Guia de Medidas</Link></li>
+                <li><Link to="/privacidade">Política de Privacidade</Link></li>
+              </ul>
+            </div>
 
-          {/* Coluna 4 - Contato */}
-          <div className={styles.footerColumn}>
-            <h4 className={styles.columnTitle}>Contato</h4>
-            
-            <div className={styles.contactInfo}>
+            {/* 4. Contato */}
+            <div className={styles.contactColumn}>
+              <h4>Fale Conosco</h4>
               <div className={styles.contactItem}>
-                <FaMapMarkerAlt className={styles.contactIcon} />
+                <FaPhone className={styles.icon} />
                 <div>
-                  <p>Rua da Moda, 123</p>
-                  <p>Centro - São Paulo, SP</p>
-                  <p>CEP: 01234-567</p>
+                  <strong>(11) 9999-9999</strong>
+                  <span>Seg-Sex: 9h às 18h</span>
                 </div>
               </div>
-
               <div className={styles.contactItem}>
-                <FaPhone className={styles.contactIcon} />
-                <div>
-                  <p>(11) 9999-9999</p>
-                  <p>Segunda a Sexta: 9h às 18h</p>
-                  <p>Sábado: 9h às 14h</p>
-                </div>
+                <FaEnvelope className={styles.icon} />
+                <span>contato@finaestampa.com</span>
               </div>
-
               <div className={styles.contactItem}>
-                <FaEnvelope className={styles.contactIcon} />
-                <div>
-                  <p>contato@finaestampa.com.br</p>
-                  <p>Respondemos em até 24h</p>
-                </div>
+                <FaMapMarkerAlt className={styles.icon} />
+                <span>São Paulo - SP</span>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Seção de Garantias */}
-        <div className={styles.guarantees}>
-          <div className={styles.guarantee}>
-            <FaTruck className={styles.guaranteeIcon} />
-            <div>
-              <h5>Frete Grátis</h5>
-              <p>Acima de R$ 199</p>
-            </div>
           </div>
-          
-          <div className={styles.guarantee}>
-            <FaShieldAlt className={styles.guaranteeIcon} />
-            <div>
-              <h5>Compra Segura</h5>
-              <p>Site protegido</p>
-            </div>
-          </div>
-          
-          <div className={styles.guarantee}>
-            <FaCreditCard className={styles.guaranteeIcon} />
-            <div>
-              <h5>Parcelamento</h5>
-              <p>Até 12x sem juros</p>
-            </div>
-          </div>
-          
-          <div className={styles.guarantee}>
-            <FaHeart className={styles.guaranteeIcon} />
-            <div>
-              <h5>Troca Fácil</h5>
-              <p>30 dias para trocar</p>
-            </div>
-          </div>
-        </div>
 
-        {/* Rodapé Final */}
-        <div className={styles.footerBottom}>
-          <div className={styles.copyright}>
-            <p>
-              © {currentYear} Fina Estampa. Todos os direitos reservados.
-            </p>
-            <p>
-              Desenvolvido com <FaHeart className={styles.heartIcon} /> para mulheres que amam moda.
-            </p>
-          </div>
-          
-          <div className={styles.paymentMethods}>
-            <span>Formas de pagamento:</span>
-            <div className={styles.paymentIcons}>
-              <span className={styles.paymentMethod}>PIX</span>
-              <span className={styles.paymentMethod}>Cartão</span>
-              <span className={styles.paymentMethod}>Boleto</span>
+          <div className={styles.divider} />
+
+          {/* Garantias (Ícones Horizontais) */}
+          <div className={styles.guaranteesRow}>
+            <div className={styles.guaranteeItem}>
+              <FaTruck />
+              <span>Frete Grátis acima de R$299</span>
+            </div>
+            <div className={styles.guaranteeItem}>
+              <FaCreditCard />
+              <span>Em até 10x sem juros</span>
+            </div>
+            <div className={styles.guaranteeItem}>
+              <FaShieldAlt />
+              <span>Site 100% Seguro</span>
+            </div>
+            <div className={styles.guaranteeItem}>
+              <FaHeart />
+              <span>Primeira Troca Grátis</span>
             </div>
           </div>
+
+          <div className={styles.divider} />
+
+          {/* Copyright & Pagamentos */}
+          <div className={styles.bottomRow}>
+            <p className={styles.copyText}>
+              © {currentYear} Fina Estampa. Todos os direitos reservados. 
+              <span className={styles.madeWith}>Feito com <FaHeart /></span>
+            </p>
+            <div className={styles.paymentMethods}>
+              <span className={styles.paymentTag}>PIX</span>
+              <span className={styles.paymentTag}>VISA</span>
+              <span className={styles.paymentTag}>MASTER</span>
+              <span className={styles.paymentTag}>ELO</span>
+            </div>
+          </div>
+
         </div>
       </div>
     </footer>

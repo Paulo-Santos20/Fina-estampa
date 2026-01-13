@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  FaBox, 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaEye,
-  FaEyeSlash,
-  FaSearch,
-  FaFilter,
-  FaStar,
-  FaSave,
-  FaTimes
+  FaBox, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, 
+  FaSearch, FaFilter, FaStar, FaSave, FaTimes, FaImage,
+  FaTh, FaList // Novos ícones importados
 } from 'react-icons/fa';
 import { useProducts } from '../../../hooks/useProducts';
 import { useCategories } from '../../../hooks/useCategories';
@@ -19,50 +11,33 @@ import styles from './ProductsPage.module.css';
 
 const ProductsPage = () => {
   const { 
-    products, 
-    loading, 
-    addProduct, 
-    updateProduct, 
-    deleteProduct, 
-    searchProducts,
-    toggleProductStatus,
-    toggleProductFeatured
+    products, loading, addProduct, updateProduct, 
+    deleteProduct, toggleProductStatus, toggleProductFeatured 
   } = useProducts();
 
   const { getActiveCategories } = useCategories();
   const activeCategories = getActiveCategories();
-
-  // Toast hooks
-  const { showSuccess, showError, showWarning, showInfo } = useToast();
+  const { showSuccess, showError } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [viewMode, setViewMode] = useState('grid'); // Estado para controlar a visualização (grid ou list)
+  
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    originalPrice: '',
-    category: '',
-    stock: '',
-    isNew: false,
-    isPromo: false,
-    image: '',
-    sizes: [],
-    colors: []
+    name: '', description: '', price: '', originalPrice: '',
+    category: '', stock: '', isNew: false, isPromo: false,
+    image: '', sizes: [], colors: []
   });
 
-  // Filtrar produtos
   const filteredProducts = products.filter(product => {
     const matchesSearch = !searchQuery || 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.category.toLowerCase().includes(searchQuery.toLowerCase());
-    
     const matchesCategory = !selectedCategory || product.category === selectedCategory;
-    
     return matchesSearch && matchesCategory;
   });
 
@@ -72,23 +47,6 @@ const ProductsPage = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    
-    // Forçar re-render para atualizar classes CSS dos checkboxes
-    if (type === 'checkbox') {
-      setTimeout(() => {
-        const labels = document.querySelectorAll(`.${styles.optionLabel}`);
-        labels.forEach(label => {
-          const checkbox = label.querySelector('input[type="checkbox"]');
-          if (checkbox) {
-            if (checkbox.checked) {
-              label.classList.add(styles.checked);
-            } else {
-              label.classList.remove(styles.checked);
-            }
-          }
-        });
-      }, 0);
-    }
   };
 
   const openModal = (product = null) => {
@@ -96,11 +54,11 @@ const ProductsPage = () => {
       setEditingProduct(product);
       setFormData({
         name: product.name,
-        description: product.description,
-        price: product.price.toString(),
-        originalPrice: product.originalPrice?.toString() || '',
-        category: product.category,
-        stock: product.stock?.toString() || '0',
+        description: product.description || '',
+        price: product.price,
+        originalPrice: product.originalPrice || '',
+        category: product.category || '',
+        stock: product.stock || 0,
         isNew: product.isNew || false,
         isPromo: product.isPromo || false,
         image: product.image || '',
@@ -110,17 +68,9 @@ const ProductsPage = () => {
     } else {
       setEditingProduct(null);
       setFormData({
-        name: '',
-        description: '',
-        price: '',
-        originalPrice: '',
-        category: '',
-        stock: '',
-        isNew: false,
-        isPromo: false,
-        image: '',
-        sizes: [],
-        colors: []
+        name: '', description: '', price: '', originalPrice: '', 
+        category: '', stock: '', isNew: false, isPromo: false, 
+        image: '', sizes: [], colors: []
       });
     }
     setShowModal(true);
@@ -134,14 +84,11 @@ const ProductsPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!formData.name.trim() || !formData.price) {
-      showError('Por favor, preencha todos os campos obrigatórios');
+      showError('Preencha os campos obrigatórios.');
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       const productData = {
         ...formData,
@@ -151,509 +98,310 @@ const ProductsPage = () => {
       };
 
       if (editingProduct) {
-        const success = updateProduct(editingProduct.id, productData);
-        if (success) {
-          showSuccess('Produto atualizado com sucesso!');
-          closeModal();
-        } else {
-          showError('Erro ao atualizar produto');
-        }
+        const success = await updateProduct(editingProduct.id, productData);
+        if (success) { showSuccess('Produto atualizado!'); closeModal(); } 
+        else showError('Erro ao atualizar.');
       } else {
-        const newProduct = addProduct(productData);
-        if (newProduct) {
-          showSuccess('Produto adicionado com sucesso!');
-          closeModal();
-        } else {
-          showError('Erro ao adicionar produto');
-        }
+        const newProduct = await addProduct(productData);
+        if (newProduct) { showSuccess('Produto criado!'); closeModal(); } 
+        else showError('Erro ao criar.');
       }
-    } catch (err) {
-      console.error('Erro ao salvar produto:', err);
-      showError('Erro ao salvar produto');
+    } catch (error) {
+      console.error(error);
+      showError('Erro ao salvar produto.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = (productId, productName) => {
-    if (window.confirm(`Tem certeza que deseja excluir o produto "${productName}"?`)) {
-      const success = deleteProduct(productId);
-      if (success) {
-        showSuccess('Produto excluído com sucesso!');
-      } else {
-        showError('Erro ao excluir produto');
-      }
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Excluir "${name}"?`)) {
+      const success = await deleteProduct(id);
+      if (success) showSuccess('Produto excluído.');
+      else showError('Erro ao excluir.');
     }
   };
 
-  const handleToggleStatus = (productId) => {
-    const success = toggleProductStatus(productId);
-    if (success) {
-      const product = products.find(p => p.id === productId);
-      const newStatus = !product.isActive;
-      showSuccess(`Produto ${newStatus ? 'ativado' : 'desativado'} com sucesso!`);
-    } else {
-      showError('Erro ao alterar status do produto');
-    }
-  };
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val));
 
-  const handleToggleFeatured = (productId) => {
-    const success = toggleProductFeatured(productId);
-    if (success) {
-      const product = products.find(p => p.id === productId);
-      const newStatus = !product.isFeatured;
-      showSuccess(`Produto ${newStatus ? 'adicionado aos' : 'removido dos'} destaques!`);
-    } else {
-      showError('Erro ao alterar destaque do produto');
-    }
-  };
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  // Atualizar classes dos checkboxes quando o modal abrir
-  useEffect(() => {
-    if (showModal) {
-      setTimeout(() => {
-        const labels = document.querySelectorAll(`.${styles.optionLabel}`);
-        labels.forEach(label => {
-          const checkbox = label.querySelector('input[type="checkbox"]');
-          if (checkbox) {
-            if (checkbox.checked) {
-              label.classList.add(styles.checked);
-            } else {
-              label.classList.remove(styles.checked);
-            }
-          }
-        });
-      }, 100);
-    }
-  }, [showModal, formData.isNew, formData.isPromo]);
-
-  if (loading) {
-    return (
-      <div className={styles.pageContainer}>
-        <div className={styles.loadingState}>
-          <FaBox className={styles.loadingIcon} />
-          <h3>Carregando produtos...</h3>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className={styles.loading}>Carregando produtos...</div>;
 
   return (
     <div className={styles.pageContainer}>
       {/* Header */}
       <div className={styles.pageHeader}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.pageTitle}>
-            <FaBox />
-            Gerenciar Produtos ({filteredProducts.length})
-          </h2>
-          <p className={styles.pageSubtitle}>
-            Adicione, edite e organize os produtos da sua loja
-          </p>
+        <div>
+          <h2 className={styles.pageTitle}>Gerenciar Produtos</h2>
+          <p className={styles.pageSubtitle}>{filteredProducts.length} produtos cadastrados</p>
         </div>
-        
-        <div className={styles.headerActions}>
+        <button onClick={() => openModal()} className={styles.primaryBtn}>
+          <FaPlus /> Novo Produto
+        </button>
+      </div>
+
+      {/* Barra de Ferramentas (Filtros + View Mode) */}
+      <div className={styles.filtersBar}>
+        <div className={styles.filtersLeft}>
+          <div className={styles.searchBox}>
+            <FaSearch className={styles.searchIcon} />
+            <input 
+              type="text" 
+              placeholder="Buscar produtos..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className={styles.filterBox}>
+            <FaFilter className={styles.filterIcon} />
+            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+              <option value="">Todas as Categorias</option>
+              {activeCategories.map(cat => (
+                <option key={cat.id} value={cat.name}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Botões de Alternância de Visualização */}
+        <div className={styles.viewToggle}>
           <button 
-            onClick={() => openModal()}
-            className={styles.primaryBtn}
+            className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeView : ''}`}
+            onClick={() => setViewMode('grid')}
+            title="Visualização em Grade"
           >
-            <FaPlus /> Novo Produto
+            <FaTh />
+          </button>
+          <button 
+            className={`${styles.viewBtn} ${viewMode === 'list' ? styles.activeView : ''}`}
+            onClick={() => setViewMode('list')}
+            title="Visualização em Lista"
+          >
+            <FaList />
           </button>
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className={styles.filtersSection}>
-        <div className={styles.searchContainer}>
-          <FaSearch className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Buscar produtos por nome ou categoria..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
-          />
-        </div>
-        
-        <div className={styles.filterContainer}>
-          <FaFilter className={styles.filterIcon} />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className={styles.filterSelect}
-          >
-            <option value="">Todas as categorias</option>
-            {activeCategories.map(category => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      {/* Conteúdo (Renderização Condicional) */}
+      {filteredProducts.length > 0 ? (
+        <>
+          {viewMode === 'grid' ? (
+            // --- MODO GRID (CARDS) ---
+            <div className={styles.productsGrid}>
+              {filteredProducts.map(product => (
+                <div key={product.id} className={`${styles.productCard} ${!product.isActive ? styles.inactiveCard : ''}`}>
+                  <div className={styles.imageWrapper}>
+                    <img 
+                      src={product.image || 'https://via.placeholder.com/300x300?text=Sem+Imagem'} 
+                      alt={product.name} 
+                      onError={(e) => e.target.src = 'https://via.placeholder.com/300x300?text=Erro'}
+                    />
+                    <div className={styles.badges}>
+                      {product.isNew && <span className={styles.badgeNew}>Novo</span>}
+                      {product.isPromo && <span className={styles.badgePromo}>Promo</span>}
+                      {!product.isActive && <span className={styles.badgeInactive}>Inativo</span>}
+                    </div>
+                  </div>
 
-      {/* Lista de Produtos */}
-      <div className={styles.productsSection}>
-        {filteredProducts.length > 0 ? (
-          <div className={styles.productsGrid}>
-            {filteredProducts.map((product) => (
-              <div key={product.id} className={styles.productCard}>
-                <div className={styles.productImage}>
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    onError={(e) => {
-                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIyMCIgdmlld0JveD0iMCAwIDMyMCAyMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjIwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjE2MCIgeT0iMTEwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjQ4IiBmaWxsPSIjNzIyRjM3Ij7wn5GXPC90ZXh0Pgo8L3N2Zz4=';
-                    }}
-                  />
-                  
-                  <div className={styles.productBadges}>
-                    {product.isNew && (
-                      <span className={styles.newBadge}>Novo</span>
-                    )}
-                    {product.isPromo && (
-                      <span className={styles.saleBadge}>Promoção</span>
-                    )}
-                    {product.isFeatured && (
-                      <span className={styles.featuredBadge}>Destaque</span>
-                    )}
-                    {!product.isActive && (
-                      <span className={styles.inactiveBadge}>Inativo</span>
-                    )}
-                  </div>
-                </div>
-                
-                <div className={styles.productInfo}>
-                  <h4 className={styles.productName}>{product.name}</h4>
-                  <p className={styles.productCategory}>{product.category}</p>
-                  
-                  <div className={styles.productPricing}>
-                    <span className={styles.productPrice}>
-                      {formatCurrency(product.price)}
-                    </span>
-                    {product.originalPrice && product.originalPrice > product.price && (
-                      <span className={styles.originalPrice}>
-                        {formatCurrency(product.originalPrice)}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className={styles.productMeta}>
-                    <span className={styles.productStock}>
-                      Estoque: {product.stock || 0}
-                    </span>
-                    <div className={styles.productRating}>
-                      <FaStar style={{ color: '#F59E0B' }} />
-                      <span>{product.rating || 0}</span>
+                  <div className={styles.cardContent}>
+                    <div className={styles.cardHeader}>
+                      <h3 className={styles.productName}>{product.name}</h3>
+                      <span className={styles.productCategory}>{product.category}</span>
+                    </div>
+                    
+                    <div className={styles.priceRow}>
+                      <span className={styles.price}>{formatCurrency(product.price)}</span>
+                      {product.originalPrice > product.price && (
+                        <span className={styles.originalPrice}>{formatCurrency(product.originalPrice)}</span>
+                      )}
+                    </div>
+
+                    <div className={styles.metaRow}>
+                      <span>Estoque: <strong>{product.stock}</strong></span>
+                      {product.isFeatured && <span className={styles.featuredTag}><FaStar /> Destaque</span>}
+                    </div>
+
+                    <div className={styles.actionsRow}>
+                      <button onClick={() => toggleProductStatus(product.id)} className={styles.iconBtn} title={product.isActive ? 'Desativar' : 'Ativar'}>
+                        {product.isActive ? <FaEye /> : <FaEyeSlash />}
+                      </button>
+                      <button onClick={() => toggleProductFeatured(product.id)} className={`${styles.iconBtn} ${product.isFeatured ? styles.activeStar : ''}`} title="Destacar">
+                        <FaStar />
+                      </button>
+                      <button onClick={() => openModal(product)} className={styles.iconBtn} title="Editar">
+                        <FaEdit />
+                      </button>
+                      <button onClick={() => handleDelete(product.id, product.name)} className={`${styles.iconBtn} ${styles.deleteBtn}`} title="Excluir">
+                        <FaTrash />
+                      </button>
                     </div>
                   </div>
                 </div>
-                
-                <div className={`${styles.productActions} ${styles.fourButtons}`}>
-                  <button
-                    onClick={() => handleToggleStatus(product.id)}
-                    className={`${styles.actionBtn} ${product.isActive ? styles.activeBtn : styles.inactiveBtn}`}
-                    title={product.isActive ? 'Desativar produto' : 'Ativar produto'}
-                  >
-                    {product.isActive ? <FaEye /> : <FaEyeSlash />}
-                    {product.isActive ? 'Ativo' : 'Inativo'}
-                  </button>
-                  
-                  <button
-                    onClick={() => handleToggleFeatured(product.id)}
-                    className={`${styles.actionBtn} ${product.isFeatured ? styles.featuredBtn : styles.notFeaturedBtn}`}
-                    title={product.isFeatured ? 'Remover dos destaques' : 'Adicionar aos destaques'}
-                  >
-                    <FaStar />
-                    {product.isFeatured ? 'Destaque' : 'Destacar'}
-                  </button>
-                  
-                  <button
-                    onClick={() => openModal(product)}
-                    className={`${styles.actionBtn} ${styles.editBtn}`}
-                    title="Editar produto"
-                  >
-                    <FaEdit />
-                    Editar
-                  </button>
-                  
-                  <button
-                    onClick={() => handleDelete(product.id, product.name)}
-                    className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                    title="Excluir produto"
-                  >
-                    <FaTrash />
-                    Excluir
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <FaBox className={styles.emptyIcon} />
-            <h3>Nenhum produto encontrado</h3>
-            <p>
-              {searchQuery || selectedCategory 
-                ? 'Tente ajustar os filtros de busca' 
-                : 'Comece adicionando seu primeiro produto'
-              }
-            </p>
-            {!searchQuery && !selectedCategory && (
-              <button 
-                onClick={() => openModal()}
-                className={styles.primaryBtn}
-                style={{ marginTop: 'var(--spacing-lg)' }}
-              >
-                <FaPlus /> Adicionar Produto
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          ) : (
+            // --- MODO LISTA (TABELA) ---
+            <div className={styles.tableContainer}>
+              <table className={styles.listTable}>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                    <th>Status</th>
+                    <th align="right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredProducts.map(product => (
+                    <tr key={product.id} className={!product.isActive ? styles.inactiveRow : ''}>
+                      <td>
+                        <div className={styles.productCell}>
+                          <div className={styles.smallImage}>
+                            <img 
+                              src={product.image || 'https://via.placeholder.com/100'} 
+                              alt={product.name} 
+                              onError={(e) => e.target.src = 'https://via.placeholder.com/100'}
+                            />
+                          </div>
+                          <div className={styles.productCellInfo}>
+                            <span className={styles.productNameList}>{product.name}</span>
+                            <div className={styles.listBadges}>
+                              {product.isNew && <span className={styles.miniBadgeNew}>Novo</span>}
+                              {product.isPromo && <span className={styles.miniBadgePromo}>Promo</span>}
+                              {product.isFeatured && <span className={styles.miniBadgeStar}><FaStar /></span>}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{product.category}</td>
+                      <td>
+                        <div className={styles.priceCell}>
+                          <span className={styles.priceList}>{formatCurrency(product.price)}</span>
+                          {product.originalPrice > product.price && (
+                            <span className={styles.originalPriceList}>{formatCurrency(product.originalPrice)}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`${styles.stockBadge} ${product.stock < 5 ? styles.lowStock : ''}`}>
+                          {product.stock} un.
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`${styles.statusBadge} ${product.isActive ? styles.statusActive : styles.statusInactive}`}>
+                          {product.isActive ? 'Ativo' : 'Inativo'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className={styles.listActions}>
+                          <button onClick={() => toggleProductStatus(product.id)} className={styles.listActionBtn} title="Alterar Status">
+                            {product.isActive ? <FaEye /> : <FaEyeSlash />}
+                          </button>
+                          <button onClick={() => toggleProductFeatured(product.id)} className={`${styles.listActionBtn} ${product.isFeatured ? styles.activeStar : ''}`} title="Destacar">
+                            <FaStar />
+                          </button>
+                          <button onClick={() => openModal(product)} className={styles.listActionBtn} title="Editar">
+                            <FaEdit />
+                          </button>
+                          <button onClick={() => handleDelete(product.id, product.name)} className={`${styles.listActionBtn} ${styles.deleteBtnList}`} title="Excluir">
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className={styles.emptyState}>
+          <FaBox />
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente ajustar os filtros ou adicione um novo produto.</p>
+        </div>
+      )}
 
-      {/* Modal de Produto */}
+      {/* Modal permanece igual... */}
       {showModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
+          <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>
-                {editingProduct ? '✏️ Editar Produto' : '➕ Novo Produto'}
-              </h3>
-              <button
-                onClick={closeModal}
-                className={styles.modalCloseBtn}
-                disabled={isSubmitting}
-              >
-                <FaTimes />
-              </button>
+              <h3>{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h3>
+              <button onClick={closeModal}><FaTimes /></button>
             </div>
-
-            <form onSubmit={handleSubmit} className={styles.modalForm}>
+            <form onSubmit={handleSubmit} className={styles.modalBody}>
               <div className={styles.formGrid}>
-                {/* Informações Básicas */}
-                <div className={styles.formSection}>
-                  <h4 className={styles.sectionTitle}>
-                    📝 Informações Básicas
-                  </h4>
-                  
+                {/* Lado Esquerdo */}
+                <div className={styles.formColumn}>
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Nome do Produto *</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isSubmitting}
-                      className={styles.formInput}
-                      placeholder="Ex: Vestido Longo Festa Rosa"
-                    />
+                    <label>Nome do Produto *</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
                   </div>
-
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Descrição</label>
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      rows="3"
-                      className={styles.formTextarea}
-                      placeholder="Descreva as características do produto..."
-                    />
+                    <label>Descrição</label>
+                    <textarea name="description" value={formData.description} onChange={handleInputChange} rows="3" />
                   </div>
-
-                  <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label>URL da Imagem</label>
+                    <div className={styles.imageInput}>
+                      <FaImage />
+                      <input type="text" name="image" value={formData.image} onChange={handleInputChange} placeholder="https://..." />
+                    </div>
+                  </div>
+                  <div className={styles.row}>
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Categoria *</label>
-                      <select
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        required
-                        disabled={isSubmitting}
-                        className={styles.formSelect}
-                      >
-                        <option value="">Selecione uma categoria</option>
-                        {activeCategories.map(category => (
-                          <option key={category.id} value={category.name}>
-                            {category.name}
-                          </option>
+                      <label>Categoria *</label>
+                      <select name="category" value={formData.category} onChange={handleInputChange} required>
+                        <option value="">Selecione</option>
+                        {activeCategories.map(cat => (
+                          <option key={cat.id} value={cat.name}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
-
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Estoque</label>
-                      <input
-                        type="number"
-                        name="stock"
-                        value={formData.stock}
-                        onChange={handleInputChange}
-                        min="0"
-                        disabled={isSubmitting}
-                        className={styles.formInput}
-                        placeholder="0"
-                      />
+                      <label>Estoque</label>
+                      <input type="number" name="stock" value={formData.stock} onChange={handleInputChange} />
                     </div>
                   </div>
                 </div>
-
-                {/* Preços */}
-                <div className={styles.formSection}>
-                  <h4 className={styles.sectionTitle}>
-                    💰 Preços
-                  </h4>
-                  
-                  <div className={styles.formRow}>
+                {/* Lado Direito */}
+                <div className={styles.formColumn}>
+                  <div className={styles.row}>
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Preço Atual (R$) *</label>
-                      <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        step="0.01"
-                        min="0"
-                        required
-                        disabled={isSubmitting}
-                        className={styles.formInput}
-                        placeholder="0,00"
-                      />
+                      <label>Preço (R$) *</label>
+                      <input type="number" name="price" value={formData.price} onChange={handleInputChange} step="0.01" required />
                     </div>
-
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Preço Original (R$)</label>
-                      <input
-                        type="number"
-                        name="originalPrice"
-                        value={formData.originalPrice}
-                        onChange={handleInputChange}
-                        step="0.01"
-                        min="0"
-                        disabled={isSubmitting}
-                        className={styles.formInput}
-                        placeholder="0,00"
-                      />
-                      <small className={styles.formHint}>
-                        Deixe vazio se não houver preço original
-                      </small>
+                      <label>Preço Original</label>
+                      <input type="number" name="originalPrice" value={formData.originalPrice} onChange={handleInputChange} step="0.01" />
                     </div>
                   </div>
-                </div>
-
-                {/* Imagem */}
-                <div className={styles.formSection}>
-                  <h4 className={styles.sectionTitle}>
-                    🖼️ Imagem
-                  </h4>
-                  
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>URL da Imagem</label>
-                    <input
-                      type="url"
-                      name="image"
-                      value={formData.image}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={styles.formInput}
-                      placeholder="https://exemplo.com/imagem.jpg"
-                    />
-                    <small className={styles.formHint}>
-                      Cole a URL de uma imagem online
-                    </small>
-                  </div>
-                </div>
-
-                {/* Opções */}
-                <div className={styles.formSection}>
-                  <h4 className={styles.sectionTitle}>
-                    ⚙️ Opções do Produto
-                  </h4>
-                  
-                  <div className={styles.formOptions}>
-                    <label 
-                      className={`${styles.optionLabel} ${styles.newProduct} ${formData.isNew ? styles.checked : ''}`}
-                    >
-                      <div className={styles.customCheckbox}>
-                        <input
-                          type="checkbox"
-                          name="isNew"
-                          checked={formData.isNew}
-                          onChange={handleInputChange}
-                          disabled={isSubmitting}
-                          className={styles.checkbox}
-                        />
-                        <div className={styles.checkboxVisual}></div>
-                      </div>
-                      
-                      <div className={styles.optionContent}>
-                        <div className={styles.optionTitle}>
-                          <span className={styles.optionIcon}>🆕</span>
-                          Produto Novo
-                        </div>
-                        <div className={styles.optionDescription}>
-                          Marque esta opção para destacar o produto como novidade na loja
-                        </div>
-                      </div>
-                      
-                      <div className={styles.optionIndicator}></div>
+                  <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input type="checkbox" name="isNew" checked={formData.isNew} onChange={handleInputChange} />
+                      <span>Marcar como <strong>Novo</strong></span>
                     </label>
-
-                    <label 
-                      className={`${styles.optionLabel} ${styles.promoProduct} ${formData.isPromo ? styles.checked : ''}`}
-                    >
-                      <div className={styles.customCheckbox}>
-                        <input
-                          type="checkbox"
-                          name="isPromo"
-                          checked={formData.isPromo}
-                          onChange={handleInputChange}
-                          disabled={isSubmitting}
-                          className={styles.checkbox}
-                        />
-                        <div className={styles.checkboxVisual}></div>
-                      </div>
-                      
-                      <div className={styles.optionContent}>
-                        <div className={styles.optionTitle}>
-                          <span className={styles.optionIcon}>🏷️</span>
-                          Em Promoção
-                        </div>
-                        <div className={styles.optionDescription}>
-                          Marque para indicar que o produto está em oferta especial
-                        </div>
-                      </div>
-                      
-                      <div className={styles.optionIndicator}></div>
+                    <label className={styles.checkboxLabel}>
+                      <input type="checkbox" name="isPromo" checked={formData.isPromo} onChange={handleInputChange} />
+                      <span>Marcar como <strong>Promoção</strong></span>
                     </label>
+                  </div>
+                  <div className={styles.imagePreview}>
+                    {formData.image ? (
+                      <img src={formData.image} alt="Preview" onError={(e) => e.target.style.display='none'} />
+                    ) : (
+                      <div className={styles.placeholderPreview}>Sem imagem</div>
+                    )}
                   </div>
                 </div>
               </div>
-
-              <div className={styles.modalActions}>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  disabled={isSubmitting}
-                  className={styles.cancelBtn}
-                >
-                  ❌ Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={styles.submitBtn}
-                >
-                  <FaSave /> {isSubmitting ? 'Salvando...' : (editingProduct ? 'Atualizar' : 'Salvar')}
+              <div className={styles.modalFooter}>
+                <button type="button" onClick={closeModal} className={styles.cancelBtn} disabled={isSubmitting}>Cancelar</button>
+                <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
+                  {isSubmitting ? 'Salvando...' : <><FaSave /> Salvar Produto</>}
                 </button>
               </div>
             </form>

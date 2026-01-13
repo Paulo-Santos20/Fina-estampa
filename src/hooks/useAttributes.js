@@ -1,98 +1,173 @@
 import { useState, useEffect } from 'react';
 
-// Cores baseadas nos produtos
-const MOCK_COLORS = [
-  { id: 'pink', name: 'Rosa', hexCode: '#FF69B4' },
-  { id: 'purple', name: 'Roxo', hexCode: '#8A2BE2' },
-  { id: 'black', name: 'Preto', hexCode: '#000000' },
-  { id: 'white', name: 'Branco', hexCode: '#FFFFFF' },
-  { id: 'blue', name: 'Azul', hexCode: '#4169E1' },
-  { id: 'navy', name: 'Azul Marinho', hexCode: '#000080' },
-  { id: 'lightblue', name: 'Azul Claro', hexCode: '#87CEEB' },
-  { id: 'hotpink', name: 'Rosa Pink', hexCode: '#FF1493' },
-  { id: 'green', name: 'Verde', hexCode: '#32CD32' },
-  { id: 'gold', name: 'Dourado', hexCode: '#FFD700' },
-  { id: 'brown', name: 'Marrom', hexCode: '#8B4513' },
-  { id: 'red', name: 'Vermelho', hexCode: '#DC143C' }
+// Dados iniciais simulados (Mock Data)
+const INITIAL_COLORS = [
+  { id: 1, name: 'Preto Clássico', hexCode: '#000000', description: 'Preto básico para todas as ocasiões', isActive: true },
+  { id: 2, name: 'Branco Puro', hexCode: '#FFFFFF', description: 'Branco neve', isActive: true },
+  { id: 3, name: 'Vinho', hexCode: '#722F37', description: 'Cor da marca', isActive: true },
+  { id: 4, name: 'Nude', hexCode: '#E5D0B1', description: 'Tom pele suave', isActive: true },
 ];
 
-// Tamanhos baseados nos produtos
-const MOCK_SIZES = [
-  { id: 'pp', name: 'Extra Pequeno', abbreviation: 'PP', order: 1 },
-  { id: 'p', name: 'Pequeno', abbreviation: 'P', order: 2 },
-  { id: 'm', name: 'Médio', abbreviation: 'M', order: 3 },
-  { id: 'g', name: 'Grande', abbreviation: 'G', order: 4 },
-  { id: 'gg', name: 'Extra Grande', abbreviation: 'GG', order: 5 },
-  { id: '36', name: 'Tamanho 36', abbreviation: '36', order: 6 },
-  { id: '38', name: 'Tamanho 38', abbreviation: '38', order: 7 },
-  { id: '40', name: 'Tamanho 40', abbreviation: '40', order: 8 },
-  { id: '42', name: 'Tamanho 42', abbreviation: '42', order: 9 },
-  { id: '44', name: 'Tamanho 44', abbreviation: '44', order: 10 },
-  { id: 'unico', name: 'Tamanho Único', abbreviation: 'Único', order: 11 }
+const INITIAL_SIZES = [
+  { id: 1, name: 'Pequeno', abbreviation: 'P', description: 'Veste 36-38', order: 1, isActive: true },
+  { id: 2, name: 'Médio', abbreviation: 'M', description: 'Veste 40-42', order: 2, isActive: true },
+  { id: 3, name: 'Grande', abbreviation: 'G', description: 'Veste 44-46', order: 3, isActive: true },
+  { id: 4, name: 'Extra Grande', abbreviation: 'GG', description: 'Veste 48+', order: 4, isActive: false },
 ];
 
 export const useAttributes = () => {
-  const [colors, setColors] = useState([]);
-  const [sizes, setSizes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // --- ESTADOS ---
+  // Carrega do localStorage ou usa os dados iniciais
+  const [colors, setColors] = useState(() => {
+    const saved = localStorage.getItem('sana_colors');
+    return saved ? JSON.parse(saved) : INITIAL_COLORS;
+  });
+
+  const [sizes, setSizes] = useState(() => {
+    const saved = localStorage.getItem('sana_sizes');
+    return saved ? JSON.parse(saved) : INITIAL_SIZES;
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  // --- PERSISTÊNCIA ---
+  useEffect(() => {
+    localStorage.setItem('sana_colors', JSON.stringify(colors));
+  }, [colors]);
 
   useEffect(() => {
-    const loadAttributes = async () => {
-      try {
-        setLoading(true);
-        
-        // Simular delay de API
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Verificar se há atributos salvos no localStorage (CMS)
-        const savedColors = localStorage.getItem('cmsColors');
-        const savedSizes = localStorage.getItem('cmsSizes');
-        
-        if (savedColors) {
-          const parsedColors = JSON.parse(savedColors);
-          setColors([...MOCK_COLORS, ...parsedColors]);
-        } else {
-          setColors(MOCK_COLORS);
-        }
-        
-        if (savedSizes) {
-          const parsedSizes = JSON.parse(savedSizes);
-          setSizes([...MOCK_SIZES, ...parsedSizes]);
-        } else {
-          setSizes(MOCK_SIZES);
-        }
-        
-      } catch (err) {
-        setError('Erro ao carregar atributos');
-        console.error('Erro ao carregar atributos:', err);
-        // Em caso de erro, usar dados mockados
-        setColors(MOCK_COLORS);
-        setSizes(MOCK_SIZES);
-      } finally {
-        setLoading(false);
-      }
-    };
+    localStorage.setItem('sana_sizes', JSON.stringify(sizes));
+  }, [sizes]);
 
-    loadAttributes();
-  }, []);
+  // ==========================
+  // LÓGICA DE CORES
+  // ==========================
 
-  // Função para obter cor por ID
-  const getColorById = (id) => {
-    return colors.find(color => color.id === id);
+  const addColor = (colorData) => {
+    setLoading(true);
+    try {
+      const newColor = {
+        ...colorData,
+        id: Date.now(),
+        isActive: true
+      };
+      setColors(prev => [...prev, newColor]);
+      setLoading(false);
+      return newColor;
+    } catch (error) {
+      setLoading(false);
+      return null;
+    }
   };
 
-  // Função para obter tamanho por ID
-  const getSizeById = (id) => {
-    return sizes.find(size => size.id === id);
+  const updateColor = (id, updatedData) => {
+    setLoading(true);
+    try {
+      setColors(prev => prev.map(c => c.id === id ? { ...c, ...updatedData } : c));
+      setLoading(false);
+      return true;
+    } catch (error) {
+      setLoading(false);
+      return false;
+    }
+  };
+
+  const deleteColor = (id) => {
+    setLoading(true);
+    try {
+      setColors(prev => prev.filter(c => c.id !== id));
+      setLoading(false);
+      return true;
+    } catch (error) {
+      setLoading(false);
+      return false;
+    }
+  };
+
+  const toggleColorStatus = (id) => {
+    try {
+      setColors(prev => prev.map(c => 
+        c.id === id ? { ...c, isActive: !c.isActive } : c
+      ));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // ==========================
+  // LÓGICA DE TAMANHOS
+  // ==========================
+
+  const addSize = (sizeData) => {
+    setLoading(true);
+    try {
+      const newSize = {
+        ...sizeData,
+        id: Date.now(),
+        isActive: true
+      };
+      setSizes(prev => [...prev, newSize]);
+      setLoading(false);
+      return newSize;
+    } catch (error) {
+      setLoading(false);
+      return null;
+    }
+  };
+
+  const updateSize = (id, updatedData) => {
+    setLoading(true);
+    try {
+      setSizes(prev => prev.map(s => s.id === id ? { ...s, ...updatedData } : s));
+      setLoading(false);
+      return true;
+    } catch (error) {
+      setLoading(false);
+      return false;
+    }
+  };
+
+  const deleteSize = (id) => {
+    setLoading(true);
+    try {
+      setSizes(prev => prev.filter(s => s.id !== id));
+      setLoading(false);
+      return true;
+    } catch (error) {
+      setLoading(false);
+      return false;
+    }
+  };
+
+  // --- A FUNÇÃO QUE FALTAVA ---
+  const toggleSizeStatus = (id) => {
+    try {
+      setSizes(prev => prev.map(s => 
+        s.id === id ? { ...s, isActive: !s.isActive } : s
+      ));
+      return true;
+    } catch (error) {
+      return false;
+    }
   };
 
   return {
+    // Dados
     colors,
     sizes,
     loading,
-    error,
-    getColorById,
-    getSizeById
+    
+    // Ações de Cores
+    addColor,
+    updateColor,
+    deleteColor,
+    toggleColorStatus,
+    
+    // Ações de Tamanhos
+    addSize,
+    updateSize,
+    deleteSize,
+    toggleSizeStatus // Agora exportada corretamente
   };
 };

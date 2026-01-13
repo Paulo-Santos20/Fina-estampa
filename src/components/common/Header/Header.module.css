@@ -74,7 +74,7 @@
 .rightSection { display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
 .desktopOnly { display: block; }
 
-/* ICON BUTTONS (Minimalista) */
+/* ICON BUTTONS */
 .iconButton {
   background: none;
   border: none;
@@ -88,7 +88,6 @@
   transition: opacity 0.2s ease;
   overflow: visible; 
 }
-/* Apenas opacidade, sem movimento */
 .iconButton:hover { opacity: 0.6; transform: none; background: none; }
 
 /* CART BADGE */
@@ -110,7 +109,9 @@
   z-index: 10;
 }
 
-/* LOGIN / USER (Minimalista) */
+/* LOGIN / USER (Desktop) */
+.userContainer { position: relative; }
+
 .loginButton {
   background-color: var(--sana-dark-brown);
   color: #fff;
@@ -363,7 +364,7 @@
 }
 .removeItemBtn:hover { color: #b91c1c; }
 
-/* Footer */
+/* Footer do Carrinho */
 .cartFooter {
   margin-top: auto;
   padding-top: 24px;
@@ -392,7 +393,7 @@
   border-radius: 4px;
 }
 
-/* SEARCH OVERLAY (COM IMAGENS) */
+/* SEARCH OVERLAY */
 .searchOverlayBackdrop {
   position: fixed;
   top: 0;
@@ -433,31 +434,105 @@
 }
 .searchResults { padding: 40px; flex: 1; overflow-y: auto; }
 .productGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+.productImage img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
 
-/* Grid de Produtos na Busca */
-.productCard { cursor: pointer; }
-.productImage { width: 100%; aspect-ratio: 3/4; background: #eee; margin-bottom: 8px; overflow: hidden; }
-.productImage img { width: 100%; height: 100%; object-fit: cover; }
-.productInfo p { margin: 0; color: var(--sana-text); }
-.productName { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-.productPrice { font-size: 13px; color: #666; }
-
-/* MOBILE */
+/* === MOBILE DRAWER (Menu Lateral) === */
 .mobileDrawer {
-  position: fixed; top: 0; left: 0; width: 300px; height: 100vh; background-color: var(--sana-cream); z-index: 2000; transform: translateX(-100%); transition: transform 0.3s;
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 300px; 
+  height: 100vh; 
+  background-color: var(--sana-cream); 
+  z-index: 2000; 
+  transform: translateX(-100%); 
+  transition: transform 0.3s;
+  display: flex; 
+  flex-direction: column;
 }
 .mobileDrawer.open { transform: translateX(0); }
 .drawerHeader { padding: 24px; }
-.drawerNav { padding: 0 24px; display: flex; flex-direction: column; }
-.drawerLink { padding: 16px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; text-decoration: none; color: var(--sana-text); }
+
+/* O nav ocupa todo o espaço restante para empurrar a seção do usuário para baixo */
+.drawerNav { 
+  padding: 0 24px 24px; 
+  display: flex; 
+  flex-direction: column; 
+  height: 100%; 
+  overflow-y: auto;
+}
+
+.drawerLinksContainer {
+  flex: 1; /* Ocupa espaço para empurrar o userSection */
+}
+
+.drawerLink { 
+  padding: 16px 0; 
+  border-bottom: 1px solid rgba(0,0,0,0.05); 
+  display: flex; 
+  justify-content: space-between; 
+  text-decoration: none; 
+  color: var(--sana-text); 
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.drawerDivider { 
+  height: 1px; 
+  background-color: rgba(0,0,0,0.08); 
+  margin: 10px 0; 
+}
+
 .backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1500; }
+
+/* === SEÇÃO DE USUÁRIO MOBILE === */
+.mobileUserSection {
+  margin-top: auto; /* Garante que fique no rodapé do menu */
+  padding-top: 10px;
+}
+
+.mobileUserHeader {
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  margin-bottom: 8px;
+}
+
+.mobileUserName {
+  font-weight: 600;
+  color: var(--sana-dark-brown);
+  font-size: 16px;
+  display: block;
+}
+
+.mobileLoginRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: var(--sana-text);
+}
+
+.mobileLogout {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #b91c1c; /* Vermelho para destaque */
+  padding: 16px 0;
+  font-weight: 500;
+}
 
 @media (max-width: 900px) {
   .headerContainer { grid-template-columns: auto 1fr auto; padding: 0 20px; height: 60px; }
   .mainHeader { height: 60px; }
   .desktopNav, .desktopOnly { display: none; }
   .mobileControls { display: flex; }
+  
+  /* ESCONDE O BOTÃO DE USUÁRIO NO HEADER EM MOBILE PARA EVITAR DUPLICIDADE */
   .userContainer { display: none; }
+  
   .cartDrawer { width: 100%; }
   .searchOverlayBackdrop { padding-top: 0; background: var(--sana-cream); }
   .searchModal { width: 100%; height: 100%; border-radius: 0; }

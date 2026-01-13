@@ -1,14 +1,13 @@
-/* Importar variáveis CSS globais */
+/* Import global variables */
 @import '../../../styles/variables.css';
 
 /* ===========================================
-   SEÇÃO DOS NOVOS PRODUTOS
+   SECTION
    =========================================== */
 
 .newProductsSection {
   padding: 4rem 0;
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  overflow: hidden;
   position: relative;
 }
 
@@ -30,7 +29,7 @@
 }
 
 /* ===========================================
-   HEADER DA SEÇÃO
+   HEADER
    =========================================== */
 
 .sectionHeader {
@@ -71,75 +70,21 @@
 }
 
 /* ===========================================
-   WRAPPER DO CARROSSEL
+   PRODUCT GRID
    =========================================== */
 
-.carouselWrapper {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-large);
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 Columns */
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 /* ===========================================
-   BOTÕES DE NAVEGAÇÃO
-   =========================================== */
-
-.navButton {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, var(--dourado-sutil) 0%, #b8860b 100%);
-  color: white;
-  cursor: pointer;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
-  transition: all 0.3s ease;
-}
-
-.navButton:hover {
-  background: linear-gradient(135deg, #b8860b 0%, var(--dourado-sutil) 100%);
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
-}
-
-.prevButton {
-  left: 1rem;
-}
-
-.nextButton {
-  right: 1rem;
-}
-
-/* ===========================================
-   CONTAINER DO CARROSSEL
-   =========================================== */
-
-.carouselContainer {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem 0;
-  cursor: grab;
-  user-select: none;
-}
-
-.carouselContainer:active {
-  cursor: grabbing;
-}
-
-/* ===========================================
-   CARDS DOS PRODUTOS
+   PRODUCT CARDS
    =========================================== */
 
 .productCard {
-  flex: 0 0 280px;
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -147,6 +92,8 @@
   transition: all 0.3s ease;
   cursor: pointer;
   border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
 }
 
 .productCard:hover {
@@ -162,18 +109,21 @@
 }
 
 /* ===========================================
-   IMAGENS DOS PRODUTOS
+   PRODUCT IMAGES
    =========================================== */
 
 .productImageWrapper {
   position: relative;
   width: 100%;
-  height: 220px;
+  padding-top: 125%; /* Aspect Ratio 4:5 */
   overflow: hidden;
   background: #F8F9FA;
 }
 
 .productImage {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -186,7 +136,7 @@
 }
 
 /* ===========================================
-   BADGES DOS PRODUTOS
+   BADGES
    =========================================== */
 
 .discountBadge {
@@ -195,9 +145,9 @@
   left: 0.8rem;
   background: #722F37;
   color: white;
-  padding: 0.6rem 1rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -210,9 +160,9 @@
   right: 0.8rem;
   background: linear-gradient(135deg, var(--dourado-sutil) 0%, #b8860b 100%);
   color: white;
-  padding: 0.6rem 1rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -224,7 +174,7 @@
 }
 
 /* ===========================================
-   AÇÕES DO PRODUTO
+   ACTIONS
    =========================================== */
 
 .productActions {
@@ -236,13 +186,19 @@
   flex-direction: column;
   gap: 0.8rem;
   z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.productCard:hover .productActions {
   opacity: 1;
   visibility: visible;
 }
 
 .actionButton {
-  width: 50px !important;
-  height: 50px !important;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.95) !important;
@@ -265,20 +221,8 @@
   border-color: var(--dourado-sutil);
 }
 
-.actionButton svg {
-  width: 16px !important;
-  height: 16px !important;
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-.actionButton:hover svg {
-  color: white !important;
-}
-
 /* ===========================================
-   INFORMAÇÕES DO PRODUTO
+   PRODUCT INFO
    =========================================== */
 
 .productInfo {
@@ -286,7 +230,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .productLink {
@@ -313,7 +257,7 @@
 }
 
 /* ===========================================
-   AVALIAÇÕES
+   RATING
    =========================================== */
 
 .productRating {
@@ -350,7 +294,7 @@
 }
 
 /* ===========================================
-   PREÇOS DOS PRODUTOS
+   PRICING
    =========================================== */
 
 .productPricing {
@@ -360,7 +304,7 @@
 .promoPrice {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.2rem;
 }
 
 .originalPrice {
@@ -376,19 +320,19 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 .currentPrice,
 .regularPrice {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--wine-destaque);
-  flex: 1;
 }
 
 .addToCartIcon {
-  width: 44px !important;
-  height: 44px !important;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50% !important;
   border: none !important;
   background: linear-gradient(135deg, var(--wine-destaque) 0%, #5a1f29 100%) !important;
@@ -399,7 +343,6 @@
   justify-content: center !important;
   transition: all 0.3s ease !important;
   box-shadow: 0 3px 12px rgba(114, 47, 55, 0.3) !important;
-  flex-shrink: 0 !important;
 }
 
 .addToCartIcon:hover {
@@ -418,325 +361,64 @@
   100% { transform: scale(1); }
 }
 
-.addToCartIcon svg {
-  width: 20px !important;
-  height: 20px !important;
-  color: white !important;
-  display: block !important;
-}
-
 /* ===========================================
-   INDICADORES
+   SEE MORE BUTTON
    =========================================== */
 
-.indicators {
+.seeMoreContainer {
   display: flex;
   justify-content: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
-.indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: none;
-  background: #e0e0e0;
+.seeMoreButton {
+  padding: 12px 30px;
+  background-color: transparent;
+  color: var(--wine-destaque);
+  border: 2px solid var(--wine-destaque);
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.indicator.active {
-  background: var(--dourado-sutil);
-  transform: scale(1.3);
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
-}
-
-.indicator:hover:not(.active) {
-  background: var(--cinza-medio);
-  transform: scale(1.1);
+.seeMoreButton:hover {
+  background-color: var(--wine-destaque);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
 }
 
 /* ===========================================
-   RESPONSIVIDADE
+   RESPONSIVENESS
    =========================================== */
 
 @media (max-width: 1200px) {
-  .productCard {
-    flex: 0 0 260px;
-  }
-  
-  .container {
-    padding: 0 1.5rem;
+  .productsGrid {
+    grid-template-columns: repeat(3, 1fr); /* 3 Columns */
   }
 }
 
-@media (max-width: 968px) {
-  .newProductsSection {
-    padding: 3rem 0;
-  }
-  
-  .sectionTitle {
-    font-size: 2rem;
-  }
-  
-  .productCard {
-    flex: 0 0 240px;
-  }
-  
-  .productImageWrapper {
-    height: 200px;
-  }
-  
-  .navButton {
-    width: 44px;
-    height: 44px;
-    font-size: 14px;
-  }
-  
-  .prevButton {
-    left: 0.5rem;
-  }
-  
-  .nextButton {
-    right: 0.5rem;
+@media (max-width: 900px) {
+  .productsGrid {
+    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
   }
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
+@media (max-width: 600px) {
+  .productsGrid {
+    grid-template-columns: 1fr; /* 1 Column */
   }
   
   .sectionTitle {
     font-size: 1.8rem;
   }
   
-  .sectionSubtitle {
-    font-size: 1rem;
-  }
-  
-  .productCard {
-    flex: 0 0 220px;
-  }
-  
-  .productImageWrapper {
-    height: 180px;
-  }
-  
-  .productInfo {
-    padding: 1.25rem;
-  }
-  
-  .productName {
-    font-size: 0.9rem;
-  }
-  
-  .currentPrice,
-  .regularPrice {
-    font-size: 1.1rem;
-  }
-  
-  .addToCartIcon {
-    width: 40px !important;
-    height: 40px !important;
-  }
-  
-  .addToCartIcon svg {
-    width: 18px !important;
-    height: 18px !important;
-  }
-  
-  .actionButton {
-    width: 44px !important;
-    height: 44px !important;
-  }
-  
-  .actionButton svg {
-    width: 14px !important;
-    height: 14px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .newProductsSection {
-    padding: 2rem 0;
-  }
-  
-  .sectionHeader {
-    margin-bottom: 2rem;
-  }
-  
-  .sectionTitle {
-    font-size: 1.6rem;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .titleIcon {
-    font-size: 1.5rem;
-  }
-  
-  .productCard {
-    flex: 0 0 200px;
-  }
-  
-  .productImageWrapper {
-    height: 160px;
-  }
-  
-  .productInfo {
-    padding: 1rem;
-    gap: 0.5rem;
-  }
-  
-  .productName {
-    font-size: 0.85rem;
-    min-height: 2.2rem;
-  }
-  
-  .currentPrice,
-  .regularPrice {
-    font-size: 1rem;
-  }
-  
-  .addToCartIcon {
-    width: 36px !important;
-    height: 36px !important;
-  }
-  
-  .addToCartIcon svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-  
-  .navButton {
-    width: 40px;
-    height: 40px;
-    font-size: 12px;
-  }
-  
-  .actionButton {
-    width: 40px !important;
-    height: 40px !important;
-  }
-  
-  .actionButton svg {
-    width: 12px !important;
-    height: 12px !important;
-  }
-  
-  .carouselContainer {
-    gap: 1rem;
-    padding: 1rem 0;
-  }
-}
-
-/* ===========================================
-   ANIMAÇÕES ESPECIAIS
-   =========================================== */
-
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.productCard {
-  animation: slideInFromRight 0.6s ease-out;
-}
-
-.productCard:nth-child(1) { animation-delay: 0.1s; }
-.productCard:nth-child(2) { animation-delay: 0.2s; }
-.productCard:nth-child(3) { animation-delay: 0.3s; }
-.productCard:nth-child(4) { animation-delay: 0.4s; }
-.productCard:nth-child(5) { animation-delay: 0.5s; }
-.productCard:nth-child(6) { animation-delay: 0.6s; }
-
-/* ===========================================
-   ESTADOS DE FOCO PARA ACESSIBILIDADE
-   =========================================== */
-
-.productCard:focus {
-  outline: 3px solid var(--dourado-sutil);
-  outline-offset: 2px;
-}
-
-.navButton:focus,
-.indicator:focus,
-.actionButton:focus,
-.addToCartIcon:focus {
-  outline: 2px solid var(--dourado-sutil);
-  outline-offset: 2px;
-}
-
-/* ===========================================
-   MODO ESCURO (OPCIONAL)
-   =========================================== */
-
-@media (prefers-color-scheme: dark) {
-  .newProductsSection {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  }
-  
-  .sectionTitle {
-    color: #f8f9fa;
-  }
-  
-  .sectionSubtitle {
-    color: #adb5bd;
-  }
-  
-  .productCard {
-    background: #2d2d2d;
-    box-shadow: 0 3px 12px rgba(255, 255, 255, 0.05);
-  }
-  
-  .productCard:hover {
-    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.15);
-  }
-  
-  .productName {
-    color: #f8f9fa;
-  }
-  
-  .productCard:hover .productName {
-    color: var(--dourado-sutil);
-  }
-}
-
-/* ===========================================
-   PRINT STYLES
-   =========================================== */
-
-@media print {
-  .newProductsSection {
-    background: white;
-    padding: 2rem 0;
-  }
-  
-  .navButton,
-  .indicators,
-  .actionButton,
-  .addToCartIcon {
-    display: none;
-  }
-  
-  .productCard {
-    break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-  
-  .carouselContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    transform: none !important;
+  .productActions {
+    opacity: 1; /* Always visible on mobile */
+    visibility: visible;
   }
 }

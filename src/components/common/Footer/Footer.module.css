@@ -1,136 +1,142 @@
-/* Importar variáveis CSS globais */
-@import '../../../styles/variables.css';
-
-/* ===========================================
-   FOOTER PRINCIPAL
-   =========================================== */
+:root {
+  --footer-bg: #1A1A1A; /* Quase preto */
+  --footer-text: #B0B0B0; /* Cinza claro suave */
+  --footer-title: #FFFFFF;
+  --footer-accent: #8C5E4A; /* Tom terroso da marca */
+  --footer-border: rgba(255, 255, 255, 0.1);
+}
 
 .footer {
-  background: linear-gradient(135deg, var(--preto-secundario) 0%, #1a1a1a 100%);
-  color: var(--white-principal);
-  padding: 4rem 0 2rem;
-  margin-top: auto;
+  width: 100%;
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .container {
-  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
-/* ===========================================
-   SEÇÃO PRINCIPAL DO FOOTER
-   =========================================== */
-
-.footerMain {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-  padding-bottom: 3rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* === MINI NEWSLETTER (Barra Superior) === */
+.miniNewsletter {
+  border-bottom: 1px solid var(--footer-border);
+  padding: 1.5rem 0;
 }
 
-.footerColumn {
+.newsletterRow {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* ===========================================
-   MARCA E DESCRIÇÃO
-   =========================================== */
-
-.brand {
-  margin-bottom: 1rem;
-}
-
-.brandName {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--wine-destaque);
-  margin-bottom: 0.5rem;
-  line-height: 1.2;
-}
-
-.brandTagline {
-  font-size: 1rem;
-  color: var(--dourado-sutil);
-  margin: 0;
-  font-style: italic;
-}
-
-.brandDescription {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 2rem;
-}
-
-/* ===========================================
-   REDES SOCIAIS
-   =========================================== */
-
-.socialMedia h4 {
-  font-size: 1.1rem;
-  color: var(--white-principal);
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.socialLinks {
-  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
-.socialLink {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--white-principal);
+.newsletterRow span {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--footer-title);
+  letter-spacing: 0.5px;
+}
+
+.newsletterInputGroup {
+  display: flex;
+  border-bottom: 1px solid var(--footer-text);
+  padding-bottom: 5px;
+  width: 300px;
+}
+
+.newsletterInputGroup input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  flex: 1;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.newsletterInputGroup button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.newsletterInputGroup button:hover {
+  transform: translateX(3px);
+  color: var(--footer-accent);
+}
+
+/* === CONTEÚDO PRINCIPAL === */
+.mainContent {
+  padding: 4rem 0 2rem;
+}
+
+.topGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+/* Coluna Marca */
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.brandLogo {
+  font-family: 'Times New Roman', serif;
+  font-size: 2rem;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.brandText {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.socialRow {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.socialRow a {
+  color: #fff;
+  font-size: 1.2rem;
+  transition: color 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  text-decoration: none;
-  transition: all var(--transition-normal);
-  border: 2px solid transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--footer-border);
 }
 
-.socialLink:hover {
-  background: var(--wine-destaque);
-  border-color: var(--wine-destaque);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.4);
+.socialRow a:hover {
+  color: var(--footer-accent);
+  border-color: var(--footer-accent);
 }
 
-/* ===========================================
-   COLUNAS DE LINKS
-   =========================================== */
-
-.columnTitle {
-  font-size: 1.2rem;
-  color: var(--white-principal);
+/* Colunas de Links */
+.linksColumn h4, .contactColumn h4 {
+  color: var(--footer-title);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   margin-bottom: 1.5rem;
   font-weight: 600;
-  position: relative;
 }
 
-.columnTitle::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--wine-destaque);
-  border-radius: 1px;
-}
-
-.linksList {
+.linksColumn ul {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -139,260 +145,156 @@
   gap: 0.8rem;
 }
 
-.footerLink {
-  color: rgba(255, 255, 255, 0.7);
+.linksColumn a {
+  color: var(--footer-text);
   text-decoration: none;
-  font-size: 0.95rem;
-  transition: all var(--transition-normal);
-  padding: 0.3rem 0;
+  font-size: 0.9rem;
+  transition: all 0.3s;
   position: relative;
 }
 
-.footerLink:hover {
-  color: var(--wine-destaque);
-  padding-left: 10px;
+.linksColumn a:hover {
+  color: #fff;
+  padding-left: 5px;
 }
 
-.footerLink::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 1px;
-  background: var(--wine-destaque);
-  transition: width var(--transition-normal);
-}
-
-.footerLink:hover::before {
-  width: 6px;
-}
-
-/* ===========================================
-   INFORMAÇÕES DE CONTATO
-   =========================================== */
-
-.contactInfo {
+/* Coluna Contato */
+.contactColumn {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .contactItem {
   display: flex;
-  gap: 1rem;
   align-items: flex-start;
-}
-
-.contactIcon {
-  color: var(--wine-destaque);
-  font-size: 1.2rem;
-  margin-top: 0.2rem;
-  flex-shrink: 0;
-}
-
-.contactItem div p {
-  margin: 0;
+  gap: 1rem;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.4;
 }
 
-.contactItem div p:first-child {
-  color: var(--white-principal);
-  font-weight: 500;
+.contactItem .icon {
+  color: var(--footer-accent);
+  margin-top: 3px;
 }
 
-/* ===========================================
-   SEÇÃO DE GARANTIAS
-   =========================================== */
+.contactItem strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 2px;
+}
 
-.guarantees {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* === DIVISOR === */
+.divider {
+  height: 1px;
+  background-color: var(--footer-border);
+  width: 100%;
+  margin: 2rem 0;
+}
+
+/* === GARANTIAS (Ícones) === */
+.guaranteesRow {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 2rem;
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-large);
-  backdrop-filter: blur(10px);
+  padding: 1rem 0;
 }
 
-.guarantee {
+.guaranteeItem {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  text-align: left;
+  gap: 0.8rem;
+  color: #fff;
+  font-size: 0.9rem;
 }
 
-.guaranteeIcon {
-  color: var(--dourado-sutil);
-  font-size: 2rem;
-  flex-shrink: 0;
+.guaranteeItem svg {
+  color: var(--footer-accent);
+  font-size: 1.4rem;
 }
 
-.guarantee h5 {
-  font-size: 1rem;
-  color: var(--white-principal);
-  margin: 0 0 0.3rem 0;
-  font-weight: 600;
-}
-
-.guarantee p {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-/* ===========================================
-   RODAPÉ FINAL
-   =========================================== */
-
-.footerBottom {
+/* === RODAPÉ INFERIOR === */
+.bottomRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.copyright {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.copyright p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.heartIcon {
-  color: var(--wine-destaque);
+  flex-wrap: wrap;
+  gap: 1rem;
   font-size: 0.8rem;
-  margin: 0 0.2rem;
+}
+
+.madeWith svg {
+  color: #d32f2f;
+  margin: 0 3px;
+  vertical-align: middle;
 }
 
 .paymentMethods {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  gap: 0.5rem;
 }
 
-.paymentIcons {
-  display: flex;
-  gap: 0.8rem;
+.paymentTag {
+  border: 1px solid var(--footer-border);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  color: #fff;
+  text-transform: uppercase;
 }
 
-.paymentMethod {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.4rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  color: var(--white-principal);
-  font-weight: 500;
-}
-
-/* ===========================================
-   RESPONSIVIDADE
-   =========================================== */
-
-@media (max-width: 1200px) {
-  .footerMain {
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
-    gap: 2rem;
-  }
-  
-  .guarantees {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 968px) {
-  .footerMain {
+/* === RESPONSIVIDADE === */
+@media (max-width: 1024px) {
+  .topGrid {
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-  
-  .guarantees {
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  
-  .footerBottom {
-    flex-direction: column;
-    gap: 1.5rem;
-    text-align: center;
+    gap: 3rem;
   }
 }
 
 @media (max-width: 768px) {
-  .footer {
-    padding: 3rem 0 1.5rem;
-  }
-  
-  .container {
-    padding: 0 1rem;
-  }
-  
-  .footerMain {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-  }
-  
-  .guarantees {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1.5rem;
-  }
-  
-  .guarantee {
-    justify-content: center;
+  .newsletterRow {
+    flex-direction: column;
     text-align: center;
   }
   
-  .brandName {
-    font-size: 1.6rem;
+  .newsletterRow span {
+    font-size: 1.1rem;
   }
-  
-  .socialLinks {
+
+  .topGrid {
+    grid-template-columns: 1fr; /* Coluna única no mobile */
+    gap: 2.5rem;
+    text-align: center;
+  }
+
+  .brandColumn {
+    align-items: center;
+  }
+
+  .contactItem {
     justify-content: center;
   }
+
+  .guaranteesRow {
+    justify-content: center;
+    gap: 1.5rem;
+  }
   
-  .paymentMethods {
+  .guaranteeItem {
+    width: 45%; /* 2 por linha */
+    justify-content: center;
     flex-direction: column;
-    gap: 0.8rem;
+    text-align: center;
+  }
+
+  .bottomRow {
+    flex-direction: column;
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
-  .footerMain {
-    gap: 1.5rem;
-  }
-  
-  .guarantees {
-    padding: 1rem;
-  }
-  
-  .guarantee {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .guaranteeIcon {
-    font-size: 1.5rem;
-  }
-  
-  .socialLink {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+  .guaranteeItem {
+    width: 100%; /* 1 por linha */
   }
 }

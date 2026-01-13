@@ -25,6 +25,13 @@ const ChevronDownIcon = () => (
 const ChevronRightIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6" /></svg>
 );
+// Ícone de Usuário para o Mobile
+const UserIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
 
 // --- TOP BAR ---
 const TopBar = () => {
@@ -39,7 +46,7 @@ const TopBar = () => {
   );
 };
 
-// --- SEARCH OVERLAY (CORRIGIDO: IMAGENS) ---
+// --- SEARCH OVERLAY ---
 const SearchOverlay = ({ isOpen, onClose }) => {
   const { products } = useProducts();
   const { getActiveHeaderCategories } = useCMS();
@@ -97,9 +104,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
         <div className={styles.searchResults}>
           <div className={styles.productGrid}>
             {suggestions.products.map(product => {
-              // Correção de Imagem para a Busca
               const imgSource = product.image || (product.images && product.images[0]) || '/placeholder.jpg';
-              
               return (
                 <div key={product.id} className={styles.productCard} onClick={() => { navigate(`/product/${product.id}`); onClose(); }}>
                   <div className={styles.productImage}>
@@ -123,7 +128,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
   );
 };
 
-// --- CART DRAWER (MANTIDO CORRIGIDO) ---
+// --- CART DRAWER ---
 const CartDrawer = ({ isOpen, onClose }) => {
   const context = useCart();
   const { isLoggedIn } = useAuth();
@@ -212,6 +217,7 @@ const MainHeader = () => {
   const { user, isLoggedIn, logout } = useAuth();
   const { getActiveHeaderCategories } = useCMS();
   const navigate = useNavigate();
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -237,6 +243,8 @@ const MainHeader = () => {
     <>
       <div className={styles.mainHeader}>
         <div className={styles.headerContainer}>
+          
+          {/* ESQUERDA: Controles Mobile + Nav Desktop */}
           <div className={styles.leftSection}>
             <div className={styles.mobileControls}>
               <button className={styles.iconButton} onClick={() => setMobileMenuOpen(true)}><MenuIcon /></button>
@@ -248,15 +256,22 @@ const MainHeader = () => {
               ))}
             </nav>
           </div>
+
+          {/* CENTRO: Logo */}
           <div className={styles.centerSection}>
             <Link to="/" className={styles.logo}>Fina Estampa.</Link>
           </div>
+
+          {/* DIREITA: Ícones */}
           <div className={styles.rightSection}>
             <button className={`${styles.iconButton} ${styles.desktopOnly}`} onClick={() => setSearchOpen(true)}><SearchIcon /></button>
+            
             <button className={styles.iconButton} onClick={() => setCartOpen(true)}>
               <BagIcon />
               {badgeCount > 0 && <span className={styles.cartBadge}>{badgeCount}</span>}
             </button>
+
+            {/* Container do Usuário (SÓ DESKTOP) */}
             <div className={styles.userContainer} ref={dropdownRef}>
               {isLoggedIn() ? (
                 <div className={styles.loggedInWrapper}>
@@ -278,20 +293,54 @@ const MainHeader = () => {
           </div>
         </div>
       </div>
+
       <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* --- MOBILE DRAWER (Menu Lateral) --- */}
       <div className={`${styles.mobileDrawer} ${mobileMenuOpen ? styles.open : ''}`}>
         <div className={styles.drawerHeader}>
           <button className={styles.closeDrawerButton} onClick={() => setMobileMenuOpen(false)}><CloseIcon /></button>
         </div>
+        
         <nav className={styles.drawerNav}>
-          {categories.map((cat) => (
-            <Link key={cat.id} to={`/catalog?category=${cat.slug}`} className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>{cat.name} <ChevronRightIcon /></Link>
-          ))}
+          {/* Links das Categorias */}
+          <div className={styles.drawerLinksContainer}>
+            {categories.map((cat) => (
+              <Link key={cat.id} to={`/catalog?category=${cat.slug}`} className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>
+                {cat.name} <ChevronRightIcon />
+              </Link>
+            ))}
+          </div>
+          
           <div className={styles.drawerDivider}></div>
-          {!isLoggedIn() && <Link to="/login" className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>Login / Cadastrar</Link>}
+          
+          {/* SEÇÃO DE USUÁRIO (MOBILE) - NO FINAL */}
+          <div className={styles.mobileUserSection}>
+            {isLoggedIn() ? (
+              <>
+                <div className={styles.mobileUserHeader}>
+                  <span className={styles.mobileUserName}>Olá, {user?.name?.split(' ')[0]}</span>
+                </div>
+                <Link to="/dashboard" className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>
+                  Minha Conta
+                </Link>
+                <button className={`${styles.drawerLink} ${styles.mobileLogout}`} onClick={() => { logout(); setMobileMenuOpen(false); }}>
+                  Sair da conta
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>
+                <div className={styles.mobileLoginRow}>
+                  <UserIcon />
+                  <span>Entrar / Cadastrar</span>
+                </div>
+              </Link>
+            )}
+          </div>
         </nav>
       </div>
+      
       {mobileMenuOpen && <div className={styles.backdrop} onClick={() => setMobileMenuOpen(false)} />}
     </>
   );

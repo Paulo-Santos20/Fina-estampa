@@ -1,372 +1,256 @@
-/* Importar variáveis CSS globais */
-@import '../../../styles/variables.css';
+/* Cores inspiradas em sanaskinstudio.com */
+:root {
+  --sana-brown-dark: #3E2B26;
+  --sana-brown-warm: #8C5E4A; /* Cor de destaque/botão */
+  --sana-cream-bg: #F9F6F0;
+  --sana-text-light: #FAF7F2;
+  --border-radius-soft: 16px;
+}
 
-/* ===========================================
-   SEÇÃO DE CATEGORIAS
-   =========================================== */
-
-.categoriesSection {
-  padding: 5rem 0;
-  background: var(--white-principal);
+.section {
+  padding: 4rem 0;
+  background-color: var(--sana-cream-bg); /* Fundo creme suave */
 }
 
 .container {
-  width: 100%;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* ===========================================
-   HEADER DA SEÇÃO
-   =========================================== */
-
-.sectionHeader {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.sectionTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  color: var(--wine-destaque);
-  margin-bottom: 1rem;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.sectionSubtitle {
-  font-size: 1.2rem;
-  color: var(--cinza-medio);
-  line-height: 1.6;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* ===========================================
-   GRID DE CATEGORIAS
-   =========================================== */
-
-.categoriesGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-
-/* ===========================================
-   CARDS DAS CATEGORIAS
-   =========================================== */
-
-.categoryCard {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  border-radius: var(--radius-large);
-  overflow: hidden;
-  box-shadow: var(--shadow-light);
-  transition: all var(--transition-normal);
-  position: relative;
-  height: 300px;
-}
-
-.categoryCard:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-heavy);
-}
-
-.categoryImageWrapper {
-  position: relative;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Espaço entre o grid de cima e o banner de baixo */
 }
 
-.categoryImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--transition-slow);
-}
-
-.categoryCard:hover .categoryImage {
-  transform: scale(1.1);
-}
-
-/* ===========================================
-   OVERLAY E CONTEÚDO
-   =========================================== */
-
-.categoryOverlay {
+/* Imagem Base Comum */
+.imageWrapper, .largeImageWrapper {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.4) 0%,
-    rgba(114, 47, 55, 0.6) 100%
-  );
-  display: flex;
-  align-items: flex-end;
-  padding: 2rem;
-  transition: all var(--transition-normal);
-}
-
-.categoryCard:hover .categoryOverlay {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(114, 47, 55, 0.8) 100%
-  );
-}
-
-.categoryContent {
   width: 100%;
-  color: var(--white-principal);
+  height: 100%;
+  z-index: 0;
 }
 
-.categoryName {
-  font-family: 'Playfair Display', serif;
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+  /* Filtro sutil para aquecer as imagens e uniformizar o tom */
+  filter: sepia(10%) contrast(95%) brightness(95%);
+}
+
+/* =========================================
+   GRID SUPERIOR (3 Banners Pequenos)
+========================================= */
+.topGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.smallBannerCard {
+  position: relative;
+  height: 450px; /* Altura fixa para uniformidade */
+  border-radius: var(--border-radius-soft);
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(62, 43, 38, 0.05);
+}
+
+.overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  /* Gradiente suave para garantir leitura do texto branco */
+  background: linear-gradient(to top, rgba(62, 43, 38, 0.5) 0%, rgba(0,0,0,0) 50%);
+  z-index: 1;
+  transition: background 0.3s;
+}
+
+.smallBannerContent {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+  z-index: 2;
+  color: var(--sana-text-light);
+}
+
+.smallBannerTitle {
+  font-family: 'Playfair Display', serif; /* Use uma fonte serifada se tiver disponível */
   font-size: 1.8rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.2;
-}
-
-.categoryDescription {
-  font-size: 1rem;
-  margin: 0 0 1.5rem 0;
-  opacity: 0.9;
-  line-height: 1.4;
-}
-
-.categoryFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.itemCount {
-  font-size: 0.9rem;
-  opacity: 0.8;
   font-weight: 500;
+  margin: 0 0 15px 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.arrowIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+/* Botão estilo "Sana Skin" - Sólido, tom terroso */
+.smallBannerButton {
+  display: inline-block;
+  padding: 10px 24px;
+  background-color: var(--sana-brown-warm);
+  color: var(--sana-text-light);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px; /* Botões mais quadrados no site de referência */
+  transition: background-color 0.3s ease;
+}
+
+/* Hover Effects Small Banner */
+.smallBannerCard:hover .bannerImage {
+  transform: scale(1.05);
+}
+
+.smallBannerCard:hover .overlay {
+  background: linear-gradient(to top, rgba(62, 43, 38, 0.7) 0%, rgba(0,0,0,0) 60%);
+}
+
+.smallBannerCard:hover .smallBannerButton {
+  background-color: var(--sana-brown-dark);
+}
+
+/* =========================================
+   BANNER INFERIOR (Grande)
+========================================= */
+.bottomWrapper {
+  width: 100%;
+}
+
+.largeBannerCard {
+  position: relative;
+  height: 600px; /* Mais alto que os outros */
+  border-radius: var(--border-radius-soft);
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Centraliza conteúdo verticalmente */
+  justify-content: center; /* Centraliza conteúdo horizontalmente */
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(62, 43, 38, 0.08);
+}
+
+.largeOverlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  /* Overlay mais escuro e uniforme para o banner grande */
+  background: rgba(62, 43, 38, 0.25);
+  z-index: 1;
+  transition: background 0.3s;
+}
+
+.largeBannerContent {
+  position: relative;
+  z-index: 2;
+  color: var(--sana-text-light);
+  max-width: 600px;
+  padding: 20px;
+}
+
+.largeSubtitle {
+  display: block;
   font-size: 1rem;
-  transition: all var(--transition-normal);
-  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  opacity: 0.9;
+  font-weight: 600;
 }
 
-.categoryCard:hover .arrowIcon {
-  background: var(--dourado-sutil);
-  color: var(--preto-secundario);
-  transform: translateX(5px);
+.largeTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 500;
+  margin: 0 0 20px 0;
+  line-height: 1.1;
 }
 
-/* ===========================================
+.largeDescription {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+.largeButton {
+  display: inline-block;
+  padding: 14px 32px;
+  background-color: var(--sana-brown-warm);
+  color: var(--sana-text-light);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Hover Effects Large Banner */
+.largeBannerCard:hover .bannerImage {
+  transform: scale(1.04);
+}
+
+.largeBannerCard:hover .largeOverlay {
+  background: rgba(62, 43, 38, 0.35);
+}
+
+.largeBannerCard:hover .largeButton {
+  background-color: var(--sana-brown-dark);
+  transform: translateY(-2px);
+}
+
+/* =========================================
    RESPONSIVIDADE
-   =========================================== */
-
-@media (max-width: 1200px) {
-  .categoriesGrid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+========================================= */
+@media (max-width: 1024px) {
+  .topGrid {
+    gap: 15px;
   }
-  
-  .categoryCard {
-    height: 280px;
+  .smallBannerCard {
+    height: 380px;
   }
-  
-  .sectionTitle {
-    font-size: 2.5rem;
-  }
-}
-
-@media (max-width: 968px) {
-  .categoriesGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  
-  .categoryCard {
-    height: 250px;
-  }
-  
-  .categoryOverlay {
-    padding: 1.5rem;
-  }
-  
-  .categoryName {
+  .smallBannerTitle {
     font-size: 1.5rem;
   }
-  
-  .sectionTitle {
-    font-size: 2.2rem;
+  .largeBannerCard {
+    height: 500px;
+  }
+  .largeTitle {
+    font-size: 2.8rem;
   }
 }
 
 @media (max-width: 768px) {
-  .categoriesSection {
-    padding: 3rem 0;
-  }
-  
-  .container {
-    padding: 0 1rem;
-  }
-  
-  .sectionHeader {
-    margin-bottom: 3rem;
-  }
-  
-  .sectionTitle {
-    font-size: 2rem;
-  }
-  
-  .sectionSubtitle {
-    font-size: 1rem;
-  }
-  
-  .categoriesGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .categoryCard {
-    height: 220px;
-  }
-  
-  .categoryOverlay {
-    padding: 1.2rem;
-  }
-  
-  .categoryName {
-    font-size: 1.3rem;
-  }
-  
-  .categoryDescription {
-    font-size: 0.9rem;
-  }
-  
-  .arrowIcon {
-    width: 35px;
-    height: 35px;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .categoriesSection {
+  .section {
     padding: 2rem 0;
   }
   
-  .sectionTitle {
-    font-size: 1.6rem;
+  /* Transforma o grid em uma coluna única no mobile */
+  .topGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
-  
-  .categoryCard {
-    height: 200px;
+
+  .smallBannerCard {
+    height: 300px; /* Menor altura no mobile */
   }
-  
-  .categoryOverlay {
-    padding: 1rem;
+
+  .largeBannerCard {
+    height: 450px;
   }
-  
-  .categoryName {
-    font-size: 1.2rem;
+
+  .largeBannerContent {
+    padding: 20px;
   }
-  
-  .categoryDescription {
-    font-size: 0.8rem;
-    margin-bottom: 1rem;
+
+  .largeTitle {
+    font-size: 2.2rem;
   }
-  
-  .categoryFooter {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+
+  .largeDescription {
+    font-size: 1rem;
   }
-  
-  .arrowIcon {
-    align-self: flex-end;
-    width: 30px;
-    height: 30px;
-    font-size: 0.8rem;
-  }
-}
-
-/* ===========================================
-   ANIMAÇÕES ESPECIAIS
-   =========================================== */
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.categoryCard {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.categoryCard:nth-child(1) { animation-delay: 0.1s; }
-.categoryCard:nth-child(2) { animation-delay: 0.2s; }
-.categoryCard:nth-child(3) { animation-delay: 0.3s; }
-.categoryCard:nth-child(4) { animation-delay: 0.4s; }
-.categoryCard:nth-child(5) { animation-delay: 0.5s; }
-.categoryCard:nth-child(6) { animation-delay: 0.6s; }
-
-/* ===========================================
-   HOVER EFFECTS ESPECIAIS
-   =========================================== */
-
-.categoryCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 70%
-  );
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.categoryCard:hover::before {
-  transform: translateX(100%);
-}
-
-.categoryOverlay {
-  z-index: 2;
-}
-
-/* ===========================================
-   EFEITO DE BRILHO
-   =========================================== */
-
-.categoryCard:hover .categoryName {
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.categoryCard:hover .arrowIcon {
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }

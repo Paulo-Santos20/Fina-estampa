@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { FaTag, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, FaArrowUp, FaArrowDown, FaSave, FaTimes } from 'react-icons/fa';
+import { 
+  FaTag, FaPlus, FaEdit, FaTrash, FaEye, 
+  FaEyeSlash, FaArrowUp, FaArrowDown, FaSave, 
+  FaTimes, FaGripVertical
+} from 'react-icons/fa';
 import { useCategories } from '../../../hooks/useCategories';
+import { useToast } from '../../../components/ui/Toast'; // Supondo que exista, opcional
 import styles from './CategoriesPage.module.css';
 
 const CategoriesPage = () => {
@@ -9,7 +14,7 @@ const CategoriesPage = () => {
     addCategory, 
     updateCategory, 
     deleteCategory, 
-    toggleCategoryHeader,
+    toggleCategoryHeader, // Função para alternar visualização no header
     updateCategoryOrder 
   } = useCategories();
 
@@ -22,7 +27,30 @@ const CategoriesPage = () => {
     isActive: true
   });
 
+  // Garante que a lista esteja sempre ordenada visualmente
   const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
+
+  // --- LÓGICA DE REORDENAÇÃO CORRIGIDA ---
+  const moveCategory = (index, direction) => {
+    // index: posição atual no array visual (sortedCategories)
+    // direction: -1 (subir) ou 1 (descer)
+    
+    const newIndex = index + direction;
+
+    // Proteção para não sair dos limites do array
+    if (newIndex < 0 || newIndex >= sortedCategories.length) return;
+
+    const currentItem = sortedCategories[index];
+    const swapItem = sortedCategories[newIndex];
+
+    // Troca as ordens
+    const newOrderCurrent = swapItem.order;
+    const newOrderSwap = currentItem.order;
+
+    // Atualiza ambos (chamando a função do hook)
+    updateCategoryOrder(currentItem.id, newOrderCurrent);
+    updateCategoryOrder(swapItem.id, newOrderSwap);
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,17 +65,16 @@ const CategoriesPage = () => {
       setEditingCategory(category);
       setFormData({
         name: category.name,
-        description: category.description,
-        showInHeader: category.showInHeader,
-        isActive: category.isActive
+        description: category.description || '',
+        showInHeader: category.showInHeader || false,
+        isActive: category.isActive !== undefined ? category.isActive : true
       });
     } else {
       setEditingCategory(null);
+      // Ao criar, define a ordem como o último + 1
+      const maxOrder = categories.length > 0 ? Math.max(...categories.map(c => c.order)) : 0;
       setFormData({
-        name: '',
-        description: '',
-        showInHeader: false,
-        isActive: true
+        name: '', description: '', showInHeader: false, isActive: true, order: maxOrder + 1
       });
     }
     setShowModal(true);
@@ -56,17 +83,10 @@ const CategoriesPage = () => {
   const closeModal = () => {
     setShowModal(false);
     setEditingCategory(null);
-    setFormData({
-      name: '',
-      description: '',
-      showInHeader: false,
-      isActive: true
-    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
     if (!formData.name.trim()) {
       alert('Por favor, preencha o nome da categoria');
       return;
@@ -75,278 +95,195 @@ const CategoriesPage = () => {
     if (editingCategory) {
       updateCategory(editingCategory.id, {
         ...formData,
-        order: editingCategory.order
+        order: editingCategory.order // Mantém a ordem original ao editar
       });
-      alert('✅ Categoria atualizada com sucesso!');
     } else {
       addCategory(formData);
-      alert('✅ Categoria adicionada com sucesso!');
     }
-
     closeModal();
   };
 
   const handleDelete = (categoryId, categoryName) => {
     if (window.confirm(`Tem certeza que deseja excluir a categoria "${categoryName}"?`)) {
       deleteCategory(categoryId);
-      alert('✅ Categoria excluída com sucesso!');
-    }
-  };
-
-  const handleToggleHeader = (categoryId) => {
-    toggleCategoryHeader(categoryId);
-  };
-
-  const handleMoveUp = (category) => {
-    if (category.order > 1) {
-      updateCategoryOrder(category.id, category.order - 1);
-      const previousCategory = categories.find(c => c.order === category.order - 1);
-      if (previousCategory) {
-        updateCategoryOrder(previousCategory.id, category.order);
-      }
-    }
-  };
-
-  const handleMoveDown = (category) => {
-    const maxOrder = Math.max(...categories.map(c => c.order));
-    if (category.order < maxOrder) {
-      updateCategoryOrder(category.id, category.order + 1);
-      const nextCategory = categories.find(c => c.order === category.order + 1);
-      if (nextCategory) {
-        updateCategoryOrder(nextCategory.id, category.order);
-      }
     }
   };
 
   return (
     <div className={styles.pageContainer}>
-      {/* Header */}
+      {/* Header da Página */}
       <div className={styles.pageHeader}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.pageTitle}>
-            <FaTag />
-            Gerenciar Categorias ({categories.length})
-          </h2>
+        <div>
+          <h2 className={styles.pageTitle}>Gerenciar Categorias</h2>
           <p className={styles.pageSubtitle}>
-            Organize as categorias dos produtos e defina quais aparecem no menu
+            {categories.length} categorias cadastradas. Use as setas para definir a ordem no menu.
           </p>
         </div>
-        
-        <div className={styles.headerActions}>
-          <button 
-            onClick={() => openModal()}
-            className={styles.primaryBtn}
-          >
-            <FaPlus /> Nova Categoria
-          </button>
-        </div>
-      </div>
-
-      {/* Dica */}
-      <div className={styles.tipCard}>
-        <h4 className={styles.tipTitle}>💡 Dica sobre Categorias no Header</h4>
-        <p className={styles.tipText}>
-          As categorias marcadas como "Mostrar no Header" aparecerão no menu principal do site. 
-          Use a ordem para definir a sequência de exibição.
-        </p>
+        <button onClick={() => openModal()} className={styles.primaryBtn}>
+          <FaPlus /> Nova Categoria
+        </button>
       </div>
 
       {/* Lista de Categorias */}
-      <div className={styles.categoriesSection}>
+      <div className={styles.categoriesList}>
         {sortedCategories.length > 0 ? (
-          <div className={styles.categoriesList}>
-            {sortedCategories.map((category) => (
-              <div key={category.id} className={styles.categoryCard}>
-                <div className={styles.categoryLeft}>
-                  <div 
-                    className={styles.orderBadge}
-                    style={{
-                      backgroundColor: category.showInHeader ? '#722F37' : '#6B7280'
-                    }}
-                  >
-                    {category.order}
-                  </div>
-                  
-                  <div className={styles.categoryInfo}>
-                    <div className={styles.categoryHeader}>
-                      <h4 className={styles.categoryName}>{category.name}</h4>
-                      
-                      <div className={styles.categoryBadges}>
-                        {category.showInHeader && (
-                          <span className={styles.headerBadge}>NO HEADER</span>
-                        )}
-                        
-                        {!category.isActive && (
-                          <span className={styles.inactiveBadge}>INATIVA</span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <p className={styles.categoryDescription}>
-                      {category.description || 'Sem descrição'}
-                    </p>
-                  </div>
+          sortedCategories.map((category, index) => (
+            <div key={category.id} className={`${styles.categoryCard} ${!category.isActive ? styles.inactiveCard : ''}`}>
+              
+              {/* Esquerda: Ordem e Infos */}
+              <div className={styles.cardMain}>
+                <div className={styles.dragHandle}>
+                  <FaGripVertical />
+                  <span className={styles.orderNumber}>{index + 1}º</span>
                 </div>
-
-                <div className={styles.categoryActions}>
-                  {/* Controles de Ordem */}
-                  <div className={styles.orderControls}>
-                    <button
-                      onClick={() => handleMoveUp(category)}
-                      disabled={category.order === 1}
-                      className={`${styles.orderBtn} ${category.order === 1 ? styles.disabled : ''}`}
-                      title="Mover para cima"
-                    >
-                      <FaArrowUp />
-                    </button>
-                    <button
-                      onClick={() => handleMoveDown(category)}
-                      disabled={category.order === Math.max(...categories.map(c => c.order))}
-                      className={`${styles.orderBtn} ${category.order === Math.max(...categories.map(c => c.order)) ? styles.disabled : ''}`}
-                      title="Mover para baixo"
-                    >
-                      <FaArrowDown />
-                    </button>
+                
+                <div className={styles.cardInfo}>
+                  <div className={styles.cardHeaderRow}>
+                    <h3 className={styles.categoryName}>{category.name}</h3>
+                    <div className={styles.badges}>
+                      {category.showInHeader && <span className={styles.badgeHeader}>No Menu</span>}
+                      {!category.isActive && <span className={styles.badgeInactive}>Oculta</span>}
+                    </div>
                   </div>
-
-                  {/* Toggle Header */}
-                  <button
-                    onClick={() => handleToggleHeader(category.id)}
-                    className={`${styles.actionBtn} ${category.showInHeader ? styles.headerActive : styles.headerInactive}`}
-                    title={category.showInHeader ? 'Remover do header' : 'Adicionar ao header'}
-                  >
-                    {category.showInHeader ? <FaEye /> : <FaEyeSlash />}
-                  </button>
-
-                  {/* Editar */}
-                  <button
-                    onClick={() => openModal(category)}
-                    className={`${styles.actionBtn} ${styles.editBtn}`}
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-
-                  {/* Excluir */}
-                  <button
-                    onClick={() => handleDelete(category.id, category.name)}
-                    className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                    title="Excluir"
-                  >
-                    <FaTrash />
-                  </button>
+                  <p className={styles.categoryDesc}>
+                    {category.description || 'Sem descrição.'}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {/* Direita: Ações */}
+              <div className={styles.cardActions}>
+                
+                {/* Botões de Ordem (Subir/Descer) */}
+                <div className={styles.orderActions}>
+                  <button 
+                    onClick={() => moveCategory(index, -1)} 
+                    disabled={index === 0}
+                    className={styles.iconBtn}
+                    title="Mover para cima"
+                  >
+                    <FaArrowUp />
+                  </button>
+                  <button 
+                    onClick={() => moveCategory(index, 1)} 
+                    disabled={index === sortedCategories.length - 1}
+                    className={styles.iconBtn}
+                    title="Mover para baixo"
+                  >
+                    <FaArrowDown />
+                  </button>
+                </div>
+
+                <div className={styles.separator} />
+
+                {/* Botão Ocultar/Mostrar no Menu (Olho) */}
+                <button 
+                  onClick={() => toggleCategoryHeader(category.id)}
+                  className={`${styles.iconBtn} ${category.showInHeader ? styles.activeEye : ''}`}
+                  title={category.showInHeader ? "Ocultar do Menu" : "Mostrar no Menu"}
+                >
+                  {category.showInHeader ? <FaEye /> : <FaEyeSlash />}
+                </button>
+                
+                <button 
+                  onClick={() => openModal(category)}
+                  className={styles.iconBtn}
+                  title="Editar"
+                >
+                  <FaEdit />
+                </button>
+                
+                <button 
+                  onClick={() => handleDelete(category.id, category.name)}
+                  className={`${styles.iconBtn} ${styles.deleteBtn}`}
+                  title="Excluir"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
+          ))
         ) : (
           <div className={styles.emptyState}>
-            <FaTag className={styles.emptyIcon} />
+            <FaTag />
             <h3>Nenhuma categoria encontrada</h3>
-            <p>Comece criando sua primeira categoria</p>
-            <button 
-              onClick={() => openModal()}
-              className={styles.primaryBtn}
-            >
-              <FaPlus /> Criar Primeira Categoria
-            </button>
+            <p>Crie categorias para organizar seus produtos.</p>
           </div>
         )}
       </div>
 
-      {/* Modal de Categoria */}
+      {/* Modal de Criação/Edição */}
       {showModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
+          <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>
-                {editingCategory ? '✏️ Editar Categoria' : '🏷️ Nova Categoria'}
-              </h3>
-              <button
-                onClick={closeModal}
-                className={styles.modalCloseBtn}
-              >
-                <FaTimes />
-              </button>
+              <h3>{editingCategory ? 'Editar Categoria' : 'Nova Categoria'}</h3>
+              <button onClick={closeModal} className={styles.closeBtn}><FaTimes /></button>
             </div>
-
-            <form onSubmit={handleSubmit} className={styles.modalForm}>
+            
+            <form onSubmit={handleSubmit} className={styles.modalBody}>
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>
-                  📝 Nome da Categoria *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                  placeholder="Ex: Vestidos"
+                <label>Nome da Categoria *</label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  value={formData.name} 
+                  onChange={handleInputChange} 
+                  placeholder="Ex: Vestidos" 
+                  required 
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>
-                  📄 Descrição
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="3"
-                  className={styles.formTextarea}
-                  placeholder="Descreva a categoria..."
+                <label>Descrição</label>
+                <textarea 
+                  name="description" 
+                  value={formData.description} 
+                  onChange={handleInputChange} 
+                  rows="3" 
+                  placeholder="Descrição interna ou para SEO..." 
                 />
               </div>
 
-              <div className={styles.formOptions}>
-                <label className={styles.optionLabel}>
-                  <input
-                    type="checkbox"
-                    name="showInHeader"
-                    checked={formData.showInHeader}
-                    onChange={handleInputChange}
-                    className={styles.checkbox}
+              {/* CORREÇÃO DOS CHECKBOXES AQUI */}
+              <div className={styles.checkboxContainer}>
+                
+                {/* Checkbox 1: Mostrar no Header */}
+                <label className={styles.checkboxLabel}>
+                  <input 
+                    type="checkbox" 
+                    name="showInHeader" 
+                    checked={formData.showInHeader} 
+                    onChange={handleInputChange} 
+                    className={styles.checkboxInput}
                   />
-                  <div className={styles.optionContent}>
-                    <span className={styles.optionTitle}>👁️ Mostrar no Header do Site</span>
-                    <span className={styles.optionDescription}>
-                      A categoria aparecerá no menu principal
-                    </span>
+                  <div className={styles.checkboxText}>
+                    <span className={styles.cbTitle}>Mostrar no Menu Principal</span>
+                    <span className={styles.cbDesc}>Aparecerá no header do site para os clientes</span>
                   </div>
                 </label>
                 
-                <label className={styles.optionLabel}>
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleInputChange}
-                    className={styles.checkbox}
+                {/* Checkbox 2: Ativa/Inativa */}
+                <label className={styles.checkboxLabel}>
+                  <input 
+                    type="checkbox" 
+                    name="isActive" 
+                    checked={formData.isActive} 
+                    onChange={handleInputChange} 
+                    className={styles.checkboxInput}
                   />
-                  <div className={styles.optionContent}>
-                    <span className={styles.optionTitle}>✅ Categoria Ativa</span>
-                    <span className={styles.optionDescription}>
-                      Categoria disponível para uso
-                    </span>
+                  <div className={styles.checkboxText}>
+                    <span className={styles.cbTitle}>Categoria Ativa</span>
+                    <span className={styles.cbDesc}>Se desmarcado, a categoria fica oculta em todo o site</span>
                   </div>
                 </label>
+
               </div>
 
-              <div className={styles.modalActions}>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className={styles.cancelBtn}
-                >
-                  ❌ Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className={styles.submitBtn}
-                >
-                  <FaSave /> {editingCategory ? 'Atualizar' : 'Salvar'}
+              <div className={styles.modalFooter}>
+                <button type="button" onClick={closeModal} className={styles.cancelBtn}>Cancelar</button>
+                <button type="submit" className={styles.saveBtn}>
+                  <FaSave /> Salvar
                 </button>
               </div>
             </form>

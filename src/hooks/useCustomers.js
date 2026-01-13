@@ -1,214 +1,148 @@
 import { useState, useEffect } from 'react';
 
-// Dados iniciais de clientes (exemplo)
+// Dados iniciais simulados
 const INITIAL_CUSTOMERS = [
   {
-    id: 'c1',
-    name: 'Maria Silva Santos',
+    id: 1,
+    name: 'Maria Silva',
     email: 'maria.silva@email.com',
-    phone: '(11) 99999-1111',
-    birthDate: '1985-03-15',
+    phone: '(11) 98765-4321',
+    birthDate: '1990-05-15',
     gender: 'Feminino',
     cpf: '123.456.789-00',
     address: {
       street: 'Rua das Flores, 123',
-      neighborhood: 'Centro',
+      neighborhood: 'Jardins',
       city: 'São Paulo',
       state: 'SP',
       zipCode: '01234-567'
     },
-    status: 'Ativo',
     totalOrders: 15,
-    totalSpent: 2450.00,
-    lastOrder: '2024-01-15',
-    createdAt: '2023-06-10'
+    totalSpent: 4500.50,
+    lastOrder: '2025-01-10T14:30:00',
+    status: 'Ativo',
+    createdAt: '2023-01-15T10:00:00'
   },
   {
-    id: 'c2',
-    name: 'Ana Carolina Oliveira',
-    email: 'ana.oliveira@email.com',
-    phone: '(11) 99999-2222',
-    birthDate: '1990-07-22',
-    gender: 'Feminino',
-    cpf: '987.654.321-00',
+    id: 2,
+    name: 'João Souza',
+    email: 'joao.souza@email.com',
+    phone: '(21) 99876-5432',
+    birthDate: '1985-10-20',
+    gender: 'Masculino',
+    cpf: '987.654.321-11',
     address: {
-      street: 'Av. Paulista, 456',
-      neighborhood: 'Bela Vista',
-      city: 'São Paulo',
-      state: 'SP',
-      zipCode: '01310-100'
+      street: 'Av. Atlântica, 500',
+      neighborhood: 'Copacabana',
+      city: 'Rio de Janeiro',
+      state: 'RJ',
+      zipCode: '22000-000'
     },
-    status: 'Ativo',
-    totalOrders: 8,
-    totalSpent: 1200.00,
-    lastOrder: '2024-01-10',
-    createdAt: '2023-08-20'
-  },
-  {
-    id: 'c3',
-    name: 'Juliana Costa',
-    email: 'juliana.costa@email.com',
-    phone: '(11) 99999-3333',
-    birthDate: '1988-12-05',
-    gender: 'Feminino',
-    address: {
-      street: 'Rua Augusta, 789',
-      neighborhood: 'Consolação',
-      city: 'São Paulo',
-      state: 'SP',
-      zipCode: '01305-000'
-    },
-    status: 'Ativo',
     totalOrders: 3,
     totalSpent: 450.00,
-    lastOrder: '2023-12-20',
-    createdAt: '2023-11-15'
+    lastOrder: '2024-12-05T09:15:00',
+    status: 'Ativo',
+    createdAt: '2024-05-20T11:30:00'
+  },
+  {
+    id: 3,
+    name: 'Ana Pereira',
+    email: 'ana.pereira@email.com',
+    phone: '(31) 91234-5678',
+    birthDate: '1995-03-08',
+    gender: 'Feminino',
+    cpf: '456.789.123-22',
+    address: {
+      street: 'Rua da Bahia, 1000',
+      neighborhood: 'Centro',
+      city: 'Belo Horizonte',
+      state: 'MG',
+      zipCode: '30000-000'
+    },
+    totalOrders: 8,
+    totalSpent: 1200.00,
+    lastOrder: '2025-01-08T16:45:00',
+    status: 'Ativo',
+    createdAt: '2023-11-10T14:20:00'
   }
 ];
 
 export const useCustomers = () => {
-  const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [customers, setCustomers] = useState(() => {
+    const saved = localStorage.getItem('sana_customers');
+    return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
+  });
+  
+  const [loading, setLoading] = useState(false);
 
-  // Carregar clientes do localStorage
   useEffect(() => {
-    try {
-      const savedCustomers = localStorage.getItem('customers');
-      if (savedCustomers) {
-        const parsedCustomers = JSON.parse(savedCustomers);
-        if (parsedCustomers.length === 0) {
-          setCustomers(INITIAL_CUSTOMERS);
-          localStorage.setItem('customers', JSON.stringify(INITIAL_CUSTOMERS));
-        } else {
-          setCustomers(parsedCustomers);
-        }
-      } else {
-        setCustomers(INITIAL_CUSTOMERS);
-        localStorage.setItem('customers', JSON.stringify(INITIAL_CUSTOMERS));
-      }
-    } catch (err) {
-      console.error('Erro ao carregar clientes:', err);
-      setCustomers(INITIAL_CUSTOMERS);
-      setError('Erro ao carregar clientes');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    localStorage.setItem('sana_customers', JSON.stringify(customers));
+  }, [customers]);
 
-  // Salvar clientes no localStorage
-  const saveCustomers = (newCustomers) => {
-    try {
-      localStorage.setItem('customers', JSON.stringify(newCustomers));
-      setCustomers(newCustomers);
-      
-      // Disparar evento para notificar outros componentes
-      window.dispatchEvent(new CustomEvent('customersUpdated', {
-        detail: { customers: newCustomers }
-      }));
-    } catch (err) {
-      console.error('Erro ao salvar clientes:', err);
-      setError('Erro ao salvar clientes');
-    }
-  };
-
-  // Adicionar cliente
   const addCustomer = (customerData) => {
+    setLoading(true);
     try {
       const newCustomer = {
-        id: `c${Date.now()}`,
         ...customerData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        id: Date.now(),
+        totalOrders: 0,
+        totalSpent: 0,
+        lastOrder: null,
+        status: 'Ativo',
+        createdAt: new Date().toISOString()
       };
-
-      const updatedCustomers = [...customers, newCustomer];
-      saveCustomers(updatedCustomers);
+      setCustomers(prev => [newCustomer, ...prev]);
+      setLoading(false);
       return newCustomer;
-    } catch (err) {
-      console.error('Erro ao adicionar cliente:', err);
-      setError('Erro ao adicionar cliente');
+    } catch (error) {
+      setLoading(false);
       return null;
     }
   };
 
-  // Atualizar cliente
-  const updateCustomer = (customerId, updateData) => {
+  const updateCustomer = (id, updatedData) => {
     try {
-      const updatedCustomers = customers.map(customer => {
-        if (customer.id === customerId) {
-          return {
-            ...customer,
-            ...updateData,
-            updatedAt: new Date().toISOString()
-          };
-        }
-        return customer;
-      });
-
-      saveCustomers(updatedCustomers);
+      setCustomers(prev => prev.map(c => c.id === id ? { ...c, ...updatedData } : c));
       return true;
-    } catch (err) {
-      console.error('Erro ao atualizar cliente:', err);
-      setError('Erro ao atualizar cliente');
+    } catch (error) {
       return false;
     }
   };
 
-  // Excluir cliente
-  const deleteCustomer = (customerId) => {
+  const deleteCustomer = (id) => {
     try {
-      const updatedCustomers = customers.filter(customer => customer.id !== customerId);
-      saveCustomers(updatedCustomers);
+      setCustomers(prev => prev.filter(c => c.id !== id));
       return true;
-    } catch (err) {
-      console.error('Erro ao excluir cliente:', err);
-      setError('Erro ao excluir cliente');
+    } catch (error) {
       return false;
     }
   };
 
-  // Buscar clientes
   const searchCustomers = (query) => {
-    if (!query || !query.trim()) return customers;
-    
-    const searchTerm = query.toLowerCase().trim();
-    return customers.filter(customer =>
-      customer.name.toLowerCase().includes(searchTerm) ||
-      customer.email.toLowerCase().includes(searchTerm) ||
-      customer.phone.includes(searchTerm)
+    if (!query) return customers;
+    const lowerQuery = query.toLowerCase();
+    return customers.filter(c => 
+      c.name.toLowerCase().includes(lowerQuery) || 
+      c.email.toLowerCase().includes(lowerQuery)
     );
   };
 
-  // Obter cliente por ID
-  const getCustomerById = (customerId) => {
-    return customers.find(customer => customer.id === customerId);
-  };
-
-  // Obter estatísticas dos clientes
   const getCustomerStats = () => {
     const total = customers.length;
-    const active = customers.filter(customer => customer.status === 'Ativo').length;
-    const totalRevenue = customers.reduce((sum, customer) => sum + customer.totalSpent, 0);
+    const active = customers.filter(c => c.status === 'Ativo').length;
+    const totalRevenue = customers.reduce((acc, curr) => acc + (curr.totalSpent || 0), 0);
     const averageSpent = total > 0 ? totalRevenue / total : 0;
 
-    return {
-      total,
-      active,
-      totalRevenue,
-      averageSpent
-    };
+    return { total, active, totalRevenue, averageSpent };
   };
 
   return {
     customers,
     loading,
-    error,
     addCustomer,
     updateCustomer,
     deleteCustomer,
     searchCustomers,
-    getCustomerById,
     getCustomerStats
   };
 };

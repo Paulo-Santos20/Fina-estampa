@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   FaHeart, 
   FaEye,
@@ -9,482 +9,212 @@ import {
   FaShoppingCart
 } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
-import { useCMS } from '../../../contexts/CMSContext'; // NOVO
+import { useCMS } from '../../../contexts/CMSContext';
 import styles from './ProductCarousel.module.css';
 
-// Produtos simulados (fallback)
 const SAMPLE_PRODUCTS = [
-  { 
-    id: 'p1', 
-    name: 'Blusa Social Elegante', 
-    price: 89.90, 
-    image: 'https://picsum.photos/seed/blusa1/400/480', 
-    category: 'Blusas & Camisas', 
-    rating: 4.5,
-    reviews: 124,
-    isNew: true,
-    sizes: ['PP', 'P', 'M', 'G'],
-    colors: ['Branco', 'Preto', 'Azul']
-  },
-  { 
-    id: 'p2', 
-    name: 'Vestido Festa Velvet', 
-    price: 189.90,
-    originalPrice: 219.90,
-    salePrice: 189.90,
-    isPromo: true,
-    discount: 14,
-    image: 'https://picsum.photos/seed/vestido2/400/480', 
-    category: 'Vestidos', 
-    rating: 4.8,
-    reviews: 89,
-    sizes: ['P', 'M', 'G', 'GG'],
-    colors: ['Vinho', 'Preto', 'Azul Marinho']
-  },
-  { 
-    id: 'p3', 
-    name: 'Calça Alfaiataria Slim', 
-    price: 159.90, 
-    image: 'https://picsum.photos/seed/calca3/400/480', 
-    category: 'Calças & Shorts', 
-    rating: 4.3,
-    reviews: 67,
-    sizes: ['36', '38', '40', '42'],
-    colors: ['Preto', 'Cinza', 'Marinho']
-  },
-  { 
-    id: 'p4', 
-    name: 'Saia Midi Plissada', 
-    price: 129.90, 
-    image: 'https://picsum.photos/seed/saia4/400/480', 
-    category: 'Saias & Macacões', 
-    rating: 4.6,
-    reviews: 156,
-    isNew: true,
-    sizes: ['PP', 'P', 'M', 'G'],
-    colors: ['Camel', 'Preto', 'Vinho']
-  },
-  { 
-    id: 'p5', 
-    name: 'Camisa Seda Premium', 
-    price: 219.90, 
-    image: 'https://picsum.photos/seed/camisa5/400/480', 
-    category: 'Blusas & Camisas', 
-    rating: 4.9,
-    reviews: 203,
-    sizes: ['P', 'M', 'G'],
-    colors: ['Branco', 'Nude', 'Preto']
-  },
-  { 
-    id: 'p6', 
-    name: 'Macacão Minimal Chic', 
-    price: 199.90, 
-    image: 'https://picsum.photos/seed/macacao6/400/480', 
-    category: 'Saias & Macacões', 
-    rating: 4.4,
-    reviews: 78,
-    sizes: ['P', 'M', 'G'],
-    colors: ['Preto', 'Camel', 'Branco']
-  },
-  { 
-    id: 'p7', 
-    name: 'Bolsa Courino Dourada', 
-    price: 149.90,
-    originalPrice: 169.90,
-    salePrice: 149.90,
-    isPromo: true,
-    discount: 12,
-    image: 'https://picsum.photos/seed/bolsa7/400/480', 
-    category: 'Acessórios', 
-    rating: 4.2,
-    reviews: 45,
-    colors: ['Dourado', 'Preto', 'Camel']
-  },
-  { 
-    id: 'p8', 
-    name: 'Sandália Salto Fino', 
-    price: 179.90, 
-    image: 'https://picsum.photos/seed/sandalia8/400/480', 
-    category: 'Acessórios', 
-    rating: 4.7,
-    reviews: 134,
-    sizes: ['35', '36', '37', '38', '39'],
-    colors: ['Nude', 'Preto', 'Dourado']
-  },
-  { 
-    id: 'p9', 
-    name: 'Blazer Tweed Clássico', 
-    price: 259.90, 
-    image: 'https://picsum.photos/seed/blazer9/400/480', 
-    category: 'Blusas & Camisas', 
-    rating: 4.8,
-    reviews: 92,
-    isNew: true,
-    sizes: ['P', 'M', 'G'],
-    colors: ['Tweed', 'Preto', 'Cinza']
-  },
-  { 
-    id: 'p10', 
-    name: 'Vestido Casual Summer', 
-    price: 129.90, 
-    image: 'https://picsum.photos/seed/vestido10/400/480', 
-    category: 'Vestidos', 
-    rating: 4.5,
-    reviews: 167,
-    sizes: ['PP', 'P', 'M', 'G'],
-    colors: ['Floral', 'Liso', 'Estampado']
-  },
-  { 
-    id: 'p11', 
-    name: 'Short Linho Fresh', 
-    price: 99.90, 
-    image: 'https://picsum.photos/seed/short11/400/480', 
-    category: 'Calças & Shorts', 
-    rating: 4.1,
-    reviews: 89,
-    sizes: ['PP', 'P', 'M', 'G'],
-    colors: ['Branco', 'Bege', 'Azul']
-  },
-  { 
-    id: 'p12', 
-    name: 'Colar Pérolas Delicadas', 
-    price: 79.90, 
-    image: 'https://picsum.photos/seed/colar12/400/480', 
-    category: 'Acessórios', 
-    rating: 4.6,
-    reviews: 234,
-    colors: ['Dourado', 'Prateado']
-  }
+  { id: 'p1', name: 'Blusa Social Elegante', price: 89.90, image: 'https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?w=500&q=80', category: 'Blusas', rating: 4.5, reviews: 124, sizes: ['P', 'M'], colors: ['Branco'] },
+  { id: 'p2', name: 'Vestido Festa Velvet', price: 189.90, originalPrice: 219.90, isPromo: true, discount: 14, image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80', category: 'Vestidos', rating: 4.8, reviews: 89, sizes: ['M', 'G'], colors: ['Vinho'] },
+  { id: 'p3', name: 'Calça Alfaiataria Slim', price: 159.90, image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&q=80', category: 'Calças', rating: 4.3, reviews: 67, sizes: ['38', '40'], colors: ['Preto'] },
+  { id: 'p4', name: 'Saia Midi Plissada', price: 129.90, image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&q=80', category: 'Saias', rating: 4.6, reviews: 156, isNew: true, sizes: ['P', 'M'], colors: ['Preto'] },
+  { id: 'p5', name: 'Camisa Seda Premium', price: 219.90, image: 'https://images.unsplash.com/photo-1604176354204-9268737828fa?w=500&q=80', category: 'Blusas', rating: 4.9, reviews: 203, sizes: ['P', 'M'], colors: ['Nude'] },
+  { id: 'p6', name: 'Macacão Minimal Chic', price: 199.90, image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&q=80', category: 'Macacões', rating: 4.4, reviews: 78, sizes: ['M'], colors: ['Preto'] },
 ];
 
 const ProductCarousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  // Lógica Infinita: Produtos * 3 (Buffer Esquerdo, Original, Buffer Direito)
+  const [products, setProducts] = useState([...SAMPLE_PRODUCTS, ...SAMPLE_PRODUCTS, ...SAMPLE_PRODUCTS]);
+  
+  // Começamos no meio (no primeiro item do conjunto original)
+  const [currentIndex, setCurrentIndex] = useState(SAMPLE_PRODUCTS.length);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+  const [itemsToShow, setItemsToShow] = useState(4);
+  
   const carouselRef = useRef(null);
   const autoPlayRef = useRef(null);
-  
-  const { addToCart } = useCart();
+  const context = useCart();
   const navigate = useNavigate();
-
-  // Obter configurações do CMS
   const { getCarouselSettings } = useCMS();
+
+  const addToCartFunc = context.addToCart || context.addItem;
   const carouselSettings = getCarouselSettings();
 
-  // Filtrar produtos baseado nos IDs do CMS
-  const products = SAMPLE_PRODUCTS.filter(product => 
-    carouselSettings.productIds.includes(product.id)
-  ).sort((a, b) => {
-    // Manter a ordem definida no CMS
-    const indexA = carouselSettings.productIds.indexOf(a.id);
-    const indexB = carouselSettings.productIds.indexOf(b.id);
-    return indexA - indexB;
-  });
-
-  // Auto-play functionality (usando configurações do CMS)
+  // Responsividade: define quantos itens aparecem
   useEffect(() => {
-    if (carouselSettings.autoPlay && isAutoPlaying && !isDragging && products.length > 0) {
+    const handleResize = () => {
+      if (window.innerWidth > 1024) setItemsToShow(4);
+      else if (window.innerWidth > 768) setItemsToShow(3);
+      else if (window.innerWidth > 480) setItemsToShow(2);
+      else setItemsToShow(1);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Função para mover
+  const moveSlide = useCallback((direction) => {
+    if (!isTransitioning) setIsTransitioning(true);
+    setCurrentIndex(prev => prev + direction);
+  }, [isTransitioning]);
+
+  // Efeito Infinito (Reset Mágico)
+  const handleTransitionEnd = () => {
+    const originalLength = SAMPLE_PRODUCTS.length;
+    
+    // Se foi muito para a direita (fim do buffer direito)
+    if (currentIndex >= originalLength * 2) {
+      setIsTransitioning(false); // Desliga animação
+      setCurrentIndex(originalLength); // Pula para o inicio do set original
+    } 
+    // Se foi muito para a esquerda (inicio do buffer esquerdo)
+    else if (currentIndex <= 0) {
+      setIsTransitioning(false); // Desliga animação
+      setCurrentIndex(originalLength); // Pula para o set original
+    }
+  };
+
+  // Reativar transição se ela foi desligada pelo reset
+  useEffect(() => {
+    if (!isTransitioning) {
+      // Pequeno timeout para permitir que o navegador renderize a mudança de posição "sem animação"
+      // antes de ligar a animação novamente para o próximo clique
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsTransitioning(true);
+        });
+      });
+    }
+  }, [isTransitioning]);
+
+  // Auto Play
+  useEffect(() => {
+    if (carouselSettings.autoPlay) {
       autoPlayRef.current = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
+        moveSlide(1);
       }, carouselSettings.autoPlayInterval || 4000);
     }
-
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    };
-  }, [carouselSettings.autoPlay, carouselSettings.autoPlayInterval, isAutoPlaying, isDragging, products.length]);
-
-  // Touch/Mouse events for manual scrolling
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setIsAutoPlaying(false);
-    setStartX(e.pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
-    carouselRef.current.style.cursor = 'grabbing';
-  };
-
-  const handleTouchStart = (e) => {
-    setIsDragging(true);
-    setIsAutoPlaying(false);
-    setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-    const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-    if (carouselRef.current) {
-      carouselRef.current.style.cursor = 'grab';
-    }
-    setTimeout(() => setIsAutoPlaying(true), 3000);
-  };
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 4000);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + products.length) % products.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 4000);
-  };
-
-  const formatPrice = (price) => {
-    return price.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
-  };
-
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<FaStar key={i} className={styles.starFilled} />);
-    }
-
-    if (hasHalfStar) {
-      stars.push(<FaStar key="half" className={styles.starHalf} />);
-    }
-
-    const emptyStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaStar key={`empty-${i}`} className={styles.starEmpty} />);
-    }
-
-    return stars;
-  };
+    return () => clearInterval(autoPlayRef.current);
+  }, [carouselSettings.autoPlay, moveSlide, carouselSettings.autoPlayInterval]);
 
   const handleAddToCart = (e, product) => {
     e.preventDefault();
     e.stopPropagation();
     
-    const defaultSize = product.sizes?.[0] || 'M';
-    const defaultColor = product.colors?.[0] || 'Padrão';
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      selectedSize: product.sizes?.[0] || 'UN',
+      selectedColor: product.colors?.[0] || 'Padrão',
+      quantity: 1
+    };
     
-    addToCart(product, defaultSize, defaultColor, 1);
-    
-    // Feedback visual
-    const button = e.currentTarget;
-    button.classList.add(styles.adding);
-    setTimeout(() => {
-      button.classList.remove(styles.adding);
-    }, 300);
-    
-    console.log(`${product.name} adicionado ao carrinho!`);
+    if (typeof addToCartFunc === 'function') {
+      addToCartFunc(cartItem);
+      // Feedback visual
+      const btn = e.currentTarget;
+      btn.classList.add(styles.adding);
+      setTimeout(() => btn.classList.remove(styles.adding), 300);
+    }
   };
 
-  // Função para navegar para o produto
-  const handleProductClick = (productId) => {
-    navigate(`/produto/${productId}`);
-  };
+  const formatPrice = (price) => price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  // Não renderizar se não estiver ativo ou não há produtos
-  if (!carouselSettings.active || !products || products.length === 0) {
-    return null;
-  }
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < Math.floor(rating)) stars.push(<FaStar key={i} className={styles.starFilled} />);
+      else stars.push(<FaStar key={i} className={styles.starEmpty} />);
+    }
+    return stars;
+  };
 
   return (
     <section className={styles.carouselSection}>
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{carouselSettings.title}</h2>
-          {carouselSettings.subtitle && (
-            <p className={styles.sectionSubtitle}>{carouselSettings.subtitle}</p>
-          )}
+          <h2 className={styles.sectionTitle}>{carouselSettings.title || 'Destaques'}</h2>
+          {carouselSettings.subtitle && <p className={styles.sectionSubtitle}>{carouselSettings.subtitle}</p>}
         </div>
 
         <div className={styles.carouselWrapper}>
-          {/* Botões de navegação (se habilitados) */}
           {carouselSettings.showArrows && (
             <>
-              <button 
-                className={`${styles.navButton} ${styles.prevButton}`}
-                onClick={prevSlide}
-                aria-label="Produto anterior"
-              >
+              <button className={`${styles.navButton} ${styles.prevButton}`} onClick={() => moveSlide(-1)}>
                 <FaChevronLeft />
               </button>
-
-              <button 
-                className={`${styles.navButton} ${styles.nextButton}`}
-                onClick={nextSlide}
-                aria-label="Próximo produto"
-              >
+              <button className={`${styles.navButton} ${styles.nextButton}`} onClick={() => moveSlide(1)}>
                 <FaChevronRight />
               </button>
             </>
           )}
 
-          {/* Container do carrossel */}
           <div 
             className={styles.carouselContainer}
             ref={carouselRef}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleDragEnd}
+            onTransitionEnd={handleTransitionEnd}
             style={{
-              transform: `translateX(-${currentIndex * 20}%)`,
-              transition: isDragging ? 'none' : 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              transform: `translateX(-${currentIndex * (100 / itemsToShow)}%)`,
+              transition: isTransitioning ? 'transform 0.5s ease-out' : 'none'
             }}
           >
-            {/* Renderizar produtos */}
             {products.map((product, index) => (
               <div 
-                key={product.id || index} 
+                key={`${product.id}-${index}`} 
                 className={styles.productCard}
-                onClick={() => handleProductClick(product.id)}
+                style={{ flex: `0 0 ${100 / itemsToShow}%` }} // Largura dinâmica baseada na tela
+                onClick={() => navigate(`/produto/${product.id}`)}
               >
                 <div className={styles.productCardInner}>
                   <div className={styles.productImageWrapper}>
-                    <img
-                      src={product.image}
-                      alt={product.name || 'Produto'}
-                      className={styles.productImage}
-                      draggable={false}
-                      loading="lazy"
-                      onLoad={(e) => {
-                        e.target.style.opacity = '1';
-                      }}
-                      onError={(e) => {
-                        // Fallback para emoji se a imagem falhar
-                        e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjhGOUZBIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjYwIj7wn5GXPC90ZXh0Pgo8dGV4dCB4PSIxMDAiIHk9IjE0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzcyMkYzNyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0Ij5GaW5hIEVzdGFtcGE8L3RleHQ+Cjwvc3ZnPgo=";
-                      }}
-                      style={{ opacity: 0 }}
-                    />
+                    <img src={product.image} alt={product.name} className={styles.productImage} />
                     
-                    {/* Badge de desconto para produtos em promoção */}
-                    {product.isPromo && product.discount && (
-                      <div className={styles.discountBadge}>
-                        -{product.discount}%
-                      </div>
-                    )}
-                    
-                    {/* Badge de novo produto */}
-                    {product.isNew && (
-                      <div className={styles.newBadge}>Novo</div>
-                    )}
+                    {product.isPromo && <div className={styles.discountBadge}>-{product.discount}%</div>}
+                    {product.isNew && <div className={styles.newBadge}>Novo</div>}
 
-                    {/* Ações do produto */}
+                    {/* ACTIONS - ÍCONES FORÇADOS NO CSS */}
                     <div className={styles.productActions}>
-                      <button 
-                        className={styles.actionButton} 
-                        aria-label="Adicionar aos favoritos"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log(`${product.name} adicionado aos favoritos!`);
-                        }}
-                      >
-                        <FaHeart 
-                          style={{ 
-                            fontSize: '16px',
-                            color: '#722F37',
-                            display: 'block'
-                          }} 
-                        />
+                      <button className={styles.actionButton} onClick={(e) => { e.stopPropagation(); }}>
+                        <FaHeart />
                       </button>
-                      <button 
-                        className={styles.actionButton} 
-                        aria-label="Visualização rápida"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log(`Visualização rápida: ${product.name}`);
-                        }}
-                      >
-                        <FaEye 
-                          style={{ 
-                            fontSize: '16px',
-                            color: '#722F37',
-                            display: 'block'
-                          }} 
-                        />
+                      <button className={styles.actionButton} onClick={(e) => { e.stopPropagation(); navigate(`/produto/${product.id}`); }}>
+                        <FaEye />
                       </button>
                     </div>
                   </div>
 
                   <div className={styles.productInfo}>
-                    <div className={styles.productLink}>
-                      <h3 className={styles.productName}>{product.name || 'Produto sem nome'}</h3>
-                    </div>
+                    <h3 className={styles.productName}>{product.name}</h3>
                     
                     <div className={styles.productRating}>
-                      <div className={styles.stars}>
-                        {renderStars(product.rating || 0)}
-                      </div>
-                      <span className={styles.reviewCount}>({product.reviews || 0})</span>
+                      <div className={styles.stars}>{renderStars(product.rating)}</div>
+                      <span className={styles.reviewCount}>({product.reviews})</span>
                     </div>
                     
-                    {/* Preços reformulados */}
                     <div className={styles.productPricing}>
                       {product.isPromo ? (
                         <div className={styles.promoPrice}>
-                          <span className={styles.originalPrice}>
-                            {formatPrice(product.originalPrice || 0)}
-                          </span>
+                          <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>
                           <div className={styles.currentPriceWrapper}>
-                            <span className={styles.currentPrice}>
-                              {formatPrice(product.salePrice || 0)}
-                            </span>
+                            <span className={styles.currentPrice}>{formatPrice(product.price)}</span>
                             <button 
                               className={styles.addToCartIcon}
                               onClick={(e) => handleAddToCart(e, product)}
-                              aria-label={`Adicionar ${product.name} ao carrinho`}
                             >
-                              <FaShoppingCart 
-                                style={{ 
-                                  fontSize: '20px',
-                                  color: 'white',
-                                  display: 'block'
-                                }} 
-                              />
+                              <FaShoppingCart />
                             </button>
                           </div>
                         </div>
                       ) : (
                         <div className={styles.regularPriceWrapper}>
-                          <span className={styles.regularPrice}>
-                            {formatPrice(product.price || 0)}
-                          </span>
+                          <span className={styles.regularPrice}>{formatPrice(product.price)}</span>
                           <button 
                             className={styles.addToCartIcon}
                             onClick={(e) => handleAddToCart(e, product)}
-                            aria-label={`Adicionar ${product.name} ao carrinho`}
                           >
-                            <FaShoppingCart 
-                              style={{ 
-                                fontSize: '20px',
-                                color: 'white',
-                                display: 'block'
-                              }} 
-                            />
+                            <FaShoppingCart />
                           </button>
                         </div>
                       )}
@@ -495,26 +225,6 @@ const ProductCarousel = () => {
             ))}
           </div>
         </div>
-
-        {/* Indicadores (se habilitados) */}
-        {carouselSettings.showIndicators && (
-          <div className={styles.indicators}>
-            {products.slice(0, Math.min(products.length, 8)).map((_, index) => (
-              <button
-                key={index}
-                className={`${styles.indicator} ${
-                  index === currentIndex % products.length ? styles.active : ''
-                }`}
-                onClick={() => {
-                  setCurrentIndex(index);
-                  setIsAutoPlaying(false);
-                  setTimeout(() => setIsAutoPlaying(true), 4000);
-                }}
-                aria-label={`Ir para produto ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </section>
   );

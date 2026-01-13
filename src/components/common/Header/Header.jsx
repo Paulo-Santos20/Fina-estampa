@@ -1,4 +1,3 @@
-// src/components/common/Header/Header.jsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
@@ -7,603 +6,379 @@ import { useCart } from '../../../contexts/CartContext.jsx';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import { useProducts } from '../../../hooks/useProducts.js';
 
-// Ícones SVG otimizados
+// --- ÍCONES SVG ---
 const SearchIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
 );
-
 const BagIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-    <line x1="3" y1="6" x2="21" y2="6"/>
-    <path d="M16 10a4 4 0 0 1-8 0"/>
-  </svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
 );
-
-const UserIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-
-const ChevronDownIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polyline points="6,9 12,15 18,9"/>
-  </svg>
-);
-
 const MenuIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <line x1="3" y1="6" x2="21" y2="6"/>
-    <line x1="3" y1="12" x2="21" y2="12"/>
-    <line x1="3" y1="18" x2="21" y2="18"/>
-  </svg>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
 );
-
 const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <line x1="18" y1="6" x2="6" y2="18"/>
-    <line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+);
+const ChevronDownIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
+);
+const ChevronRightIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6" /></svg>
 );
 
-const LogoutIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-    <polyline points="16,17 21,12 16,7"/>
-    <line x1="21" y1="12" x2="9" y2="12"/>
-  </svg>
-);
-
-// Hook para fechar dropdowns ao clicar fora
-const useOutsideClick = (refs, callback) => {
-  useEffect(() => {
-    const handleClick = (event) => {
-      const isOutside = refs.every(ref => 
-        ref.current && !ref.current.contains(event.target)
-      );
-      if (isOutside) callback();
-    };
-
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [refs, callback]);
-};
-
-// Componente da barra superior com anúncio (controlado pelo CMS)
+// --- TOP BAR ---
 const TopBar = () => {
   const { headerTopAnnouncements, headerSettings } = useCMS();
-
-  if (!headerSettings || !headerSettings.showTopAnnouncements || !headerTopAnnouncements || !headerTopAnnouncements[0]) {
-    return null;
-  }
-
-  const announcement = headerTopAnnouncements[0];
-
+  if (!headerSettings?.showTopAnnouncements || !headerTopAnnouncements?.[0]) return null;
   return (
     <div className={styles.topBar}>
       <div className={styles.topBarContent}>
-        <span className={styles.announcement}>
-          {announcement.text}
-        </span>
+        <span className={styles.announcement}>{headerTopAnnouncements[0].text}</span>
       </div>
     </div>
   );
 };
 
-// Componente de busca com sugestões (barra maior) - CORRIGIDO
-const SearchBar = () => {
-  const navigate = useNavigate();
+// --- SEARCH OVERLAY ---
+const SearchOverlay = ({ isOpen, onClose }) => {
   const { products } = useProducts();
   const { getActiveHeaderCategories } = useCMS();
   const [query, setQuery] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isInputFocused, setIsInputFocused] = useState(false);
-  const searchRef = useRef(null);
+  const navigate = useNavigate();
+  const inputRef = useRef(null);
+  const activeCategories = getActiveHeaderCategories() || [];
 
-  const activeCategories = getActiveHeaderCategories();
-
-  useOutsideClick([searchRef], () => {
-    setShowSuggestions(false);
-    setIsInputFocused(false);
-  });
-
-  // Filtrar sugestões baseadas na query
-  const suggestions = useMemo(() => {
-    if (!query.trim()) return { categories: [], products: [] };
-
-    const searchTerm = query.toLowerCase().trim();
-    
-    // Filtrar categorias
-    const categoryMatches = (activeCategories || [])
-      .filter(cat => cat.name.toLowerCase().includes(searchTerm))
-      .slice(0, 3);
-
-    // Filtrar produtos
-    const productMatches = (products || [])
-      .filter(product => 
-        (product.name && product.name.toLowerCase().includes(searchTerm)) ||
-        (product.title && product.title.toLowerCase().includes(searchTerm)) ||
-        (product.category && product.category.toLowerCase().includes(searchTerm))
-      )
-      .slice(0, 6);
-
-    return { categories: categoryMatches, products: productMatches };
-  }, [query, activeCategories, products]);
-
-  // Mostrar sugestões sempre que há query e input está focado
   useEffect(() => {
-    if (isInputFocused && query.trim()) {
-      setShowSuggestions(true);
-    } else if (!query.trim()) {
-      setShowSuggestions(false);
-    }
-  }, [query, isInputFocused]);
+    if (isOpen && inputRef.current) setTimeout(() => inputRef.current.focus(), 100);
+    if (!isOpen) setQuery('');
+  }, [isOpen]);
 
-  const handleSubmit = (e) => {
+  const suggestions = useMemo(() => {
+    if (!query.trim()) return { products: products.slice(0, 4), categories: [] };
+    const lowerQuery = query.toLowerCase();
+    return {
+      products: products.filter(p => p.name.toLowerCase().includes(lowerQuery)).slice(0, 5),
+      categories: activeCategories.filter(c => c.name.toLowerCase().includes(lowerQuery)).slice(0, 3)
+    };
+  }, [query, products, activeCategories]);
+
+  const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/catalog?search=${encodeURIComponent(query.trim())}`);
-      setShowSuggestions(false);
-      setIsInputFocused(false);
+      navigate(`/catalog?search=${encodeURIComponent(query)}`);
+      onClose();
     }
   };
 
-  const handleInputChange = (e) => {
-    const newQuery = e.target.value;
-    setQuery(newQuery);
-    
-    // Se há texto e input está focado, mostrar sugestões
-    if (newQuery.trim() && isInputFocused) {
-      setShowSuggestions(true);
-    } else if (!newQuery.trim()) {
-      setShowSuggestions(false);
-    }
-  };
-
-  const handleInputFocus = () => {
-    setIsInputFocused(true);
-    // Se já há texto, mostrar sugestões imediatamente
-    if (query.trim()) {
-      setShowSuggestions(true);
-    }
-  };
-
-  const handleInputBlur = (e) => {
-    // Pequeno delay para permitir cliques nas sugestões
-    setTimeout(() => {
-      // Verificar se o foco não foi para dentro do container de sugestões
-      if (searchRef.current && !searchRef.current.contains(document.activeElement)) {
-        setIsInputFocused(false);
-        setShowSuggestions(false);
-      }
-    }, 150);
-  };
-
-  const handleSuggestionClick = (type, item) => {
-    setShowSuggestions(false);
-    setIsInputFocused(false);
-    setQuery('');
-    
-    if (type === 'category') {
-      navigate(`/catalog?category=${encodeURIComponent(item.slug)}`);
-    } else if (type === 'product') {
-      navigate(`/product/${item.id}`);
-    }
-  };
-
-  const handleViewAllClick = () => {
-    navigate(`/catalog?search=${encodeURIComponent(query.trim())}`);
-    setShowSuggestions(false);
-    setIsInputFocused(false);
-  };
-
-  // Determinar se deve mostrar sugestões
-  const shouldShowSuggestions = showSuggestions && 
-    isInputFocused && 
-    query.trim() && 
-    (suggestions.categories.length > 0 || suggestions.products.length > 0);
+  if (!isOpen) return null;
 
   return (
-    <div className={styles.searchContainer} ref={searchRef}>
-      <form className={styles.searchForm} onSubmit={handleSubmit}>
-        <SearchIcon />
-        <input
-          type="search"
-          className={styles.searchInput}
-          placeholder="Buscar por vestidos, blusas, coleções..."
-          value={query}
-          onChange={handleInputChange}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          aria-label="Buscar produtos"
-          autoComplete="off"
-        />
-        <button type="submit" className={styles.searchButton}>
-          Buscar
-        </button>
-      </form>
-
-      {/* Sugestões com imagens dos produtos */}
-      {shouldShowSuggestions && (
-        <div className={styles.suggestionsPanel}>
-          {suggestions.categories.length > 0 && (
-            <div className={styles.suggestionSection}>
-              <h4 className={styles.sectionTitle}>Categorias</h4>
-              <div className={styles.categoryList}>
-                {suggestions.categories.map(category => (
-                  <button
-                    key={category.id}
-                    className={styles.categoryItem}
-                    onMouseDown={(e) => e.preventDefault()} // Previne blur do input
-                    onClick={() => handleSuggestionClick('category', category)}
-                  >
-                    <span className={styles.categoryName}>{category.name}</span>
-                  </button>
+    <div className={styles.searchOverlayBackdrop} onClick={onClose}>
+      <div className={styles.searchModal} onClick={e => e.stopPropagation()}>
+        <div className={styles.searchHeader}>
+          <div className={styles.searchHeaderTop}>
+            <SearchIcon />
+            <form onSubmit={handleSearch} className={styles.searchForm}>
+              <input ref={inputRef} type="text" className={styles.searchInput} placeholder="Buscar..." value={query} onChange={e => setQuery(e.target.value)} />
+            </form>
+            <button className={styles.closeSearchButton} onClick={onClose}><CloseIcon /></button>
+          </div>
+          {(query ? suggestions.categories : activeCategories.slice(0, 3)).length > 0 && (
+            <div className={styles.searchTags}>
+              <span className={styles.tagLabel}>{query ? 'Sugestões' : 'Populares'}</span>
+              <div className={styles.tagList}>
+                {(query ? suggestions.categories : activeCategories.slice(0, 3)).map(cat => (
+                  <button key={cat.id} className={styles.searchTag} onClick={() => { navigate(`/catalog?category=${cat.slug}`); onClose(); }}>{cat.name}</button>
                 ))}
               </div>
             </div>
           )}
-
-          {suggestions.products.length > 0 && (
-            <div className={styles.suggestionSection}>
-              <h4 className={styles.sectionTitle}>Produtos</h4>
-              <div className={styles.productGrid}>
-                {suggestions.products.map(product => (
-                  <button
-                    key={product.id}
-                    className={styles.productItem}
-                    onMouseDown={(e) => e.preventDefault()} // Previne blur do input
-                    onClick={() => handleSuggestionClick('product', product)}
-                  >
-                    <div className={styles.productImage}>
-                      <img
-                        src={product.image || '/assets/products/placeholder.jpg'}
-                        alt={product.name || product.title}
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className={styles.productInfo}>
-                      <span className={styles.productName}>
-                        {product.name || product.title}
-                      </span>
-                      {product.price && (
-                        <span className={styles.productPrice}>
-                          R$ {Number(product.price).toFixed(2).replace('.', ',')}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                ))}
+        </div>
+        <div className={styles.searchResults}>
+          <div className={styles.productGrid}>
+            {suggestions.products.map(product => (
+              <div key={product.id} className={styles.productCard} onClick={() => { navigate(`/product/${product.id}`); onClose(); }}>
+                <div className={styles.productImage}>
+                  <img src={product.image || '/placeholder.jpg'} alt={product.name} />
+                </div>
+                <div className={styles.productInfo}>
+                  <p className={styles.productName}>{product.name}</p>
+                  <p className={styles.productPrice}>R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
+                </div>
               </div>
-            </div>
-          )}
-
-          <div className={styles.suggestionFooter}>
-            <button
-              className={styles.viewAllButton}
-              onMouseDown={(e) => e.preventDefault()} // Previne blur do input
-              onClick={handleViewAllClick}
-            >
-              Ver todos os resultados para "{query}"
-            </button>
+            ))}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-// Componente da barra principal
-const MainHeader = () => {
-  const { itemCount, openDrawer } = useCart();
-  const { user, isLoggedIn, logout } = useAuth();
-  const { getLogo } = useCMS();
+// --- CART DRAWER CORRIGIDO ---
+const CartDrawer = ({ isOpen, onClose }) => {
+  const context = useCart();
+  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [logoError, setLogoError] = useState(false);
-  const accountRef = useRef(null);
 
-  const logoConfig = getLogo();
+  const { cart, incrementItem, decrementItem, removeItem, subtotal } = context;
+  const cartItems = cart || [];
 
-  useOutsideClick([accountRef], () => setShowAccountMenu(false));
-
-  const handleLogout = () => {
-    logout();
-    setShowAccountMenu(false);
-    navigate('/');
+  // Formatação de moeda
+  const formatMoney = (val) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val) || 0);
   };
 
-  const handleLoginClick = () => {
-    navigate('/login');
+  // Funções de controle
+  const handleIncrement = (e, id) => {
+    e.preventDefault(); e.stopPropagation();
+    incrementItem(id);
   };
 
-  const handleLogoError = () => {
-    setLogoError(true);
+  const handleDecrement = (e, id) => {
+    e.preventDefault(); e.stopPropagation();
+    decrementItem(id);
   };
 
-  const renderLogo = () => {
-    if (logoConfig.type === 'text' || logoError) {
-      return (
-        <span className={styles.logoText}>
-          <span className={styles.logoMain}>Fina</span>
-          <span className={styles.logoAccent}>Estampa</span>
-        </span>
-      );
-    }
-
-    return (
-      <>
-        <img
-          src={logoConfig.src}
-          alt={logoConfig.alt || 'Fina Estampa'}
-          style={{
-            width: `${logoConfig.width}px`,
-            height: `${logoConfig.height}px`,
-            objectFit: 'contain'
-          }}
-          className={styles.logoImage}
-          onError={handleLogoError}
-        />
-        {/* Fallback text logo (hidden by default) */}
-        <span className={styles.logoText} style={{ display: 'none' }}>
-          <span className={styles.logoMain}>Fina</span>
-          <span className={styles.logoAccent}>Estampa</span>
-        </span>
-      </>
-    );
+  const handleRemove = (e, id) => {
+    e.preventDefault(); e.stopPropagation();
+    removeItem(id);
   };
+
+  // Recalcular quantidade total para o badge do drawer
+  const totalCount = cartItems.reduce((acc, item) => {
+    const qty = item.quantity || item.qty || 1;
+    return acc + Number(qty);
+  }, 0);
+
+  if (!isOpen) return null;
 
   return (
-    <div className={styles.mainHeader}>
-      <div className={styles.headerContainer}>
-        {/* Menu mobile */}
-        <button
-          className={styles.mobileMenuButton}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Menu"
-        >
-          {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
-        </button>
+    <>
+      <div className={styles.backdrop} onClick={onClose} />
+      <div className={`${styles.cartDrawer} ${isOpen ? styles.open : ''}`}>
+        
+        <div className={styles.cartHeader}>
+          <button className={styles.closeDrawerButton} onClick={onClose}>
+            <ChevronRightIcon />
+          </button>
+          {totalCount > 0 && <span className={styles.cartCountText}>Sacola ({totalCount})</span>}
+        </div>
 
-        {/* Logo - DINÂMICO BASEADO NO CMS */}
-        <Link to="/" className={styles.logo}>
-          {renderLogo()}
-        </Link>
-
-        {/* Busca - MAIOR */}
-        <SearchBar />
-
-        {/* Ações do usuário */}
-        <div className={styles.userActions}>
-          {/* Conta com dropdown - CONDICIONAL */}
-          {isLoggedIn() ? (
-            // Usuário logado - mostrar dropdown com opções
-            <div className={styles.accountDropdown} ref={accountRef}>
-              <button
-                className={styles.actionButton}
-                onClick={() => setShowAccountMenu(!showAccountMenu)}
-                aria-expanded={showAccountMenu}
-              >
-                <UserIcon />
-                <span className={styles.actionText}>
-                  Olá, {(user && user.name && user.name.split(' ')[0]) || 'Usuário'}
-                </span>
-                <ChevronDownIcon />
-              </button>
-
-              {showAccountMenu && (
-                <div className={styles.dropdownMenu}>
-                  <Link 
-                    to="/dashboard" 
-                    className={styles.dropdownItem}
-                    onClick={() => setShowAccountMenu(false)}
-                  >
-                    Minha Conta
-                  </Link>
-                  <Link 
-                    to="/orders" 
-                    className={styles.dropdownItem}
-                    onClick={() => setShowAccountMenu(false)}
-                  >
-                    Meus Pedidos
-                  </Link>
-                  <Link 
-                    to="/favorites" 
-                    className={styles.dropdownItem}
-                    onClick={() => setShowAccountMenu(false)}
-                  >
-                    Favoritos
-                  </Link>
-                  <hr className={styles.dropdownDivider} />
-                  <button 
-                    onClick={handleLogout}
-                    className={`${styles.dropdownItem} ${styles.logoutItem}`}
-                  >
-                    <LogoutIcon />
-                    Sair
-                  </button>
-                </div>
+        <div className={styles.cartContent}>
+          {cartItems.length === 0 ? (
+            <div className={styles.emptyCartState}>
+              <h2 className={styles.emptyTitle}>SUA SACOLA ESTÁ VAZIA.</h2>
+              {!isLoggedIn() && (
+                <p className={styles.emptySubtitle}>
+                  Tem uma conta? <Link to="/login" onClick={onClose} className={styles.loginLink}>Entre</Link> para finalizar mais rápido.
+                </p>
               )}
+              <button className={styles.continueButton} onClick={() => { onClose(); navigate('/catalog'); }}>
+                CONTINUAR COMPRANDO
+              </button>
             </div>
           ) : (
-            // Usuário não logado - botão direto para login
-            <button
-              className={styles.actionButton}
-              onClick={handleLoginClick}
-            >
-              <UserIcon />
-              <span className={styles.actionText}>Entrar</span>
-            </button>
-          )}
+            <div className={styles.cartItemsList}>
+              {cartItems.map((item, index) => {
+                // LÓGICA DE DADOS "DEFENSIVA"
+                // Tenta pegar o dado da raiz ou de .product
+                const productId = item.id || item.product?.id || index;
+                const productName = item.name || item.product?.name || item.title || 'Produto sem nome';
+                
+                // Preço e Quantidade seguros
+                const price = Number(item.price || item.product?.price || 0);
+                const qty = Number(item.quantity || item.qty || 1);
+                
+                // Imagem segura
+                const imgSource = item.image || item.product?.image || item.images?.[0] || item.product?.images?.[0];
 
-          {/* Sacola */}
-          <button
-            className={styles.cartButton}
-            onClick={openDrawer}
-            aria-label="Abrir sacola"
-          >
-            <div className={styles.cartIconWrapper}>
-              <BagIcon />
-              {itemCount > 0 && (
-                <span className={styles.cartBadge}>{itemCount}</span>
-              )}
-            </div>
-            <span className={styles.actionText}>Sacola</span>
-          </button>
-        </div>
-      </div>
+                // Total desta linha específica
+                const totalLinePrice = price * qty;
 
-      {/* Menu mobile */}
-      {mobileMenuOpen && (
-        <div className={styles.mobileMenu}>
-          <div className={styles.mobileMenuContent}>
-            <SearchBar />
-            <nav className={styles.mobileNav}>
-              <Link to="/catalog" className={styles.mobileNavLink}>
-                Todos os Produtos
-              </Link>
-              {isLoggedIn() ? (
-                <>
-                  <Link to="/dashboard" className={styles.mobileNavLink}>
-                    Minha Conta
-                  </Link>
-                  <Link to="/orders" className={styles.mobileNavLink}>
-                    Meus Pedidos
-                  </Link>
-                  <Link to="/favorites" className={styles.mobileNavLink}>
-                    Favoritos
-                  </Link>
-                  <button onClick={handleLogout} className={styles.mobileNavLink}>
-                    Sair
-                  </button>
-                </>
-              ) : (
-                <Link to="/login" className={styles.mobileNavLink}>
-                  Entrar
-                </Link>
-              )}
-            </nav>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+                return (
+                  <div key={productId} className={styles.cartItemRow}>
+                    <img 
+                      src={imgSource} 
+                      alt={productName} 
+                      className={styles.cartItemImage}
+                      onError={(e) => e.target.src = "https://via.placeholder.com/100x120?text=Foto"}
+                    />
+                    
+                    <div className={styles.cartItemInfo}>
+                      <p className={styles.cartItemName}>{productName}</p>
+                      
+                      <div className={styles.cartItemDetails}>
+                        {/* Exibe se houver tamanho/cor */}
+                        {(item.selectedSize || item.size) && <span>Tam: {item.selectedSize || item.size} </span>}
+                        
+                        {/* Preço Unitário para referência */}
+                        <div className={styles.unitPriceDisplay}>
+                          Unitário: {formatMoney(price)}
+                        </div>
+                      </div>
 
-// Componente da barra de categorias (controlado pelo CMS)
-const CategoryBar = () => {
-  const { getActiveHeaderCategories, headerSettings } = useCMS();
-  const [showMegaMenu, setShowMegaMenu] = useState(false);
-  const [activeCategoryId, setActiveCategoryId] = useState(null);
-  const megaMenuRef = useRef(null);
-
-  const activeCategories = getActiveHeaderCategories();
-
-  useOutsideClick([megaMenuRef], () => setShowMegaMenu(false));
-
-  const activeCategory = useMemo(() => {
-    if (activeCategories && activeCategories.length > 0) {
-      return activeCategories.find(cat => cat.id === activeCategoryId) || activeCategories[0];
-    }
-    return null;
-  }, [activeCategoryId, activeCategories]);
-
-  if (!activeCategories || activeCategories.length === 0) return null;
-
-  return (
-    <div className={styles.categoryBar}>
-      <div className={styles.categoryContainer}>
-        {/* Botão "Todas as categorias" */}
-        {headerSettings && headerSettings.showAllCategoriesButton && (
-          <div className={styles.megaMenuWrapper} ref={megaMenuRef}>
-            <button
-              className={styles.allCategoriesButton}
-              onClick={() => setShowMegaMenu(!showMegaMenu)}
-              aria-expanded={showMegaMenu}
-            >
-              Todas as categorias
-              <ChevronDownIcon />
-            </button>
-
-            {showMegaMenu && (
-              <div className={styles.megaMenu}>
-                <div className={styles.megaMenuContent}>
-                  <div className={styles.categoryColumn}>
-                    {activeCategories.map(category => (
-                      <button
-                        key={category.id}
-                        className={`${styles.megaCategoryItem} ${
-                          activeCategory && activeCategory.id === category.id ? styles.active : ''
-                        }`}
-                        onMouseEnter={() => setActiveCategoryId(category.id)}
-                        onClick={() => setActiveCategoryId(category.id)}
-                      >
-                        {category.name}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className={styles.subcategoryColumn}>
-                    <h4 className={styles.subcategoryTitle}>
-                      {activeCategory ? activeCategory.name : ''}
-                    </h4>
-                    <div className={styles.subcategoryGrid}>
-                      {activeCategory && activeCategory.children && activeCategory.children.length > 0 ? (
-                        activeCategory.children.map(subcategory => (
-                          <Link
-                            key={subcategory.id}
-                            to={`/catalog?category=${encodeURIComponent(subcategory.slug)}`}
-                            className={styles.subcategoryLink}
-                            onClick={() => setShowMegaMenu(false)}
+                      <div className={styles.cartItemControls}>
+                        {/* SELETOR DE QUANTIDADE */}
+                        <div className={styles.qtySelector}>
+                          <button 
+                            className={styles.qtyBtn} 
+                            onClick={(e) => handleDecrement(e, item.id)}
+                            disabled={qty <= 1}
+                            type="button"
                           >
-                            {subcategory.name}
-                          </Link>
-                        ))
-                      ) : (
-                        <span className={styles.noSubcategories}>
-                          Explore todos os produtos desta categoria
-                        </span>
-                      )}
+                            -
+                          </button>
+                          
+                          {/* Exibe a quantidade atual do item */}
+                          <span className={styles.qtyValue}>{qty}</span>
+                          
+                          <button 
+                            className={styles.qtyBtn} 
+                            onClick={(e) => handleIncrement(e, item.id)}
+                            type="button"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        {/* PREÇO TOTAL DA LINHA (Calculado agora) */}
+                        <div style={{textAlign: 'right'}}>
+                          <div className={styles.cartItemTotal}>{formatMoney(totalLinePrice)}</div>
+                          <button 
+                            className={styles.removeItemBtn} 
+                            onClick={(e) => handleRemove(e, item.id)}
+                            type="button"
+                          >
+                            Remover
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+                );
+              })}
 
-        {/* Links diretos das categorias - DINÂMICO DO CMS */}
-        <nav className={styles.categoryNav}>
-          {activeCategories.map(category => (
-            <Link
-              key={category.id}
-              to={`/catalog?category=${encodeURIComponent(category.slug)}`}
-              className={styles.categoryLink}
-            >
-              {category.name}
-            </Link>
+              <div className={styles.cartFooter}>
+                <div className={styles.cartTotalRow}>
+                  <span>Subtotal</span>
+                  <span>{formatMoney(subtotal)}</span>
+                </div>
+                <button className={styles.checkoutButton} onClick={() => { onClose(); navigate('/checkout'); }}>
+                  FINALIZAR COMPRA
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+// --- MAIN HEADER ---
+const MainHeader = () => {
+  const context = useCart();
+  const { user, isLoggedIn, logout } = useAuth();
+  const { getActiveHeaderCategories } = useCMS();
+  const navigate = useNavigate();
+  
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Calcula badge com segurança (soma quantidades)
+  const cartItems = context.cart || [];
+  const badgeCount = cartItems.reduce((acc, item) => acc + (item.quantity || item.qty || 1), 0);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const categories = getActiveHeaderCategories() || [];
+
+  return (
+    <>
+      <div className={styles.mainHeader}>
+        <div className={styles.headerContainer}>
+          <div className={styles.leftSection}>
+            <div className={styles.mobileControls}>
+              <button className={styles.iconButton} onClick={() => setMobileMenuOpen(true)}><MenuIcon /></button>
+              <button className={styles.iconButton} onClick={() => setSearchOpen(true)}><SearchIcon /></button>
+            </div>
+            <nav className={styles.desktopNav}>
+              {categories.slice(0, 6).map((cat) => (
+                <Link key={cat.id} to={`/catalog?category=${cat.slug}`} className={styles.navLink}>{cat.name.toUpperCase()}</Link>
+              ))}
+            </nav>
+          </div>
+
+          <div className={styles.centerSection}>
+            <Link to="/" className={styles.logo}>Fina Estampa.</Link>
+          </div>
+
+          <div className={styles.rightSection}>
+            <button className={`${styles.iconButton} ${styles.desktopOnly}`} onClick={() => setSearchOpen(true)}><SearchIcon /></button>
+            
+            <button className={styles.iconButton} onClick={() => setCartOpen(true)}>
+              <BagIcon />
+              {badgeCount > 0 && <span className={styles.cartBadge}>{badgeCount}</span>}
+            </button>
+
+            <div className={styles.userContainer} ref={dropdownRef}>
+              {isLoggedIn() ? (
+                <div className={styles.loggedInWrapper}>
+                  <button className={styles.userButton} onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
+                    Olá, {user?.name?.split(' ')[0]} <ChevronDownIcon />
+                  </button>
+                  {userDropdownOpen && (
+                    <div className={styles.dropdownMenu}>
+                      <Link to="/dashboard" className={styles.dropdownItem} onClick={() => setUserDropdownOpen(false)}>Minha Conta</Link>
+                      <div className={styles.dropdownDivider}></div>
+                      <button className={`${styles.dropdownItem} ${styles.logoutItem}`} onClick={() => { logout(); setUserDropdownOpen(false); }}>Sair</button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button className={styles.loginButton} onClick={() => navigate('/login')}>LOGIN</button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
+      <div className={`${styles.mobileDrawer} ${mobileMenuOpen ? styles.open : ''}`}>
+        <div className={styles.drawerHeader}>
+          <button className={styles.closeDrawerButton} onClick={() => setMobileMenuOpen(false)}><CloseIcon /></button>
+        </div>
+        <nav className={styles.drawerNav}>
+          {categories.map((cat) => (
+            <Link key={cat.id} to={`/catalog?category=${cat.slug}`} className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>{cat.name} <ChevronRightIcon /></Link>
           ))}
+          <div className={styles.drawerDivider}></div>
+          {!isLoggedIn() && <Link to="/login" className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>Login / Cadastrar</Link>}
         </nav>
       </div>
-    </div>
+      {mobileMenuOpen && <div className={styles.backdrop} onClick={() => setMobileMenuOpen(false)} />}
+    </>
   );
 };
 
-// Componente principal do Header
-const Header = () => {
-  return (
-    <header className={styles.header}>
-      <TopBar />
-      <MainHeader />
-      <CategoryBar />
-    </header>
-  );
-};
+const Header = () => (
+  <header className={styles.headerWrapper}>
+    <TopBar />
+    <MainHeader />
+  </header>
+);
 
 export default Header;

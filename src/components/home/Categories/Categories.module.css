@@ -1,7 +1,7 @@
 /* Cores inspiradas em sanaskinstudio.com */
 :root {
   --sana-brown-dark: #3E2B26;
-  --sana-brown-warm: #8C5E4A; /* Cor de destaque/botão */
+  --sana-brown-warm: #8C5E4A;
   --sana-cream-bg: #F9F6F0;
   --sana-text-light: #FAF7F2;
   --border-radius-soft: 16px;
@@ -9,7 +9,7 @@
 
 .section {
   padding: 4rem 0;
-  background-color: var(--sana-cream-bg); /* Fundo creme suave */
+  background-color: var(--sana-cream-bg);
 }
 
 .container {
@@ -19,25 +19,25 @@
   padding: 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 30px; /* Espaço entre o grid de cima e o banner de baixo */
+  gap: 30px;
 }
 
-/* Imagem Base Comum */
+/* === IMAGENS (A mágica acontece aqui) === */
+/* Wrapper posiciona a imagem absolutamente atrás do texto */
 .imageWrapper, .largeImageWrapper {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 0; /* Fica atrás do overlay e do texto */
 }
 
 .bannerImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
-  /* Filtro sutil para aquecer as imagens e uniformizar o tom */
+  object-fit: cover; /* ISSO CORRIGE A IMAGEM: Cobre a área sem distorcer */
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   filter: sepia(10%) contrast(95%) brightness(95%);
 }
 
@@ -52,9 +52,9 @@
 
 .smallBannerCard {
   position: relative;
-  height: 450px; /* Altura fixa para uniformidade */
+  height: 450px;
   border-radius: var(--border-radius-soft);
-  overflow: hidden;
+  overflow: hidden; /* Importante para o zoom da imagem não sair da borda */
   display: block;
   text-decoration: none;
   box-shadow: 0 4px 15px rgba(62, 43, 38, 0.05);
@@ -63,7 +63,6 @@
 .overlay {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  /* Gradiente suave para garantir leitura do texto branco */
   background: linear-gradient(to top, rgba(62, 43, 38, 0.5) 0%, rgba(0,0,0,0) 50%);
   z-index: 1;
   transition: background 0.3s;
@@ -76,33 +75,36 @@
   right: 30px;
   z-index: 2;
   color: var(--sana-text-light);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinha texto à esquerda */
 }
 
 .smallBannerTitle {
-  font-family: 'Playfair Display', serif; /* Use uma fonte serifada se tiver disponível */
+  font-family: 'Playfair Display', serif;
   font-size: 1.8rem;
   font-weight: 500;
   margin: 0 0 15px 0;
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  line-height: 1.2;
 }
 
-/* Botão estilo "Sana Skin" - Sólido, tom terroso */
 .smallBannerButton {
   display: inline-block;
-  padding: 10px 24px;
+  padding: 12px 24px;
   background-color: var(--sana-brown-warm);
   color: var(--sana-text-light);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-radius: 4px; /* Botões mais quadrados no site de referência */
+  border-radius: 4px;
   transition: background-color 0.3s ease;
 }
 
 /* Hover Effects Small Banner */
 .smallBannerCard:hover .bannerImage {
-  transform: scale(1.05);
+  transform: scale(1.08); /* Zoom suave na imagem */
 }
 
 .smallBannerCard:hover .overlay {
@@ -122,12 +124,12 @@
 
 .largeBannerCard {
   position: relative;
-  height: 600px; /* Mais alto que os outros */
+  height: 600px;
   border-radius: var(--border-radius-soft);
   overflow: hidden;
   display: flex;
-  align-items: center; /* Centraliza conteúdo verticalmente */
-  justify-content: center; /* Centraliza conteúdo horizontalmente */
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
   text-align: center;
   box-shadow: 0 8px 25px rgba(62, 43, 38, 0.08);
@@ -136,8 +138,7 @@
 .largeOverlay {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  /* Overlay mais escuro e uniforme para o banner grande */
-  background: rgba(62, 43, 38, 0.25);
+  background: rgba(62, 43, 38, 0.2);
   z-index: 1;
   transition: background 0.3s;
 }
@@ -146,42 +147,39 @@
   position: relative;
   z-index: 2;
   color: var(--sana-text-light);
-  max-width: 600px;
+  max-width: 700px;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .largeSubtitle {
   display: block;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   margin-bottom: 15px;
   opacity: 0.9;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .largeTitle {
   font-family: 'Playfair Display', serif;
   font-size: 3.5rem;
   font-weight: 500;
-  margin: 0 0 20px 0;
+  margin: 0 0 25px 0;
   line-height: 1.1;
-}
-
-.largeDescription {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-  opacity: 0.95;
-  line-height: 1.5;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .largeButton {
   display: inline-block;
-  padding: 14px 32px;
+  padding: 16px 36px;
   background-color: var(--sana-brown-warm);
   color: var(--sana-text-light);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   border-radius: 4px;
@@ -190,11 +188,11 @@
 
 /* Hover Effects Large Banner */
 .largeBannerCard:hover .bannerImage {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 .largeBannerCard:hover .largeOverlay {
-  background: rgba(62, 43, 38, 0.35);
+  background: rgba(62, 43, 38, 0.3);
 }
 
 .largeBannerCard:hover .largeButton {
@@ -235,7 +233,7 @@
   }
 
   .smallBannerCard {
-    height: 300px; /* Menor altura no mobile */
+    height: 350px;
   }
 
   .largeBannerCard {
@@ -248,9 +246,5 @@
 
   .largeTitle {
     font-size: 2.2rem;
-  }
-
-  .largeDescription {
-    font-size: 1rem;
   }
 }

@@ -34,32 +34,10 @@
 }
 
 /* Actions */
-.headerActions {
-  display: flex;
-  gap: 1rem;
-}
-
-.editBtn {
-  background-color: #374151;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background 0.2s;
-}
-.editBtn:hover { background-color: #1F2937; }
-
+.headerActions { display: flex; gap: 1rem; }
 .editGroup { display: flex; gap: 0.5rem; }
 
-.saveBtn {
-  background-color: #722F37;
-  color: white;
-  border: none;
+.editBtn, .saveBtn, .cancelBtn {
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   font-weight: 600;
@@ -67,21 +45,17 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  transition: all 0.2s;
+  border: none;
 }
+
+.editBtn { background-color: #374151; color: white; }
+.editBtn:hover { background-color: #1F2937; }
+
+.saveBtn { background-color: #722F37; color: white; }
 .saveBtn:hover { background-color: #5a252c; }
 
-.cancelBtn {
-  background-color: white;
-  color: #374151;
-  border: 1px solid #D1D5DB;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+.cancelBtn { background-color: white; color: #374151; border: 1px solid #D1D5DB; }
 .cancelBtn:hover { background-color: #F3F4F6; }
 
 /* Tabs */
@@ -116,13 +90,10 @@
 }
 
 /* Content Sections */
-.tabContent {
-  animation: fadeIn 0.3s ease;
-}
-
+.tabContent { animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.contentSection {
+.sectionCard {
   background: white;
   border: 1px solid #E5E7EB;
   border-radius: 12px;
@@ -131,36 +102,26 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-.sectionHeader h3 {
-  margin: 0 0 1.5rem 0;
+.cardHeader {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #F3F4F6;
+  padding-bottom: 0.5rem;
+}
+
+.cardHeader h3 {
+  margin: 0;
   font-size: 1.1rem;
   color: #374151;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border-bottom: 1px solid #F3F4F6;
-  padding-bottom: 0.5rem;
 }
 
 /* Forms */
-.formGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .formColumn { display: flex; flex-direction: column; gap: 1rem; }
-
-.formRow {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.formGroup {
-  margin-bottom: 1rem;
-  flex: 1;
-}
+.formRow { display: flex; gap: 1.5rem; margin-bottom: 1rem; }
+.formGroup { margin-bottom: 1rem; flex: 1; }
 
 .formGroup label {
   display: block;
@@ -170,33 +131,31 @@
   margin-bottom: 0.5rem;
 }
 
-.inputField, .textArea {
+.formGroup input, .formGroup textarea {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #D1D5DB;
   border-radius: 6px;
   font-size: 0.95rem;
   outline: none;
-  font-family: inherit;
-  box-sizing: border-box;
   background: #fff;
+  color: #1F2937;
 }
 
-.inputField:disabled, .textArea:disabled {
+.formGroup input:disabled, .formGroup textarea:disabled {
   background: #F9FAFB;
   color: #6B7280;
-  border-color: #E5E7EB;
 }
 
-.inputField:focus, .textArea:focus {
+.formGroup input:focus, .formGroup textarea:focus {
   border-color: #722F37;
   box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1);
 }
 
-/* Image Upload Preview */
+/* Image Preview */
 .imagePreviewBox {
   width: 100%;
-  height: 250px;
+  height: 200px;
   background: #F3F4F6;
   border-radius: 8px;
   overflow: hidden;
@@ -207,16 +166,7 @@
   border: 2px dashed #D1D5DB;
 }
 
-.previewImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.placeholderImg {
-  color: #9CA3AF;
-  font-weight: 500;
-}
+.imagePreviewBox img { width: 100%; height: 100%; object-fit: cover; }
 
 .uploadOverlay {
   position: absolute;
@@ -231,37 +181,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background 0.2s;
 }
 
-.uploadOverlay:hover { background: rgba(0,0,0,0.9); }
+/* Banners */
+.bannersHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.primaryBtn { background-color: #722F37; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
 
-/* Banners Tab */
-.bannersHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.primaryBtn {
-  background-color: #722F37;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.bannersList {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+.bannersList { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .bannerCard {
   background: white;
@@ -273,44 +199,27 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-.bannerImageWrapper {
-  width: 250px;
-  height: 140px;
+.bannerImage {
+  width: 200px;
+  height: 120px;
   background: #F3F4F6;
   position: relative;
   flex-shrink: 0;
 }
 
-.bannerImageWrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.bannerImage img { width: 100%; height: 100%; object-fit: cover; }
 
-.bannerDetails {
-  flex: 1;
-  padding: 1.5rem;
-}
-
+.bannerInfo { flex: 1; padding: 1.5rem; }
 .bannerInfo h4 { margin: 0 0 0.5rem 0; color: #1F2937; }
-.bannerInfo p { margin: 0 0 0.5rem 0; color: #4B5563; }
+.bannerInfo p { margin: 0 0 0.5rem 0; color: #4B5563; font-size: 0.9rem; }
 .bannerInfo small { color: #9CA3AF; }
 
-.bannerForm {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+.bannerForm { display: flex; flex-direction: column; gap: 0.5rem; }
 
-.bannerActions {
-  padding: 1.5rem;
-  border-left: 1px solid #E5E7EB;
-}
-
-.deleteIconBtn {
+.deleteBtn {
   background: #FEE2E2;
   color: #DC2626;
-  border: 1px solid #FECACA;
+  border: none;
   width: 36px;
   height: 36px;
   border-radius: 6px;
@@ -318,10 +227,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 1.5rem;
 }
 
-/* Settings Colors */
-.colorPickerWrapper {
+/* Color Picker */
+.colorPicker {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -331,70 +241,15 @@
   border-radius: 6px;
 }
 
-.colorInput {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-/* Brand Uploads */
-.brandUpload {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logoPreview { height: 40px; }
-.faviconPreview { width: 32px; height: 32px; }
-
-.miniUploadBtn {
-  font-size: 0.8rem;
-  color: #722F37;
-  text-decoration: underline;
-  cursor: pointer;
-}
+.colorPicker input { width: 40px; height: 40px; padding: 0; border: none; background: none; cursor: pointer; }
 
 /* Checkboxes */
-.checkboxGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
+.checkboxGroup { display: flex; flex-direction: column; gap: 0.75rem; }
+.checkboxLabel { display: flex; align-items: center; gap: 0.75rem; font-size: 0.95rem; color: #374151; cursor: pointer; }
 
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.95rem;
-  color: #374151;
-  cursor: pointer;
-}
-
-.previewContainer {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 100;
-}
-
-.previewBtn {
-  background-color: #374151;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 30px;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: transform 0.2s;
-}
-
+/* Preview Btn */
+.previewContainer { position: fixed; bottom: 2rem; right: 2rem; z-index: 100; }
+.previewBtn { background-color: #374151; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s; }
 .previewBtn:hover { transform: translateY(-3px); }
 
 /* Responsive */
@@ -403,7 +258,6 @@
   .headerActions { width: 100%; justify-content: space-between; }
   .formGrid { grid-template-columns: 1fr; }
   .bannerCard { flex-direction: column; align-items: stretch; }
-  .bannerImageWrapper { width: 100%; height: 200px; }
-  .bannerActions { border-left: none; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; }
-  .formRow { flex-direction: column; gap: 0; }
+  .bannerImage { width: 100%; height: 180px; }
+  .deleteBtn { position: absolute; top: 10px; right: 10px; margin: 0; }
 }

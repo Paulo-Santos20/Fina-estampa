@@ -111,7 +111,6 @@
 
 /* LOGIN / USER (Desktop) */
 .userContainer { position: relative; }
-
 .loginButton {
   background-color: var(--sana-dark-brown);
   color: #fff;
@@ -131,15 +130,21 @@
   background: none;
   border: none;
   color: var(--sana-text);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
+  cursor: pointer;  
+  padding: 5px; 
+  transition: opacity 0.2s ease;  
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: opacity 0.2s;
+  font-size: 13px;
+  font-weight: 500;
 }
-.userButton:hover { opacity: 0.7; transform: none; }
+
+.userButton:hover { 
+  opacity: 0.6; 
+  transform: none; 
+  background: none; 
+}
 
 /* DROPDOWN */
 .dropdownMenu {

@@ -1,32 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  FaInstagram, 
-  FaFacebook, 
-  FaWhatsapp,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaPhone,
-  FaHeart,
-  FaCreditCard,
-  FaTruck,
-  FaShieldAlt,
-  FaArrowRight
+  FaInstagram, FaFacebook, FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaPhone, 
+  FaHeart, FaCreditCard, FaTruck, FaShieldAlt, FaArrowRight,
+  FaChevronDown, FaChevronUp // Novos ícones
 } from 'react-icons/fa';
 import styles from './Footer.module.css';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  
+  // Estado para controlar quais seções estão abertas no mobile
+  const [openSection, setOpenSection] = useState('');
+
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? '' : section);
+  };
 
   return (
     <footer className={styles.footer}>
-      {/* Newsletter Miniatura (Opcional, bom para UX) */}
+      {/* Newsletter Compacta */}
       <div className={styles.miniNewsletter}>
         <div className={styles.container}>
-          <div className={styles.newsletterRow}>
-            <span>Cadastre-se para receber novidades e ofertas exclusivas</span>
+          <div className={styles.newsletterContent}>
+            <span className={styles.newsletterTitle}>GANHE 10% OFF NA PRIMEIRA COMPRA</span>
             <div className={styles.newsletterInputGroup}>
-              <input type="email" placeholder="Seu e-mail" />
+              <input type="email" placeholder="Digite seu e-mail..." />
               <button><FaArrowRight /></button>
             </div>
           </div>
@@ -38,11 +37,11 @@ const Footer = () => {
           
           <div className={styles.topGrid}>
             
-            {/* 1. Marca & Sobre */}
+            {/* 1. Marca (Sempre visível) */}
             <div className={styles.brandColumn}>
               <Link to="/" className={styles.brandLogo}>Fina Estampa.</Link>
               <p className={styles.brandText}>
-                Moda feminina com elegância e sofisticação. Há mais de 10 anos vestindo mulheres autênticas com peças atemporais.
+                Elegância e sofisticação para mulheres autênticas.
               </p>
               <div className={styles.socialRow}>
                 <a href="#" aria-label="Instagram"><FaInstagram /></a>
@@ -51,85 +50,84 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* 2. Links Institucionais */}
-            <div className={styles.linksColumn}>
-              <h4>Institucional</h4>
+            {/* 2. Institucional (Acordeão no Mobile) */}
+            <div className={`${styles.linksColumn} ${openSection === 'institucional' ? styles.open : ''}`}>
+              <h4 onClick={() => toggleSection('institucional')}>
+                Institucional
+                <span className={styles.accordionIcon}>
+                  {openSection === 'institucional' ? <FaChevronUp /> : <FaChevronDown />}
+                </span>
+              </h4>
               <ul>
                 <li><Link to="/sobre">Sobre Nós</Link></li>
-                <li><Link to="/contato">Contato</Link></li>
                 <li><Link to="/blog">Blog de Moda</Link></li>
+                <li><Link to="/lojas">Nossas Lojas</Link></li>
                 <li><Link to="/trabalhe-conosco">Trabalhe Conosco</Link></li>
               </ul>
             </div>
 
-            {/* 3. Ajuda & Suporte */}
-            <div className={styles.linksColumn}>
-              <h4>Ajuda</h4>
+            {/* 3. Ajuda (Acordeão no Mobile) */}
+            <div className={`${styles.linksColumn} ${openSection === 'ajuda' ? styles.open : ''}`}>
+              <h4 onClick={() => toggleSection('ajuda')}>
+                Ajuda & Suporte
+                <span className={styles.accordionIcon}>
+                  {openSection === 'ajuda' ? <FaChevronUp /> : <FaChevronDown />}
+                </span>
+              </h4>
               <ul>
                 <li><Link to="/trocas">Trocas e Devoluções</Link></li>
-                <li><Link to="/entregas">Prazos e Entregas</Link></li>
+                <li><Link to="/entregas">Frete e Entregas</Link></li>
                 <li><Link to="/tamanhos">Guia de Medidas</Link></li>
                 <li><Link to="/privacidade">Política de Privacidade</Link></li>
               </ul>
             </div>
 
-            {/* 4. Contato */}
+            {/* 4. Contato (Sempre visível, mas compacto) */}
             <div className={styles.contactColumn}>
-              <h4>Fale Conosco</h4>
-              <div className={styles.contactItem}>
-                <FaPhone className={styles.icon} />
-                <div>
-                  <strong>(11) 9999-9999</strong>
-                  <span>Seg-Sex: 9h às 18h</span>
+              <h4>Atendimento</h4>
+              <div className={styles.contactList}>
+                <div className={styles.contactItem}>
+                  <FaWhatsapp className={styles.icon} />
+                  <div>
+                    <strong>(11) 99999-9999</strong>
+                    <span>Seg a Sex: 9h às 18h</span>
+                  </div>
+                </div>
+                <div className={styles.contactItem}>
+                  <FaEnvelope className={styles.icon} />
+                  <span>contato@finaestampa.com</span>
                 </div>
               </div>
-              <div className={styles.contactItem}>
-                <FaEnvelope className={styles.icon} />
-                <span>contato@finaestampa.com</span>
-              </div>
-              <div className={styles.contactItem}>
-                <FaMapMarkerAlt className={styles.icon} />
-                <span>São Paulo - SP</span>
-              </div>
             </div>
 
           </div>
 
           <div className={styles.divider} />
 
-          {/* Garantias (Ícones Horizontais) */}
+          {/* Garantias (Grid 2x2 no mobile) */}
           <div className={styles.guaranteesRow}>
             <div className={styles.guaranteeItem}>
-              <FaTruck />
-              <span>Frete Grátis acima de R$299</span>
+              <FaTruck /> <span>Frete Grátis > R$299</span>
             </div>
             <div className={styles.guaranteeItem}>
-              <FaCreditCard />
-              <span>Em até 10x sem juros</span>
+              <FaCreditCard /> <span>10x sem juros</span>
             </div>
             <div className={styles.guaranteeItem}>
-              <FaShieldAlt />
-              <span>Site 100% Seguro</span>
+              <FaShieldAlt /> <span>Site Seguro</span>
             </div>
             <div className={styles.guaranteeItem}>
-              <FaHeart />
-              <span>Primeira Troca Grátis</span>
+              <FaHeart /> <span>1ª Troca Grátis</span>
             </div>
           </div>
 
           <div className={styles.divider} />
 
-          {/* Copyright & Pagamentos */}
+          {/* Copyright */}
           <div className={styles.bottomRow}>
-            <p className={styles.copyText}>
-              © {currentYear} Fina Estampa. Todos os direitos reservados. 
-              <span className={styles.madeWith}>Feito com <FaHeart /></span>
-            </p>
+            <p className={styles.copyText}>© {currentYear} Fina Estampa. CNPJ: 00.000.000/0001-00</p>
             <div className={styles.paymentMethods}>
               <span className={styles.paymentTag}>PIX</span>
-              <span className={styles.paymentTag}>VISA</span>
-              <span className={styles.paymentTag}>MASTER</span>
-              <span className={styles.paymentTag}>ELO</span>
+              <span className={styles.paymentTag}>CARD</span>
             </div>
           </div>
 

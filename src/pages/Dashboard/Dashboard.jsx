@@ -37,6 +37,10 @@ import OrdersPage from './components/OrdersPage';
 import CustomersPage from './components/CustomersPage';
 import PromotionsPage from './components/PromotionsPage';
 import AnalyticsPage from './components/AnalyticsPage';
+import CMSPage from './components/CMSPage';
+import UsersPage from './components/UsersPage';
+import SettingsPage from './components/SettingsPage';
+import ProfilePage from './components/ProfilePage';
 
 // --- COMPONENTES PLACEHOLDER (Para manter o visual enquanto não implementamos) ---
 const PlaceholderPage = ({ title, icon: Icon }) => (
@@ -72,10 +76,6 @@ const PlaceholderPage = ({ title, icon: Icon }) => (
 );
 
 // Definição das páginas usando o Placeholder
-const SettingsPage = () => <PlaceholderPage title="Configurações" icon={FaCog} />;
-const ProfilePage = () => <PlaceholderPage title="Meu Perfil" icon={FaUserCircle} />;
-const UsersPage = () => <PlaceholderPage title="Usuários do Sistema" icon={FaUserShield} />;
-const CMSPage = () => <PlaceholderPage title="Editor do Site (CMS)" icon={FaGlobe} />;
 
 // --- COMPONENTE DASHBOARD HOME (Tela Inicial) ---
 const DashboardHome = () => {

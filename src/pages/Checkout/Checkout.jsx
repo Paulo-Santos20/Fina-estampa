@@ -1,18 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../../components/common/Layout/Layout.jsx';
-import { useCart } from '../../contexts/CartContext.jsx';
-import { useAuth } from '../../contexts/AuthContext.jsx';
+import { 
+  FaUser, FaMapMarkerAlt, FaCreditCard, FaLock, 
+  FaArrowLeft, FaWhatsapp, FaTicketAlt, FaCheck, FaTimes 
+} from 'react-icons/fa';
+// Remova import Layout se estiver usando
+import { useCart } from '../../contexts/CartContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { calculateDistance, calculateShippingCost, getOriginCoords } from '../../utils/freightCalculator';
 import styles from './Checkout.module.css';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { cartItems, getCartTotal, clearCart } = useCart();
+  const { cart, subtotal, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   
-  // Estados do checkout
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearchingCep, setIsSearchingCep] = useState(false);
+
+  // Cupons
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+
+  // Frete (cost null indica que ainda não foi calculado)
+  const [shippingInfo, setShippingInfo] = useState({
+    cost: null, 
+    distance: null,
+    method: ''
+  });
+
+  const items = Array.isArray(cart) ? cart : [];
+
   const [orderData, setOrderData] = useState({
     customer: {
       name: user?.name || '',
@@ -30,565 +50,442 @@ const Checkout = () => {
       state: ''
     },
     payment: {
-      method: '',
+      method: 'pix',
       installments: 1
-    },
-    shipping: {
-      method: 'standard',
-      cost: 15.90
     }
   });
 
-  // Verificar se há itens no carrinho
-  useEffect(() => {
-    if (cartItems.length === 0) {
-      navigate('/cart');
+  // --- LÓGICA DE CEP E FRETE CORRIGIDA ---
+  const handleCepChange = async (e) => {
+    let cep = e.target.value.replace(/\D/g, '');
+    
+    // Atualiza input visual
+    updateOrderData('address', 'cep', cep);
+
+    // Reseta frete se apagar o CEP
+    if (cep.length < 8) {
+      setShippingInfo({ cost: null, distance: null, method: '' });
     }
-  }, [cartItems, navigate]);
 
-  // Verificar se está autenticado
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
+    if (cep.length === 8) {
+      setIsSearchingCep(true);
+      try {
+        const response = await fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`);
+        
+        if (!response.ok) throw new Error('CEP não encontrado');
+        
+        const data = await response.json();
+        
+        // Atualiza campos de endereço
+        setOrderData(prev => ({
+          ...prev,
+          address: {
+            ...prev.address,
+            street: data.street || '',
+            neighborhood: data.neighborhood || '',
+            city: data.city || '',
+            state: data.state || '',
+            cep: cep
+          }
+        }));
+
+        // --- CÁLCULO DE FRETE SEGURO ---
+        let finalCost = 0;
+        let finalDistance = null;
+        let methodText = '';
+
+        // Tenta calcular via coordenadas (preciso)
+        if (data.location && data.location.coordinates && data.location.coordinates.latitude) {
+          const { latitude, longitude } = data.location.coordinates;
+          const origin = getOriginCoords();
+          
+          finalDistance = calculateDistance(
+            origin.lat, origin.lng, 
+            parseFloat(latitude), parseFloat(longitude)
+          );
+          
+          // Se calculateDistance retornar número válido
+          if (finalDistance !== null && !isNaN(finalDistance)) {
+             finalCost = calculateShippingCost(finalDistance);
+             methodText = `Entrega (${finalDistance.toFixed(1)}km)`;
+          }
+        }
+
+        // Se falhou o cálculo por coordenadas (NaN ou null), usa fallback por Estado
+        if (finalDistance === null || isNaN(finalDistance) || isNaN(finalCost)) {
+          if (data.state === 'PE') {
+            finalCost = 15.00; // Fixo para Pernambuco
+            methodText = 'Entrega Local (PE)';
+          } else {
+            finalCost = 45.00; // Fixo para outros estados
+            methodText = 'Entrega Interestadual';
+          }
+          finalDistance = null; // Não exibe km se for fallback
+        }
+
+        setShippingInfo({
+          cost: finalCost,
+          distance: finalDistance,
+          method: methodText
+        });
+
+      } catch (error) {
+        console.error("Erro CEP:", error);
+        // Em caso de erro na API, permite digitar manual mas define um frete padrão
+        setShippingInfo({ cost: 25.00, distance: null, method: 'Frete Fixo' });
+      } finally {
+        setIsSearchingCep(false);
+      }
     }
-  }, [isAuthenticated, navigate]);
-
-  // Calcular totais
-  const subtotal = getCartTotal();
-  const shippingCost = subtotal >= 199.90 ? 0 : orderData.shipping.cost;
-  const discount = orderData.payment.method === 'pix' ? subtotal * 0.05 : 0;
-  const total = subtotal + shippingCost - discount;
-
-  // Atualizar dados do pedido
-  const updateOrderData = (section, data) => {
-    setOrderData(prev => ({
-      ...prev,
-      [section]: { ...prev[section], ...data }
-    }));
   };
 
-  // Validar etapa atual
-  const validateCurrentStep = () => {
-    switch (currentStep) {
-      case 1:
-        return orderData.customer.name && 
-               orderData.customer.email && 
-               orderData.customer.phone;
-      case 2:
-        return orderData.address.cep && 
-               orderData.address.street && 
-               orderData.address.number &&
-               orderData.address.city &&
-               orderData.address.state;
-      case 3:
-        return orderData.payment.method;
-      default:
-        return false;
-    }
-  };
+  // --- LÓGICA DE CUPONS ---
+  const handleApplyCoupon = () => {
+    const code = couponCode.toUpperCase().trim();
+    setCouponError('');
 
-  // Próxima etapa
-  const nextStep = () => {
-    if (validateCurrentStep() && currentStep < 4) {
-      setCurrentStep(prev => prev + 1);
-    }
-  };
+    const validCoupons = {
+      'FINA10': { type: 'percent', value: 0.10, min: 0 },
+      'BEMVINDO': { type: 'fixed', value: 20.00, min: 100 },
+      'FRETEZERO': { type: 'shipping', value: 0, min: 200 }
+    };
 
-  // Etapa anterior
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
-    }
-  };
+    const coupon = validCoupons[code];
 
-  // Gerar mensagem do WhatsApp
-  const generateWhatsAppMessage = (orderDetails) => {
-    let message = `🛍️ *NOVO PEDIDO - FINA ESTAMPA*\n\n`;
-    
-    message += `👤 *Cliente:* ${orderDetails.customer.name}\n`;
-    message += `�� *Telefone:* ${orderDetails.customer.phone}\n`;
-    message += `📧 *Email:* ${orderDetails.customer.email}\n\n`;
-    
-    message += `📍 *Endereço de Entrega:*\n`;
-    message += `${orderDetails.address.street}, ${orderDetails.address.number}`;
-    if (orderDetails.address.complement) {
-      message += `, ${orderDetails.address.complement}`;
-    }
-    message += `\n${orderDetails.address.neighborhood} - ${orderDetails.address.city}/${orderDetails.address.state}\n`;
-    message += `CEP: ${orderDetails.address.cep}\n\n`;
-    
-    message += `🛒 *PRODUTOS:*\n`;
-    orderDetails.items.forEach(item => {
-      message += `• ${item.name}`;
-      if (item.size) message += ` - Tam: ${item.size}`;
-      if (item.color) message += ` - Cor: ${item.color}`;
-      message += ` - Qtd: ${item.quantity} - R\$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}\n`;
-    });
-    
-    message += `\n💰 *RESUMO:*\n`;
-    message += `Subtotal: R\$ ${orderDetails.totals.subtotal.toFixed(2).replace('.', ',')}\n`;
-    message += `Frete: R\$ ${orderDetails.totals.shipping.toFixed(2).replace('.', ',')}\n`;
-    if (orderDetails.totals.discount > 0) {
-      message += `Desconto PIX: -R\$ ${orderDetails.totals.discount.toFixed(2).replace('.', ',')}\n`;
-    }
-    message += `*TOTAL: R\$ ${orderDetails.totals.total.toFixed(2).replace('.', ',')}*\n\n`;
-    
-    message += `💳 *Pagamento:* ${getPaymentMethodName(orderDetails.payment.method)}\n`;
-    if (orderDetails.payment.installments > 1) {
-      message += `Parcelamento: ${orderDetails.payment.installments}x de R\$ ${(orderDetails.totals.total / orderDetails.payment.installments).toFixed(2).replace('.', ',')}\n`;
-    }
-    
-    message += `\n🕐 *Data/Hora:* ${orderDetails.date}\n`;
-    message += `🔗 *Pedido #:* ${orderDetails.id}`;
-    
-    return message;
-  };
-
-  // Finalizar pedido
-  const finishOrder = async () => {
-    if (!validateCurrentStep()) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!coupon) {
+      setCouponError('Cupom inválido ou expirado.');
+      setAppliedCoupon(null);
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // Gerar dados do pedido
-      const orderDetails = {
-        id: `FE${Date.now()}`,
-        date: new Date().toLocaleString('pt-BR'),
-        customer: orderData.customer,
-        address: orderData.address,
-        items: cartItems,
-        payment: orderData.payment,
-        shipping: orderData.shipping,
-        totals: {
-          subtotal,
-          shipping: shippingCost,
-          discount,
-          total
-        }
-      };
-
-      // Gerar mensagem do WhatsApp
-      const whatsappMessage = generateWhatsAppMessage(orderDetails);
-      
-      // Abrir WhatsApp
-      const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(whatsappMessage)}`;
-      window.open(whatsappUrl, '_blank');
-
-      // Salvar pedido no localStorage
-      const savedOrders = JSON.parse(localStorage.getItem('finaEstampaOrders') || '[]');
-      savedOrders.push(orderDetails);
-      localStorage.setItem('finaEstampaOrders', JSON.stringify(savedOrders));
-
-      // Limpar carrinho
-      clearCart();
-
-      // Mostrar sucesso e redirecionar
-      alert('Pedido enviado com sucesso! Você será redirecionado para o WhatsApp.');
-      navigate('/', { replace: true });
-
-    } catch (error) {
-      console.error('Erro ao finalizar pedido:', error);
-      alert('Erro ao processar pedido. Tente novamente.');
-    } finally {
-      setIsLoading(false);
+    if (subtotal < coupon.min) {
+      setCouponError(`Válido apenas para compras acima de R$ ${coupon.min},00`);
+      setAppliedCoupon(null);
+      return;
     }
+
+    setAppliedCoupon({ code, ...coupon });
+    setCouponCode('');
   };
 
-  // Função auxiliar para nome do método de pagamento
-  const getPaymentMethodName = (method) => {
-    const methods = {
-      'pix': 'PIX (5% desconto)',
-      'credit': 'Cartão de Crédito',
-      'debit': 'Cartão de Débito',
-      'boleto': 'Boleto Bancário'
+  // --- TOTAIS ---
+  const getTotals = () => {
+    // Se cost for null, considera 0 para conta mas controlamos a exibição no render
+    let currentShipping = shippingInfo.cost !== null ? shippingInfo.cost : 0;
+    let discountAmount = 0;
+
+    // Frete Grátis por valor
+    if (subtotal >= 299.90) {
+      currentShipping = 0;
+    }
+
+    // Cupons
+    if (appliedCoupon) {
+      if (appliedCoupon.type === 'percent') {
+        discountAmount = subtotal * appliedCoupon.value;
+      } else if (appliedCoupon.type === 'fixed') {
+        discountAmount = appliedCoupon.value;
+      } else if (appliedCoupon.type === 'shipping') {
+        currentShipping = 0;
+        discountAmount = 0; 
+      }
+    }
+
+    // PIX
+    const pixDiscount = orderData.payment.method === 'pix' ? (subtotal - discountAmount) * 0.05 : 0;
+
+    return {
+      subtotal,
+      shipping: currentShipping,
+      couponDiscount: discountAmount,
+      pixDiscount,
+      total: Math.max(0, subtotal + currentShipping - discountAmount - pixDiscount)
     };
-    return methods[method] || method;
   };
 
-  if (cartItems.length === 0 || !isAuthenticated) {
-    return null;
-  }
+  const totals = getTotals();
+
+  // --- HELPERS ---
+  const updateOrderData = (section, field, value) => {
+    setOrderData(prev => ({
+      ...prev,
+      [section]: { ...prev[section], [field]: value }
+    }));
+  };
+
+  const validateStep = (step) => {
+    const { customer, address } = orderData;
+    if (step === 1) return customer.name && customer.email && customer.phone;
+    if (step === 2) return address.street && address.number && address.cep.length >= 8;
+    return true;
+  };
+
+  const nextStep = () => {
+    if (validateStep(currentStep)) setCurrentStep(prev => prev + 1);
+    else alert("Por favor, preencha os campos obrigatórios.");
+  };
+
+  const prevStep = () => setCurrentStep(prev => prev - 1);
+
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+ const handleFinishOrder = async () => {
+    setIsLoading(true);
+    
+    // Simula tempo de processamento
+    setTimeout(() => {
+      // 1. Monta a lista de produtos
+      let productsList = "";
+      items.forEach(item => {
+        const variantInfo = [];
+        if (item.size) variantInfo.push(item.size);
+        if (item.color) variantInfo.push(item.color);
+        const variantStr = variantInfo.length > 0 ? `(${variantInfo.join('/')})` : '';
+        
+        // Ex: • 2x Vestido Florido (M/Vermelho)
+        productsList += `▪️ ${item.qty}x ${item.title} ${variantStr}\n`;
+      });
+
+      // 2. Monta a mensagem final
+      const msg = 
+        `🛍️ *NOVO PEDIDO - FINA ESTAMPA*\n\n` +
+        `👤 *Cliente:* ${orderData.customer.name}\n` +
+        `📱 *Contato:* ${orderData.customer.phone}\n\n` +
+        `🛒 *RESUMO DO PEDIDO:*\n` +
+        `${productsList}\n` +
+        `📍 *Entrega:* ${orderData.address.street}, ${orderData.address.number} - ${orderData.address.neighborhood}\n` +
+        `🏙️ ${orderData.address.city}/${orderData.address.state}\n` +
+        (shippingInfo.distance ? `🚚 Distância: ${shippingInfo.distance}km\n` : '') +
+        `\n💰 *TOTAL: ${formatCurrency(totals.total)}*\n` +
+        `💳 Pagamento: ${orderData.payment.method === 'pix' ? 'PIX' : 'Cartão de Crédito'}`;
+        
+      // 3. Limpa o carrinho e redireciona
+      clearCart();
+      window.open(`https://wa.me/5581999999999?text=${encodeURIComponent(msg)}`, '_blank');
+      navigate('/');
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  if (items.length === 0) return <div>Carrinho Vazio</div>;
 
   return (
-    <Layout>
-      <div className={styles.checkoutPage}>
-        <div className={styles.container}>
-          {/* Header */}
-          <div className={styles.checkoutHeader}>
-            <h1 className={styles.pageTitle}>Finalizar Pedido</h1>
+    <div className={styles.pageWrapper}>
+      <header className={styles.simpleHeader}>
+        <div className={styles.headerContent}>
+          <span className={styles.logoText}>Fina Estampa<span className={styles.dot}>.</span></span>
+          <div className={styles.secureBadge}><FaLock /> Checkout Seguro</div>
+        </div>
+      </header>
+
+      <div className={styles.checkoutContainer}>
+        {/* Steps Header mantido igual... */}
+        <div className={styles.stepsHeader}>
+          <div className={`${styles.step} ${currentStep >= 1 ? styles.activeStep : ''}`}><span>1</span> Identificação</div>
+          <div className={`${styles.stepLine} ${currentStep >= 2 ? styles.lineActive : ''}`} />
+          <div className={`${styles.step} ${currentStep >= 2 ? styles.activeStep : ''}`}><span>2</span> Entrega</div>
+          <div className={`${styles.stepLine} ${currentStep >= 3 ? styles.lineActive : ''}`} />
+          <div className={`${styles.step} ${currentStep >= 3 ? styles.activeStep : ''}`}><span>3</span> Pagamento</div>
+        </div>
+
+        <div className={styles.contentGrid}>
+          <div className={styles.leftColumn}>
+            {/* ... Steps 1 e 3 mantidos iguais ... */}
             
-            {/* Steps */}
-            <div className={styles.checkoutSteps}>
-              <div className={`${styles.step} ${currentStep >= 1 ? styles.active : ''}`}>
-                <span className={styles.stepNumber}>1</span>
-                <span className={styles.stepLabel}>Dados Pessoais</span>
+            {/* STEP 1 */}
+            {currentStep === 1 && (
+              <div className={styles.card}>
+                <h2 className={styles.cardTitle}>Dados Pessoais</h2>
+                <div className={styles.formGrid}>
+                  <div className={styles.formGroup}>
+                    <label>Nome</label>
+                    <input type="text" value={orderData.customer.name} onChange={e => updateOrderData('customer', 'name', e.target.value)} />
+                  </div>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label>Email</label>
+                      <input type="email" value={orderData.customer.email} onChange={e => updateOrderData('customer', 'email', e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Telefone</label>
+                      <input type="tel" value={orderData.customer.phone} onChange={e => updateOrderData('customer', 'phone', e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.footerButtons}>
+                  <button className={styles.secondaryBtn} onClick={() => navigate('/cart')}>Voltar</button>
+                  <button className={styles.primaryBtn} onClick={nextStep}>Próximo</button>
+                </div>
               </div>
-              <div className={`${styles.step} ${currentStep >= 2 ? styles.active : ''}`}>
-                <span className={styles.stepNumber}>2</span>
-                <span className={styles.stepLabel}>Endereço</span>
+            )}
+
+            {/* STEP 2 - COM CEP */}
+            {currentStep === 2 && (
+              <div className={styles.card}>
+                <h2 className={styles.cardTitle}>Endereço de Entrega</h2>
+                <div className={styles.formGrid}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label>CEP {isSearchingCep && <span style={{fontSize:'0.8rem', color:'#722F37'}}>(Buscando...)</span>}</label>
+                      <input 
+                        type="text" 
+                        value={orderData.address.cep} 
+                        onChange={handleCepChange} 
+                        placeholder="00000-000"
+                        maxLength={9}
+                      />
+                    </div>
+                    <div className={styles.formGroup} style={{flex: 2}}>
+                      <label>Cidade</label>
+                      <input type="text" value={orderData.address.city} readOnly style={{backgroundColor: '#f9fafb'}} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>UF</label>
+                      <input type="text" value={orderData.address.state} readOnly style={{backgroundColor: '#f9fafb'}} />
+                    </div>
+                  </div>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup} style={{flex: 3}}>
+                      <label>Rua</label>
+                      <input type="text" value={orderData.address.street} onChange={e => updateOrderData('address', 'street', e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Número</label>
+                      <input type="text" value={orderData.address.number} onChange={e => updateOrderData('address', 'number', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Bairro</label>
+                    <input type="text" value={orderData.address.neighborhood} onChange={e => updateOrderData('address', 'neighborhood', e.target.value)} />
+                  </div>
+                </div>
+                <div className={styles.footerButtons}>
+                  <button className={styles.secondaryBtn} onClick={prevStep}>Voltar</button>
+                  <button className={styles.primaryBtn} onClick={nextStep}>Próximo</button>
+                </div>
               </div>
-              <div className={`${styles.step} ${currentStep >= 3 ? styles.active : ''}`}>
-                <span className={styles.stepNumber}>3</span>
-                <span className={styles.stepLabel}>Pagamento</span>
+            )}
+
+            {/* STEP 3 */}
+            {currentStep === 3 && (
+              <div className={styles.card}>
+                <h2 className={styles.cardTitle}>Pagamento</h2>
+                <div className={styles.paymentOptions}>
+                  <div 
+                    className={`${styles.paymentOption} ${orderData.payment.method === 'pix' ? styles.selected : ''}`}
+                    onClick={() => updateOrderData('payment', 'method', 'pix')}
+                  >
+                    <div className={styles.radio}></div>
+                    <div className={styles.paymentText}>
+                      <strong>PIX</strong>
+                      <span>5% de desconto extra</span>
+                    </div>
+                  </div>
+                  <div 
+                    className={`${styles.paymentOption} ${orderData.payment.method === 'credit' ? styles.selected : ''}`}
+                    onClick={() => updateOrderData('payment', 'method', 'credit')}
+                  >
+                    <div className={styles.radio}></div>
+                    <div className={styles.paymentText}>
+                      <strong>Cartão de Crédito</strong>
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.footerButtons}>
+                  <button className={styles.secondaryBtn} onClick={prevStep}>Voltar</button>
+                  <button className={styles.finishBtn} onClick={handleFinishOrder} disabled={isLoading}>
+                    {isLoading ? 'Processando...' : <>Finalizar Pedido <FaWhatsapp /></>}
+                  </button>
+                </div>
               </div>
-              <div className={`${styles.step} ${currentStep >= 4 ? styles.active : ''}`}>
-                <span className={styles.stepNumber}>4</span>
-                <span className={styles.stepLabel}>Revisão</span>
-              </div>
-            </div>
+            )}
           </div>
 
-          {/* Conteúdo Principal */}
-          <div className={styles.checkoutContent}>
-            {/* Formulário */}
-            <div className={styles.checkoutForm}>
-              {currentStep === 1 && (
-                <div className={styles.formSection}>
-                  <h2 className={styles.sectionTitle}>Dados Pessoais</h2>
-                  
-                  <div className={styles.inputGroup}>
-                    <label>Nome completo *</label>
-                    <input
-                      type="text"
-                      value={orderData.customer.name}
-                      onChange={(e) => updateOrderData('customer', { name: e.target.value })}
-                      placeholder="Seu nome completo"
-                      required
-                    />
+          <div className={styles.rightColumn}>
+            <div className={styles.summaryCard}>
+              <h3>Resumo do Pedido</h3>
+              
+              <div className={styles.itemsList}>
+                {items.map((item, idx) => (
+                  <div key={idx} className={styles.miniItem}>
+                    <span>{item.qty}x {item.title}</span>
+                    <span>{formatCurrency(item.price * item.qty)}</span>
                   </div>
+                ))}
+              </div>
 
-                  <div className={styles.inputRow}>
-                    <div className={styles.inputGroup}>
-                      <label>Email *</label>
-                      <input
-                        type="email"
-                        value={orderData.customer.email}
-                        onChange={(e) => updateOrderData('customer', { email: e.target.value })}
-                        placeholder="seu@email.com"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label>Telefone *</label>
-                      <input
-                        type="tel"
-                        value={orderData.customer.phone}
-                        onChange={(e) => updateOrderData('customer', { phone: e.target.value })}
-                        placeholder="(11) 99999-9999"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.inputGroup}>
-                    <label>CPF</label>
-                    <input
-                      type="text"
-                      value={orderData.customer.cpf}
-                      onChange={(e) => updateOrderData('customer', { cpf: e.target.value })}
-                      placeholder="000.000.000-00"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 2 && (
-                <div className={styles.formSection}>
-                  <h2 className={styles.sectionTitle}>Endereço de Entrega</h2>
-                  
-                  <div className={styles.inputGroup}>
-                    <label>CEP *</label>
-                    <input
-                      type="text"
-                      value={orderData.address.cep}
-                      onChange={(e) => updateOrderData('address', { cep: e.target.value })}
-                      placeholder="00000-000"
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.inputRow}>
-                    <div className={styles.inputGroup} style={{ flex: 2 }}>
-                      <label>Rua *</label>
-                      <input
-                        type="text"
-                        value={orderData.address.street}
-                        onChange={(e) => updateOrderData('address', { street: e.target.value })}
-                        placeholder="Nome da rua"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label>Número *</label>
-                      <input
-                        type="text"
-                        value={orderData.address.number}
-                        onChange={(e) => updateOrderData('address', { number: e.target.value })}
-                        placeholder="123"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.inputGroup}>
-                    <label>Complemento</label>
-                    <input
-                      type="text"
-                      value={orderData.address.complement}
-                      onChange={(e) => updateOrderData('address', { complement: e.target.value })}
-                      placeholder="Apartamento, bloco, etc."
-                    />
-                  </div>
-
-                  <div className={styles.inputRow}>
-                    <div className={styles.inputGroup}>
-                      <label>Bairro *</label>
-                      <input
-                        type="text"
-                        value={orderData.address.neighborhood}
-                        onChange={(e) => updateOrderData('address', { neighborhood: e.target.value })}
-                        placeholder="Nome do bairro"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label>Cidade *</label>
-                      <input
-                        type="text"
-                        value={orderData.address.city}
-                        onChange={(e) => updateOrderData('address', { city: e.target.value })}
-                        placeholder="Nome da cidade"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label>Estado *</label>
-                      <select
-                        value={orderData.address.state}
-                        onChange={(e) => updateOrderData('address', { state: e.target.value })}
-                        required
-                      >
-                        <option value="">Selecione</option>
-                        <option value="SP">SP</option>
-                        <option value="RJ">RJ</option>
-                        <option value="MG">MG</option>
-                        <option value="RS">RS</option>
-                        <option value="PR">PR</option>
-                        <option value="SC">SC</option>
-                        {/* Adicionar outros estados conforme necessário */}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
-                <div className={styles.formSection}>
-                  <h2 className={styles.sectionTitle}>Forma de Pagamento</h2>
-                  
-                  <div className={styles.paymentMethods}>
-                    <div 
-                      className={`${styles.paymentMethod} ${orderData.payment.method === 'pix' ? styles.selected : ''}`}
-                      onClick={() => updateOrderData('payment', { method: 'pix', installments: 1 })}
-                    >
-                      <div className={styles.paymentIcon}>💳</div>
-                      <div className={styles.paymentInfo}>
-                        <h3>PIX</h3>
-                        <p>5% de desconto • Aprovação imediata</p>
-                        <span className={styles.paymentPrice}>R\$ {(total * 0.95).toFixed(2).replace('.', ',')}</span>
-                      </div>
-                    </div>
-
-                    <div 
-                      className={`${styles.paymentMethod} ${orderData.payment.method === 'credit' ? styles.selected : ''}`}
-                      onClick={() => updateOrderData('payment', { method: 'credit', installments: 1 })}
-                    >
-                      <div className={styles.paymentIcon}>💳</div>
-                      <div className={styles.paymentInfo}>
-                        <h3>Cartão de Crédito</h3>
-                        <p>Parcelamento em até 12x</p>
-                        <span className={styles.paymentPrice}>R\$ {total.toFixed(2).replace('.', ',')}</span>
-                      </div>
-                    </div>
-
-                    <div 
-                      className={`${styles.paymentMethod} ${orderData.payment.method === 'debit' ? styles.selected : ''}`}
-                      onClick={() => updateOrderData('payment', { method: 'debit', installments: 1 })}
-                    >
-                      <div className={styles.paymentIcon}>💳</div>
-                      <div className={styles.paymentInfo}>
-                        <h3>Cartão de Débito</h3>
-                        <p>Aprovação imediata</p>
-                        <span className={styles.paymentPrice}>R\$ {total.toFixed(2).replace('.', ',')}</span>
-                      </div>
-                    </div>
-
-                    <div 
-                      className={`${styles.paymentMethod} ${orderData.payment.method === 'boleto' ? styles.selected : ''}`}
-                      onClick={() => updateOrderData('payment', { method: 'boleto', installments: 1 })}
-                    >
-                      <div className={styles.paymentIcon}>📄</div>
-                      <div className={styles.paymentInfo}>
-                        <h3>Boleto Bancário</h3>
-                        <p>Vencimento em 3 dias úteis</p>
-                        <span className={styles.paymentPrice}>R\$ {total.toFixed(2).replace('.', ',')}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {orderData.payment.method === 'credit' && (
-                    <div className={styles.installments}>
-                      <label>Parcelamento:</label>
-                      <select
-                        value={orderData.payment.installments}
-                        onChange={(e) => updateOrderData('payment', { installments: parseInt(e.target.value) })}
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(num => (
-                          <option key={num} value={num}>
-                            {num}x de R\$ {(total / num).toFixed(2).replace('.', ',')}
-                            {num === 1 ? ' à vista' : ''}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+              <div className={styles.couponSection}>
+                <div className={styles.couponInputWrapper}>
+                  <FaTicketAlt className={styles.couponIcon} />
+                  <input 
+                    type="text" 
+                    placeholder="Cupom de desconto" 
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    disabled={!!appliedCoupon}
+                  />
+                  {appliedCoupon ? (
+                    <button className={styles.removeCouponBtn} onClick={() => setAppliedCoupon(null)}>
+                      <FaTimes />
+                    </button>
+                  ) : (
+                    <button className={styles.applyCouponBtn} onClick={handleApplyCoupon}>
+                      Aplicar
+                    </button>
                   )}
                 </div>
-              )}
-
-              {currentStep === 4 && (
-                <div className={styles.reviewOrder}>
-                  <h2 className={styles.sectionTitle}>Revisar Pedido</h2>
-                  
-                  <div className={styles.reviewSection}>
-                    <h3>Dados Pessoais</h3>
-                    <div className={styles.reviewData}>
-                      <p><strong>Nome:</strong> {orderData.customer.name}</p>
-                      <p><strong>Email:</strong> {orderData.customer.email}</p>
-                      <p><strong>Telefone:</strong> {orderData.customer.phone}</p>
-                    </div>
-                  </div>
-
-                  <div className={styles.reviewSection}>
-                    <h3>Endereço de Entrega</h3>
-                    <div className={styles.reviewData}>
-                      <p>
-                        {orderData.address.street}, {orderData.address.number}
-                        {orderData.address.complement && `, ${orderData.address.complement}`}
-                      </p>
-                      <p>{orderData.address.neighborhood} - {orderData.address.city}/{orderData.address.state}</p>
-                      <p>CEP: {orderData.address.cep}</p>
-                    </div>
-                  </div>
-
-                  <div className={styles.reviewSection}>
-                    <h3>Forma de Pagamento</h3>
-                    <div className={styles.reviewData}>
-                      <p><strong>{getPaymentMethodName(orderData.payment.method)}</strong></p>
-                      {orderData.payment.installments > 1 && (
-                        <p>{orderData.payment.installments}x de R\$ {(total / orderData.payment.installments).toFixed(2).replace('.', ',')}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Botões de Navegação */}
-              <div className={styles.navigationButtons}>
-                {currentStep > 1 && (
-                  <button
-                    onClick={prevStep}
-                    className={styles.prevButton}
-                    disabled={isLoading}
-                  >
-                    ← Voltar
-                  </button>
-                )}
-
-                {currentStep < 4 ? (
-                  <button
-                    onClick={nextStep}
-                    className={styles.nextButton}
-                    disabled={!validateCurrentStep() || isLoading}
-                  >
-                    Continuar →
-                  </button>
-                ) : (
-                  <button
-                    onClick={finishOrder}
-                    className={styles.finishButton}
-                    disabled={!validateCurrentStep() || isLoading}
-                  >
-                    {isLoading ? (
-                      <div className={styles.loading}>
-                        <div className={styles.spinner}></div>
-                        Processando...
-                      </div>
-                    ) : (
-                      '📱 Finalizar via WhatsApp'
-                    )}
-                  </button>
+                {couponError && <p className={styles.couponError}>{couponError}</p>}
+                {appliedCoupon && (
+                  <p className={styles.couponSuccess}>
+                    <FaCheck /> Cupom <strong>{appliedCoupon.code}</strong> aplicado!
+                  </p>
                 )}
               </div>
-            </div>
 
-            {/* Resumo do Pedido */}
-            <div className={styles.orderSummaryContainer}>
-              <div className={styles.orderSummary}>
-                <h3>Resumo do Pedido</h3>
-                
-                <div className={styles.orderItems}>
-                  {cartItems.map(item => (
-                    <div key={item.id} className={styles.orderItem}>
-                      <div className={styles.itemImage}>
-                        {item.image ? (
-                          <img src={item.image} alt={item.name} />
-                        ) : (
-                          <span>👗</span>
-                        )}
-                      </div>
-                      <div className={styles.itemInfo}>
-                        <h4>{item.name}</h4>
-                        {item.size && <p>Tamanho: {item.size}</p>}
-                        {item.color && <p>Cor: {item.color}</p>}
-                        <p>Qtd: {item.quantity}</p>
-                      </div>
-                      <div className={styles.itemPrice}>
-                        R\$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
-                      </div>
-                    </div>
-                  ))}
+              <div className={styles.divider} />
+
+              <div className={styles.totals}>
+                <div className={styles.totalRow}>
+                  <span>Subtotal</span>
+                  <span>{formatCurrency(totals.subtotal)}</span>
                 </div>
+                
+                {/* --- AQUI: Só mostra a linha de frete se o CEP foi digitado e calculado --- */}
+                {shippingInfo.cost !== null && (
+                  <div className={styles.totalRow}>
+                    <span>
+                      Frete {shippingInfo.distance ? `(${shippingInfo.distance}km)` : ''}
+                    </span>
+                    <span>
+                      {totals.shipping === 0 ? 'Grátis' : formatCurrency(totals.shipping)}
+                    </span>
+                  </div>
+                )}
 
-                <div className={styles.orderTotals}>
-                  <div className={styles.totalLine}>
-                    <span>Subtotal:</span>
-                    <span>R\$ {subtotal.toFixed(2).replace('.', ',')}</span>
+                {totals.couponDiscount > 0 && (
+                  <div className={`${styles.totalRow} ${styles.discountRow}`}>
+                    <span>Cupom ({appliedCoupon.code})</span>
+                    <span>-{formatCurrency(totals.couponDiscount)}</span>
                   </div>
-                  <div className={styles.totalLine}>
-                    <span>Frete:</span>
-                    <span>{shippingCost === 0 ? 'Grátis' : `R\$ ${shippingCost.toFixed(2).replace('.', ',')}`}</span>
+                )}
+
+                {totals.pixDiscount > 0 && (
+                  <div className={`${styles.totalRow} ${styles.discountRow}`}>
+                    <span>Desconto PIX (5%)</span>
+                    <span>-{formatCurrency(totals.pixDiscount)}</span>
                   </div>
-                  {discount > 0 && (
-                    <div className={styles.totalLine} style={{ color: '#059669' }}>
-                      <span>Desconto PIX:</span>
-                      <span>-R\$ {discount.toFixed(2).replace('.', ',')}</span>
-                    </div>
-                  )}
-                  <div className={styles.totalLine} style={{ fontWeight: 'bold', fontSize: '1.2rem', borderTop: '1px solid #ddd', paddingTop: '0.5rem' }}>
-                    <span>Total:</span>
-                    <span style={{ color: 'var(--wine-destaque)' }}>R\$ {total.toFixed(2).replace('.', ',')}</span>
-                  </div>
+                )}
+
+                <div className={`${styles.totalRow} ${styles.finalRow}`}>
+                  <span>Total</span>
+                  <span>{formatCurrency(totals.total)}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

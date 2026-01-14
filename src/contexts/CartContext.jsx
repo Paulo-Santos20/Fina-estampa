@@ -1,4 +1,3 @@
-// src/contexts/CartContext.jsx
 import React, {
   createContext,
   useCallback,
@@ -59,14 +58,16 @@ export const CartProvider = ({ children }) => {
     if (!product || !product.id) return;
 
     const safeQty = Number(qty) > 0 ? Number(qty) : 1;
+    
+    // Normaliza o objeto para o carrinho
     const newItem = {
       id: product.id,
-      title: product.title || product.name || 'Produto',
+      title: product.name || product.title || 'Produto', // Garante nome ou title
       price: Number(product.price) || 0,
-      image: product.image || (Array.isArray(product.images) ? product.images[0] : undefined),
+      image: product.image || (Array.isArray(product.images) ? product.images[0] : ''),
       size: options.size || product.size || '',
       color: options.color || product.color || '',
-      qty: safeQty
+      qty: safeQty // Usa 'qty' consistentemente
     };
 
     const newKey = variantKeyOf(newItem);
@@ -74,20 +75,33 @@ export const CartProvider = ({ children }) => {
     setCart((prev) => {
       const list = ensureArray(prev);
       const idx = list.findIndex((it) => variantKeyOf(it) === newKey);
+      
       if (idx >= 0) {
+        // Item já existe, atualiza quantidade
         const updated = [...list];
         updated[idx] = { ...updated[idx], qty: updated[idx].qty + safeQty };
         return updated;
       }
+      // Item novo
       return [...list, newItem];
     });
+    
+    // Opcional: abrir drawer ao adicionar
+    setIsDrawerOpen(true);
   }, []);
 
   const removeItem = useCallback((id, options = {}) => {
     setCart((prev) => {
       const list = ensureArray(prev);
       if (!id) return list;
+      // Recria a chave para encontrar o item exato (com cor e tamanho)
       const keyToRemove = variantKeyOf({ id, size: options.size || '', color: options.color || '' });
+      
+      // Se options não foram passadas, tenta remover pelo ID genérico (menos seguro se tiver variantes)
+      if (!options.size && !options.color) {
+         return list.filter(it => it.id !== id);
+      }
+
       return list.filter((it) => variantKeyOf(it) !== keyToRemove);
     });
   }, []);
@@ -123,7 +137,7 @@ export const CartProvider = ({ children }) => {
   const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
   const toggleDrawer = useCallback(() => setIsDrawerOpen((v) => !v), []);
 
-  // Derivados
+  // Derivados (Calculados automaticamente)
   const { itemCount, subtotal } = useMemo(() => {
     const list = ensureArray(cart);
     const itemCount = list.reduce((acc, it) => acc + (Number(it.qty) || 0), 0);
@@ -147,7 +161,7 @@ export const CartProvider = ({ children }) => {
       closeDrawer,
       toggleDrawer,
       itemCount,
-      subtotal
+      subtotal // Exportando o valor calculado
     }),
     [
       cart,
@@ -168,12 +182,10 @@ export const CartProvider = ({ children }) => {
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-// Hook exportado diretamente do contexto (para permitir import { useCart } from '.../CartContext')
 export const useCart = () => {
   const ctx = useContext(CartContext);
   if (!ctx) throw new Error('useCart deve ser usado dentro de <CartProvider>');
   return ctx;
 };
 
-// Default export do Provider
 export default CartProvider;

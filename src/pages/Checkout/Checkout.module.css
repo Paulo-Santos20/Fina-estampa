@@ -1,43 +1,72 @@
-/* Importar variáveis CSS globais */
-@import '../../styles/variables.css';
-
-/* ===========================================
-   CHECKOUT PAGE LAYOUT
-   =========================================== */
-
-.checkoutPage {
+/* Layout da Página */
+.pageWrapper {
+  background-color: #F9FAFB;
   min-height: 100vh;
-  background: var(--cinza-claro);
-  padding: 2rem 0;
+  font-family: 'Inter', sans-serif;
+  color: #1F2937;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* ===========================================
-   HEADER
-   =========================================== */
-
-.checkoutHeader {
-  margin-bottom: 3rem;
-}
-
-.pageTitle {
-  font-size: 2.5rem;
-  color: var(--wine-destaque);
-  text-align: center;
-  margin: 0 0 2rem 0;
-  font-family: 'Playfair Display', serif;
-}
-
-.checkoutSteps {
+/* Header Simplificado */
+.simpleHeader {
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+  height: 70px;
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.headerContent {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoText {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1F2937;
+  cursor: pointer;
+}
+
+.dot { color: #722F37; }
+
+.secureBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #059669;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: #ECFDF5;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+/* Container Principal */
+.checkoutContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Steps (Progresso) */
+.stepsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .step {
@@ -45,452 +74,270 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  opacity: 0.5;
-  transition: opacity var(--transition-normal);
+  position: relative;
+  z-index: 2;
+  color: #9CA3AF;
 }
 
-.step.active {
-  opacity: 1;
-}
-
-.stepNumber {
-  width: 40px;
-  height: 40px;
-  background: var(--cinza-claro);
-  color: var(--cinza-medio);
-  border-radius: var(--radius-full);
+.stepIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFF;
+  border: 2px solid #E5E7EB;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  transition: all var(--transition-normal);
+  transition: all 0.3s;
 }
 
-.step.active .stepNumber {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
+.activeStep .stepIcon {
+  background: #722F37;
+  border-color: #722F37;
+  color: white;
 }
 
-.stepLabel {
-  font-size: 0.9rem;
-  color: var(--cinza-medio);
-  text-align: center;
-}
+.activeStep span { color: #722F37; font-weight: 600; }
 
-.step.active .stepLabel {
-  color: var(--preto-secundario);
-  font-weight: 500;
-}
-
-/* ===========================================
-   CONTENT
-   =========================================== */
-
-.checkoutContent {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 3rem;
-  align-items: start;
-}
-
-.checkoutForm {
-  background: var(--white-principal);
-  border-radius: var(--radius-large);
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
-}
-
-.formSection {
-  margin-bottom: 2rem;
-}
-
-.sectionTitle {
-  font-size: 1.5rem;
-  color: var(--preto-secundario);
-  margin: 0 0 1.5rem 0;
-  font-weight: 600;
-}
-
-.inputGroup {
-  margin-bottom: 1.5rem;
-}
-
-.inputGroup label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--preto-secundario);
-  font-weight: 500;
-}
-
-.inputGroup input,
-.inputGroup select {
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid var(--cinza-claro);
-  border-radius: var(--radius-medium);
-  font-size: 1rem;
-  transition: border-color var(--transition-normal);
-}
-
-.inputGroup input:focus,
-.inputGroup select:focus {
-  outline: none;
-  border-color: var(--wine-destaque);
-}
-
-.inputRow {
-  display: flex;
-  gap: 1rem;
-}
-
-.inputRow .inputGroup {
+.stepLine {
   flex: 1;
+  height: 2px;
+  background: #E5E7EB;
+  margin: 0 10px;
+  margin-bottom: 24px; /* Ajuste visual para alinhar com as bolinhas */
 }
 
-/* ===========================================
-   PAYMENT METHODS
-   =========================================== */
+.lineActive { background: #722F37; }
 
-.paymentMethods {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* Grid de Conteúdo */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  align-items: flex-start;
 }
 
-.paymentMethod {
+/* Cards Genéricos */
+.card, .summaryCard {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.cardHeader {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  border: 2px solid var(--cinza-claro);
-  border-radius: var(--radius-medium);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.paymentMethod:hover {
-  border-color: var(--wine-destaque);
-}
-
-.paymentMethod.selected {
-  border-color: var(--wine-destaque);
-  background: var(--rosa-suave);
-}
-
-.paymentIcon {
-  font-size: 2rem;
-  width: 60px;
-  text-align: center;
-}
-
-.paymentInfo {
-  flex: 1;
-}
-
-.paymentInfo h3 {
-  margin: 0 0 0.5rem 0;
-  color: var(--preto-secundario);
-}
-
-.paymentInfo p {
-  margin: 0;
-  color: var(--cinza-medio);
-  font-size: 0.9rem;
-}
-
-.paymentPrice {
-  font-weight: 600;
-  color: var(--wine-destaque);
-  font-size: 1.1rem;
-}
-
-.installments {
-  margin-top: 1rem;
-}
-
-.installments label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--preto-secundario);
-  font-weight: 500;
-}
-
-.installments select {
-  width: 100%;
-  padding: 0.8rem;
-  border: 2px solid var(--cinza-claro);
-  border-radius: var(--radius-medium);
-}
-
-/* ===========================================
-   REVIEW
-   =========================================== */
-
-.reviewOrder {
-  margin-bottom: 2rem;
-}
-
-.reviewSection {
-  margin-bottom: 2rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--cinza-claro);
+  border-bottom: 1px solid #F3F4F6;
 }
 
-.reviewSection:last-child {
-  border-bottom: none;
+.cardHeader h2 { margin: 0; font-size: 1.25rem; color: #1F2937; }
+.cardHeader .icon { color: #722F37; font-size: 1.2rem; }
+
+/* Formulários */
+.formGrid { display: flex; flex-direction: column; gap: 1rem; }
+.formRow { display: flex; gap: 1rem; }
+.formGroup { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+
+.formGroup label { font-size: 0.9rem; font-weight: 500; color: #374151; }
+.formGroup input {
+  padding: 0.75rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  background: #FFF;
+  color: black;
 }
+.formGroup input:focus { border-color: #722F37; box-shadow: 0 0 0 3px rgba(114, 47, 55, 0.1); }
 
-.reviewSection h3 {
-  color: var(--wine-destaque);
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-}
-
-.reviewData p {
-  margin: 0.5rem 0;
-  color: var(--preto-secundario);
-}
-
-/* ===========================================
-   NAVIGATION BUTTONS
-   =========================================== */
-
-.navigationButtons {
+/* Botões do Rodapé do Form */
+.footerButtons {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
   margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #F3F4F6;
 }
 
-.prevButton,
-.nextButton,
-.finishButton {
-  padding: 1rem 2rem;
+.secondaryBtn {
+  background: none;
   border: none;
-  border-radius: var(--radius-medium);
+  color: #6B7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+.secondaryBtn:hover { color: #1F2937; text-decoration: underline; }
+
+.primaryBtn, .finishBtn {
+  background-color: #722F37;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-normal);
-  font-size: 1rem;
+  transition: background 0.2s;
 }
+.primaryBtn:hover { background-color: #5a252c; }
 
-.prevButton {
-  background: var(--cinza-claro);
-  color: var(--preto-secundario);
-}
-
-.prevButton:hover:not(:disabled) {
-  background: var(--cinza-medio);
-  color: var(--white-principal);
-}
-
-.nextButton,
-.finishButton {
-  background: var(--wine-destaque);
-  color: var(--white-principal);
-  flex: 1;
-  max-width: 300px;
-  margin-left: auto;
-}
-
-.nextButton:hover:not(:disabled),
-.finishButton:hover:not(:disabled) {
-  background: #5a252a;
-}
-
-.prevButton:disabled,
-.nextButton:disabled,
-.finishButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.loading {
+.finishBtn {
+  background-color: #10B981; /* Verde WhatsApp */
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
+.finishBtn:hover { background-color: #059669; }
 
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+/* Opções de Pagamento */
+.paymentOptions { display: flex; flex-direction: column; gap: 1rem; }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* ===========================================
-   ORDER SUMMARY
-   =========================================== */
-
-.orderSummaryContainer {
-  position: sticky;
-  top: 2rem;
-}
-
-.orderSummary {
-  background: var(--white-principal);
-  border-radius: var(--radius-large);
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(114, 47, 55, 0.1);
-}
-
-.orderSummary h3 {
-  color: var(--preto-secundario);
-  margin: 0 0 1.5rem 0;
-  font-size: 1.3rem;
-}
-
-.orderItems {
-  margin-bottom: 1.5rem;
-}
-
-.orderItem {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--cinza-claro);
-}
-
-.orderItem:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.itemImage {
-  width: 60px;
-  height: 75px;
-  background: var(--cinza-claro);
-  border-radius: var(--radius-medium);
+.paymentOption {
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.itemImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.paymentOption:hover { border-color: #D1D5DB; background: #F9FAFB; }
+.paymentOption.selected { border-color: #722F37; background: #FDF2F8; }
+
+.radio {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid #D1D5DB; position: relative;
+}
+.selected .radio { border-color: #722F37; }
+.selected .radio::after {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 10px; height: 10px; border-radius: 50%; background: #722F37;
 }
 
-.itemImage span {
-  font-size: 1.5rem;
+.paymentText { flex: 1; }
+.paymentText strong { display: block; font-size: 1rem; color: #1F2937; }
+.paymentText span { font-size: 0.85rem; color: #6B7280; }
+
+.discountBadge {
+  background: #D1FAE5; color: #065F46; font-size: 0.75rem; font-weight: 700;
+  padding: 4px 8px; border-radius: 4px;
 }
 
-.itemInfo {
+/* Resumo (Direita) */
+.summaryCard h3 { margin: 0 0 1.5rem 0; font-size: 1.2rem; color: #1F2937; }
+
+.itemsList { display: flex; flex-direction: column; gap: 1rem; max-height: 400px; overflow-y: auto; }
+
+.itemRow { display: flex; gap: 1rem; align-items: center; }
+
+.itemImg { position: relative; width: 60px; height: 60px; border-radius: 8px; background: #F3F4F6; overflow: hidden; }
+.itemImg img { width: 100%; height: 100%; object-fit: cover; }
+
+.qtyBadge {
+  position: absolute; top: -5px; right: -5px; background: #722F37; color: white;
+  width: 20px; height: 20px; border-radius: 50%; font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.itemData { flex: 1; }
+.itemName { font-size: 0.95rem; font-weight: 500; margin: 0; color: #374151; }
+.itemVar { font-size: 0.8rem; color: #9CA3AF; margin: 2px 0 0 0; }
+.itemPrice { font-weight: 600; font-size: 0.95rem; }
+
+.divider { height: 1px; background: #E5E7EB; margin: 1.5rem 0; }
+
+.totals { display: flex; flex-direction: column; gap: 0.75rem; }
+.totalRow { display: flex; justify-content: space-between; font-size: 0.95rem; color: #4B5563; }
+.free { color: #10B981; font-weight: 600; }
+.discountRow { color: #059669; }
+.finalRow { font-size: 1.25rem; font-weight: 700; color: #1F2937; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid #E5E7EB; }
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .contentGrid { grid-template-columns: 1fr; }
+  .leftColumn { order: 2; }
+  .rightColumn { order: 1; margin-bottom: 2rem; }
+}
+
+@media (max-width: 600px) {
+  .formRow { flex-direction: column; gap: 1rem; }
+  .stepsHeader { display: none; } /* Oculta steps no mobile para limpar a tela */
+}
+/* ... CSS anterior mantido ... */
+
+/* Estilos para o input de CEP */
+.formGroup input[readOnly] {
+  background-color: #F3F4F6;
+  color: #6B7280;
+  cursor: not-allowed;
+}
+
+/* Área de Cupom */
+.couponSection {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #F9FAFB;
+  border-radius: 8px;
+  border: 1px dashed #D1D5DB;
+}
+
+.couponInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.couponIcon { color: #9CA3AF; }
+
+.couponInputWrapper input {
+  border: none;
+  outline: none;
   flex: 1;
-}
-
-.itemInfo h4 {
-  margin: 0 0 0.5rem 0;
-  color: var(--preto-secundario);
   font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
-.itemInfo p {
-  margin: 0.2rem 0;
-  color: var(--cinza-medio);
+.applyCouponBtn {
+  background: #374151;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
   font-size: 0.8rem;
-}
-
-.itemPrice {
-  color: var(--wine-destaque);
+  cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem;
 }
 
-.orderTotals {
-  border-top: 1px solid var(--cinza-claro);
-  padding-top: 1rem;
+.removeCouponBtn {
+  background: transparent;
+  color: #EF4444;
+  border: none;
+  cursor: pointer;
 }
 
-.totalLine {
+.couponError { color: #EF4444; font-size: 0.8rem; margin-top: 0.5rem; }
+.couponSuccess { color: #059669; font-size: 0.8rem; margin-top: 0.5rem; display: flex; alignItems: center; gap: 0.25rem; }
+
+/* Mini Items no Resumo */
+.miniItem {
   display: flex;
   justify-content: space-between;
+  font-size: 0.9rem;
+  color: #4B5563;
   margin-bottom: 0.5rem;
-  color: var(--preto-secundario);
-}
-
-/* ===========================================
-   RESPONSIVIDADE
-   =========================================== */
-
-@media (max-width: 1024px) {
-  .checkoutContent {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .orderSummaryContainer {
-    position: static;
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
-
-  .checkoutSteps {
-    gap: 1rem;
-  }
-
-  .stepLabel {
-    font-size: 0.8rem;
-  }
-
-  .checkoutForm,
-  .orderSummary {
-    padding: 1.5rem;
-  }
-
-  .inputRow {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .navigationButtons {
-    flex-direction: column;
-  }
-
-  .nextButton,
-  .finishButton {
-    max-width: none;
-    margin-left: 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .pageTitle {
-    font-size: 2rem;
-  }
-
-  .checkoutSteps {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .step {
-    flex: 1;
-    min-width: 80px;
-  }
-
-  .stepNumber {
-    width: 35px;
-    height: 35px;
-  }
-
-  .stepLabel {
-    font-size: 0.7rem;
-  }
 }

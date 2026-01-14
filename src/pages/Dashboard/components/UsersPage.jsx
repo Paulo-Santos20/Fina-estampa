@@ -1,40 +1,23 @@
 import React, { useState } from 'react';
 import { 
-  FaUserShield, 
-  FaPlus,
-  FaEdit,
-  FaTrash,
-  FaEye,
-  FaEyeSlash,
-  FaSave,
-  FaTimes,
-  FaSearch,
-  FaFilter,
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaCalendarAlt
+  FaUserShield, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, 
+  FaSave, FaTimes, FaSearch, FaFilter, FaUser, FaEnvelope, 
+  FaPhone, FaCalendarAlt, FaCheck, FaLock
 } from 'react-icons/fa';
+import { useToast } from '../../../components/ui/Toast'; // Use se disponível
 import styles from './UsersPage.module.css';
 
 const UsersPage = () => {
+  const { showSuccess, showError } = useToast();
+
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    role: 'user',
-    isActive: true,
-    password: ''
-  });
-
-  // Dados mockados
-  const users = [
+  // Estado local para usuários (Mock)
+  const [users, setUsers] = useState([
     {
       id: 1,
       name: 'Ana Silva',
@@ -65,14 +48,15 @@ const UsersPage = () => {
       createdAt: '2024-01-20',
       lastLogin: '2024-01-18'
     }
-  ];
+  ]);
+
+  const [formData, setFormData] = useState({
+    name: '', email: '', phone: '', role: 'user', isActive: true, password: ''
+  });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const openModal = (user = null) => {
@@ -84,17 +68,12 @@ const UsersPage = () => {
         phone: user.phone,
         role: user.role,
         isActive: user.isActive,
-        password: ''
+        password: '' // Senha vazia ao editar
       });
     } else {
       setEditingUser(null);
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        role: 'user',
-        isActive: true,
-        password: ''
+        name: '', email: '', phone: '', role: 'user', isActive: true, password: ''
       });
     }
     setShowModal(true);
@@ -110,44 +89,54 @@ const UsersPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simular salvamento
+    // Validação simples
+    if (!formData.name || !formData.email) {
+      showError('Preencha os campos obrigatórios.');
+      setIsSubmitting(false);
+      return;
+    }
+
     setTimeout(() => {
-      alert(editingUser ? 'Usuário atualizado!' : 'Usuário criado!');
+      if (editingUser) {
+        setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, ...formData } : u));
+        showSuccess('Usuário atualizado!');
+      } else {
+        const newUser = {
+          id: Date.now(),
+          ...formData,
+          createdAt: new Date().toLocaleDateString('en-CA'),
+          lastLogin: '-'
+        };
+        setUsers(prev => [...prev, newUser]);
+        showSuccess('Usuário criado!');
+      }
       closeModal();
-    }, 1000);
+    }, 800);
   };
 
   const handleDelete = (userId, userName) => {
     if (window.confirm(`Tem certeza que deseja excluir o usuário "${userName}"?`)) {
-      alert('Usuário excluído!');
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      showSuccess('Usuário excluído!');
     }
   };
 
   const toggleUserStatus = (userId) => {
-    alert('Status do usuário alterado!');
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, isActive: !u.isActive } : u));
   };
 
-  const getRoleLabel = (role) => {
+  const getRoleConfig = (role) => {
     switch (role) {
-      case 'admin': return 'Administrador';
-      case 'manager': return 'Gerente';
-      case 'user': return 'Usuário';
-      default: return role;
-    }
-  };
-
-  const getRoleBadgeClass = (role) => {
-    switch (role) {
-      case 'admin': return styles.adminBadge;
-      case 'manager': return styles.managerBadge;
-      case 'user': return styles.userBadge;
-      default: return styles.userBadge;
+      case 'admin': return { label: 'Administrador', bg: '#FEE2E2', color: '#991B1B' };
+      case 'manager': return { label: 'Gerente', bg: '#FEF3C7', color: '#92400E' };
+      case 'user': return { label: 'Usuário', bg: '#EFF6FF', color: '#1E40AF' };
+      default: return { label: role, bg: '#F3F4F6', color: '#374151' };
     }
   };
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -156,48 +145,34 @@ const UsersPage = () => {
     <div className={styles.pageContainer}>
       {/* Header */}
       <div className={styles.pageHeader}>
-        <div className={styles.headerContent}>
+        <div>
           <h2 className={styles.pageTitle}>
             <FaUserShield />
             Gerenciar Usuários
           </h2>
           <p className={styles.pageSubtitle}>
-            Gerencie usuários e suas permissões no sistema
+            Controle de acesso e permissões da equipe ({filteredUsers.length} usuários).
           </p>
         </div>
-        
-        <div className={styles.headerActions}>
-          <button 
-            onClick={() => openModal()}
-            className={styles.primaryBtn}
-          >
-            <FaPlus /> Novo Usuário
-          </button>
-        </div>
+        <button onClick={() => openModal()} className={styles.primaryBtn}>
+          <FaPlus /> Novo Usuário
+        </button>
       </div>
 
       {/* Filtros */}
-      <div className={styles.filtersSection}>
-        <div className={styles.searchGroup}>
-          <div className={styles.searchInput}>
-            <FaSearch className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Buscar usuários..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={styles.searchField}
-            />
-          </div>
+      <div className={styles.filtersBar}>
+        <div className={styles.searchBox}>
+          <FaSearch className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Buscar por nome ou email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-
-        <div className={styles.filterGroup}>
+        <div className={styles.filterBox}>
           <FaFilter className={styles.filterIcon} />
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className={styles.filterSelect}
-          >
+          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
             <option value="all">Todas as funções</option>
             <option value="admin">Administradores</option>
             <option value="manager">Gerentes</option>
@@ -207,91 +182,78 @@ const UsersPage = () => {
       </div>
 
       {/* Lista de Usuários */}
-      <div className={styles.usersGrid}>
-        {filteredUsers.map((user) => (
-          <div key={user.id} className={styles.userCard}>
-            <div className={styles.userHeader}>
-              <div className={styles.userAvatar}>
-                <FaUser />
-              </div>
-              <div className={styles.userInfo}>
-                <h3 className={styles.userName}>{user.name}</h3>
-                <span className={`${styles.roleBadge} ${getRoleBadgeClass(user.role)}`}>
-                  {getRoleLabel(user.role)}
-                </span>
-              </div>
-              {!user.isActive && (
-                <span className={styles.inactiveBadge}>Inativo</span>
-              )}
-            </div>
+      <div className={styles.usersList}>
+        {filteredUsers.length > 0 ? (
+          <div className={styles.usersGrid}>
+            {filteredUsers.map((user) => {
+              const roleConfig = getRoleConfig(user.role);
+              return (
+                <div key={user.id} className={`${styles.userCard} ${!user.isActive ? styles.inactiveCard : ''}`}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.userInfo}>
+                      <div className={styles.avatar}>
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h3 className={styles.userName}>{user.name}</h3>
+                        <span 
+                          className={styles.roleBadge}
+                          style={{ backgroundColor: roleConfig.bg, color: roleConfig.color }}
+                        >
+                          {roleConfig.label}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={styles.statusDot} title={user.isActive ? "Ativo" : "Inativo"}>
+                      <div className={`${styles.dot} ${user.isActive ? styles.dotActive : styles.dotInactive}`} />
+                    </div>
+                  </div>
 
-            <div className={styles.userDetails}>
-              <div className={styles.userContact}>
-                <div className={styles.contactItem}>
-                  <FaEnvelope />
-                  <span>{user.email}</span>
-                </div>
-                <div className={styles.contactItem}>
-                  <FaPhone />
-                  <span>{user.phone}</span>
-                </div>
-              </div>
+                  <div className={styles.cardBody}>
+                    <div className={styles.infoRow}>
+                      <FaEnvelope className={styles.icon} /> <span>{user.email}</span>
+                    </div>
+                    <div className={styles.infoRow}>
+                      <FaPhone className={styles.icon} /> <span>{user.phone || '-'}</span>
+                    </div>
+                    <div className={styles.metaRow}>
+                      <small><FaCalendarAlt /> Cadastro: {user.createdAt}</small>
+                      <small><FaCheck /> Último login: {user.lastLogin}</small>
+                    </div>
+                  </div>
 
-              <div className={styles.userMeta}>
-                <div className={styles.metaItem}>
-                  <FaCalendarAlt />
-                  <span>Criado em {user.createdAt}</span>
+                  <div className={styles.cardActions}>
+                    <button
+                      onClick={() => toggleUserStatus(user.id)}
+                      className={styles.iconBtn}
+                      title={user.isActive ? 'Desativar acesso' : 'Ativar acesso'}
+                    >
+                      {user.isActive ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                    <button
+                      onClick={() => openModal(user)}
+                      className={styles.iconBtn}
+                      title="Editar dados"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(user.id, user.name)}
+                      className={`${styles.iconBtn} ${styles.deleteBtn}`}
+                      title="Excluir usuário"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
-                <div className={styles.metaItem}>
-                  <span>Último acesso: {user.lastLogin}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.userActions}>
-              <button
-                onClick={() => toggleUserStatus(user.id)}
-                className={`${styles.actionBtn} ${user.isActive ? styles.activeBtn : styles.inactiveBtn}`}
-                title={user.isActive ? 'Desativar usuário' : 'Ativar usuário'}
-              >
-                {user.isActive ? <FaEye /> : <FaEyeSlash />}
-              </button>
-              <button
-                onClick={() => openModal(user)}
-                className={`${styles.actionBtn} ${styles.editBtn}`}
-                title="Editar usuário"
-              >
-                <FaEdit />
-              </button>
-              <button
-                onClick={() => handleDelete(user.id, user.name)}
-                className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                title="Excluir usuário"
-              >
-                <FaTrash />
-              </button>
-            </div>
+              );
+            })}
           </div>
-        ))}
-
-        {filteredUsers.length === 0 && (
+        ) : (
           <div className={styles.emptyState}>
-            <FaUserShield className={styles.emptyIcon} />
+            <FaUserShield />
             <h3>Nenhum usuário encontrado</h3>
-            <p>
-              {searchTerm || roleFilter !== 'all' 
-                ? 'Tente ajustar os filtros de busca'
-                : 'Comece adicionando o primeiro usuário'
-              }
-            </p>
-            {!searchTerm && roleFilter === 'all' && (
-              <button 
-                onClick={() => openModal()}
-                className={styles.primaryBtn}
-              >
-                <FaPlus /> Adicionar Usuário
-              </button>
-            )}
+            <p>Tente ajustar os filtros ou adicione um novo membro à equipe.</p>
           </div>
         )}
       </div>
@@ -299,59 +261,44 @@ const UsersPage = () => {
       {/* Modal */}
       {showModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
+          <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>
-                {editingUser ? '✏️ Editar Usuário' : '👤 Novo Usuário'}
-              </h3>
-              <button
-                onClick={closeModal}
-                className={styles.modalCloseBtn}
-                disabled={isSubmitting}
-              >
-                <FaTimes />
-              </button>
+              <h3>{editingUser ? 'Editar Usuário' : 'Novo Usuário'}</h3>
+              <button onClick={closeModal} className={styles.closeBtn}><FaTimes /></button>
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.modalForm}>
+            <form onSubmit={handleSubmit} className={styles.modalBody}>
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Nome Completo *</label>
+                <label>Nome Completo *</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  disabled={isSubmitting}
-                  className={styles.formInput}
-                  placeholder="Nome completo do usuário"
+                  placeholder="Ex: João Silva"
                 />
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>E-mail *</label>
+                  <label>E-mail *</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    disabled={isSubmitting}
-                    className={styles.formInput}
-                    placeholder="email@exemplo.com"
+                    placeholder="joao@empresa.com"
                   />
                 </div>
-
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Telefone</label>
+                  <label>Telefone</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    disabled={isSubmitting}
-                    className={styles.formInput}
                     placeholder="(11) 99999-9999"
                   />
                 </div>
@@ -359,67 +306,52 @@ const UsersPage = () => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Função *</label>
+                  <label>Função *</label>
                   <select
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
                     required
-                    disabled={isSubmitting}
-                    className={styles.formSelect}
                   >
-                    <option value="user">Usuário</option>
+                    <option value="user">Usuário (Padrão)</option>
                     <option value="manager">Gerente</option>
                     <option value="admin">Administrador</option>
                   </select>
                 </div>
-
-                {!editingUser && (
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Senha *</label>
+                
+                <div className={styles.formGroup}>
+                  <label>Senha {editingUser && '(Opcional)'}</label>
+                  <div className={styles.passwordWrapper}>
+                    <FaLock className={styles.fieldIcon} />
                     <input
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      placeholder={editingUser ? "Nova senha" : "Senha inicial"}
                       required={!editingUser}
-                      disabled={isSubmitting}
-                      className={styles.formInput}
-                      placeholder="Senha temporária"
-                      minLength="6"
+                      minLength={6}
                     />
                   </div>
-                )}
+                </div>
               </div>
 
-              <div className={styles.formGroup}>
+              <div className={styles.checkboxGroup}>
                 <label className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
                     name="isActive"
                     checked={formData.isActive}
                     onChange={handleInputChange}
-                    disabled={isSubmitting}
                   />
-                  <span>Usuário ativo</span>
+                  <span>Acesso Ativo ao Sistema</span>
                 </label>
               </div>
 
-              <div className={styles.modalActions}>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  disabled={isSubmitting}
-                  className={styles.cancelBtn}
-                >
-                  ❌ Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={styles.submitBtn}
-                >
-                  <FaSave /> {isSubmitting ? 'Salvando...' : (editingUser ? 'Atualizar' : 'Criar')}
+              <div className={styles.modalFooter}>
+                <button type="button" onClick={closeModal} className={styles.cancelBtn}>Cancelar</button>
+                <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
+                  <FaSave /> {isSubmitting ? 'Salvando...' : 'Salvar Usuário'}
                 </button>
               </div>
             </form>

@@ -25,7 +25,6 @@ const ChevronDownIcon = () => (
 const ChevronRightIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6" /></svg>
 );
-// Ícone de Usuário para o Mobile
 const UserIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -131,7 +130,10 @@ const SearchOverlay = ({ isOpen, onClose }) => {
 // --- CART DRAWER ---
 const CartDrawer = ({ isOpen, onClose }) => {
   const context = useCart();
-  const { isLoggedIn } = useAuth();
+  
+  // CORREÇÃO: Usar isAuthenticated (boolean) ao invés de isLoggedIn (function)
+  const { isAuthenticated } = useAuth(); 
+  
   const navigate = useNavigate();
 
   const { cart, incrementItem, decrementItem, removeItem, subtotal } = context;
@@ -162,7 +164,8 @@ const CartDrawer = ({ isOpen, onClose }) => {
           {cartItems.length === 0 ? (
             <div className={styles.emptyCartState}>
               <h2 className={styles.emptyTitle}>SUA SACOLA ESTÁ VAZIA</h2>
-              {!isLoggedIn() && <p className={styles.emptySubtitle}>Tem uma conta? <Link to="/login" onClick={onClose} className={styles.loginLink}>Entre</Link> para finalizar mais rápido.</p>}
+              {/* CORREÇÃO: Verificação booleana direta */}
+              {!isAuthenticated && <p className={styles.emptySubtitle}>Tem uma conta? <Link to="/login" onClick={onClose} className={styles.loginLink}>Entre</Link> para finalizar mais rápido.</p>}
               <button className={styles.continueButton} onClick={() => { onClose(); navigate('/catalog'); }}>CONTINUAR COMPRANDO</button>
             </div>
           ) : (
@@ -214,7 +217,10 @@ const CartDrawer = ({ isOpen, onClose }) => {
 // --- MAIN HEADER ---
 const MainHeader = () => {
   const context = useCart();
-  const { user, isLoggedIn, logout } = useAuth();
+  
+  // CORREÇÃO: Usar isAuthenticated (boolean) ao invés de isLoggedIn
+  const { user, isAuthenticated, logout } = useAuth();
+  
   const { getActiveHeaderCategories } = useCMS();
   const navigate = useNavigate();
   
@@ -273,7 +279,8 @@ const MainHeader = () => {
 
             {/* Container do Usuário (SÓ DESKTOP) */}
             <div className={styles.userContainer} ref={dropdownRef}>
-              {isLoggedIn() ? (
+              {/* CORREÇÃO: Verificação booleana direta */}
+              {isAuthenticated ? (
                 <div className={styles.loggedInWrapper}>
                   <button className={styles.userButton} onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
                     Olá, {user?.name?.split(' ')[0]} <ChevronDownIcon />
@@ -317,7 +324,8 @@ const MainHeader = () => {
           
           {/* SEÇÃO DE USUÁRIO (MOBILE) - NO FINAL */}
           <div className={styles.mobileUserSection}>
-            {isLoggedIn() ? (
+            {/* CORREÇÃO: Verificação booleana direta */}
+            {isAuthenticated ? (
               <>
                 <div className={styles.mobileUserHeader}>
                   <span className={styles.mobileUserName}>Olá, {user?.name?.split(' ')[0]}</span>

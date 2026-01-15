@@ -18,7 +18,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent 0%, var(--dourado-sutil) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--dourado-sutil, #D4AF37) 50%, transparent 100%);
 }
 
 .container {
@@ -40,7 +40,7 @@
 .sectionTitle {
   font-family: 'Playfair Display', serif;
   font-size: 2.4rem;
-  color: var(--wine-destaque);
+  color: var(--wine-destaque, #722F37);
   margin-bottom: 1rem;
   font-weight: 600;
   line-height: 1.2;
@@ -51,7 +51,7 @@
 }
 
 .titleIcon {
-  color: var(--dourado-sutil);
+  color: var(--dourado-sutil, #D4AF37);
   font-size: 2rem;
   animation: giftPulse 2s ease-in-out infinite;
 }
@@ -63,7 +63,7 @@
 
 .sectionSubtitle {
   font-size: 1.1rem;
-  color: var(--cinza-medio);
+  color: var(--cinza-medio, #666);
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
@@ -75,7 +75,7 @@
 
 .productsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 Columns */
+  grid-template-columns: repeat(4, 1fr); /* 4 Columns Desktop */
   gap: 2rem;
   margin-bottom: 3rem;
 }
@@ -99,7 +99,7 @@
 .productCard:hover {
   transform: translateY(-6px);
   box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
-  border-color: var(--dourado-sutil);
+  border-color: var(--dourado-sutil, #D4AF37);
 }
 
 .productCardInner {
@@ -128,7 +128,7 @@
   height: 100%;
   object-fit: cover;
   transition: all 0.3s ease;
-  opacity: 0;
+  opacity: 0; /* Controlado pelo JS onLoad */
 }
 
 .productCard:hover .productImage {
@@ -158,7 +158,7 @@
   position: absolute;
   top: 0.8rem;
   right: 0.8rem;
-  background: linear-gradient(135deg, var(--dourado-sutil) 0%, #b8860b 100%);
+  background: linear-gradient(135deg, var(--dourado-sutil, #D4AF37) 0%, #b8860b 100%);
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
@@ -214,11 +214,11 @@
 }
 
 .actionButton:hover {
-  background: var(--dourado-sutil) !important;
+  background: var(--dourado-sutil, #D4AF37) !important;
   color: white !important;
   transform: scale(1.1) !important;
   box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4) !important;
-  border-color: var(--dourado-sutil);
+  border-color: var(--dourado-sutil, #D4AF37);
 }
 
 /* ===========================================
@@ -241,7 +241,7 @@
 .productName {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--preto-secundario);
+  color: var(--preto-secundario, #333);
   margin: 0;
   line-height: 1.3;
   display: -webkit-box;
@@ -253,7 +253,7 @@
 }
 
 .productCard:hover .productName {
-  color: var(--wine-destaque);
+  color: var(--wine-destaque, #722F37);
 }
 
 /* ===========================================
@@ -272,12 +272,12 @@
 }
 
 .starFilled {
-  color: var(--dourado-sutil);
+  color: var(--dourado-sutil, #D4AF37);
   font-size: 0.9rem;
 }
 
 .starHalf {
-  color: var(--dourado-sutil);
+  color: var(--dourado-sutil, #D4AF37);
   font-size: 0.9rem;
   opacity: 0.6;
 }
@@ -289,7 +289,7 @@
 
 .reviewCount {
   font-size: 0.8rem;
-  color: var(--cinza-medio);
+  color: var(--cinza-medio, #999);
   font-weight: 500;
 }
 
@@ -309,7 +309,7 @@
 
 .originalPrice {
   font-size: 0.85rem;
-  color: var(--cinza-medio);
+  color: var(--cinza-medio, #999);
   text-decoration: line-through;
   font-weight: 500;
 }
@@ -327,7 +327,7 @@
 .regularPrice {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--wine-destaque);
+  color: var(--wine-destaque, #722F37);
 }
 
 .addToCartIcon {
@@ -335,7 +335,7 @@
   height: 40px !important;
   border-radius: 50% !important;
   border: none !important;
-  background: linear-gradient(135deg, var(--wine-destaque) 0%, #5a1f29 100%) !important;
+  background: linear-gradient(135deg, var(--wine-destaque, #722F37) 0%, #5a1f29 100%) !important;
   color: white !important;
   cursor: pointer !important;
   display: flex !important;
@@ -346,7 +346,7 @@
 }
 
 .addToCartIcon:hover {
-  background: linear-gradient(135deg, #5a1f29 0%, var(--wine-destaque) 100%) !important;
+  background: linear-gradient(135deg, #5a1f29 0%, var(--wine-destaque, #722F37) 100%) !important;
   transform: scale(1.1) !important;
   box-shadow: 0 4px 16px rgba(114, 47, 55, 0.4) !important;
 }
@@ -374,8 +374,8 @@
 .seeMoreButton {
   padding: 12px 30px;
   background-color: transparent;
-  color: var(--wine-destaque);
-  border: 2px solid var(--wine-destaque);
+  color: var(--wine-destaque, #722F37);
+  border: 2px solid var(--wine-destaque, #722F37);
   border-radius: 50px;
   font-size: 1rem;
   font-weight: 600;
@@ -386,7 +386,7 @@
 }
 
 .seeMoreButton:hover {
-  background-color: var(--wine-destaque);
+  background-color: var(--wine-destaque, #722F37);
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
@@ -404,21 +404,52 @@
 
 @media (max-width: 900px) {
   .productsGrid {
-    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
+    grid-template-columns: repeat(2, 1fr); /* 2 Columns (Tablet) */
   }
 }
 
 @media (max-width: 600px) {
+  /* ALTERAÇÃO PRINCIPAL: Grid de 2 colunas no Mobile */
   .productsGrid {
-    grid-template-columns: 1fr; /* 1 Column */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 12px; /* Gap menor para caber melhor */
   }
   
+  .container {
+    padding: 0 15px; /* Menos padding lateral para aproveitar espaço */
+  }
+
   .sectionTitle {
     font-size: 1.8rem;
   }
+
+  /* Ajustes nos Cards para ficarem bons em tamanho reduzido */
+  .productInfo {
+    padding: 10px; /* Padding interno menor */
+  }
+
+  .productName {
+    font-size: 0.9rem; /* Fonte do nome menor */
+    min-height: auto;
+  }
+
+  .currentPrice, .regularPrice {
+    font-size: 1rem; /* Preço menor */
+  }
+
+  /* Badges menores */
+  .discountBadge, .newBadge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+
+  /* Botão de adicionar ao carrinho menor */
+  .addToCartIcon {
+    width: 32px !important;
+    height: 32px !important;
+  }
   
   .productActions {
-    opacity: 1; /* Always visible on mobile */
-    visibility: visible;
+    display: none; /* Opcional: Esconder ações de hover no mobile para limpar a view */
   }
 }

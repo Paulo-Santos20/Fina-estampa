@@ -6,22 +6,22 @@ const Categories = () => {
   const topBanners = [
     {
       id: 1,
-      title: 'goal driven facials',
-      buttonText: 'Book Your Glow',
+      title: 'Tratamentos Exclusivos', // Antes: goal driven facials
+      buttonText: 'Agendar Sessão',    // Antes: Book Your Glow
       image: 'https://www.sanaskinstudio.com/cdn/shop/files/sana-banner-small-00003.png?v=1752525867&width=1650',
       link: '/categoria/facials'
     },
     {
       id: 2,
-      title: 'real guidance',
-      buttonText: 'Sana Membership',
+      title: 'Consultoria Expert',     // Antes: real guidance
+      buttonText: 'Clube de Vantagens', // Antes: Sana Membership
       image: 'https://www.sanaskinstudio.com/cdn/shop/files/sana-banner-small-00002.png?v=1752525867&width=1800',
       link: '/categoria/membership'
     },
     {
       id: 3,
-      title: 'clean skincare',
-      buttonText: 'Shop Curation',
+      title: 'Beleza Limpa',           // Antes: clean skincare
+      buttonText: 'Ver Coleção',       // Antes: Shop Curation
       image: 'https://www.sanaskinstudio.com/cdn/shop/files/sana-banner-small-00001.png?v=1752525867&width=1650',
       link: '/categoria/shop'
     }
@@ -29,9 +29,9 @@ const Categories = () => {
 
   const bottomBannerData = {
     id: 'supermama',
-    subtitle: 'meet our newest facial',
-    title: 'THE SUPERMAMA FACIAL',
-    buttonText: 'BOOK YOUR GLOW',
+    subtitle: 'Conheça nosso novo ritual', // Antes: meet our newest facial
+    title: 'RITUAL SUPER MAMA',            // Mantido o nome do produto/serviço
+    buttonText: 'AGENDAR AGORA',           // Antes: BOOK YOUR GLOW
     image: 'https://www.sanaskinstudio.com/cdn/shop/files/SuperMama3893_2.jpg?v=1756374863&width=2500',
     link: '/colecao/supermama'
   };

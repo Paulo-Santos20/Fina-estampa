@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  FaHeart, 
-  FaEye,
-  FaStar,
-  FaChevronLeft,
-  FaChevronRight,
-  FaShoppingCart
+  FaHeart, FaEye, FaStar, FaChevronLeft, FaChevronRight, FaShoppingCart
 } from 'react-icons/fa';
 import { useCart } from '../../../contexts/CartContext';
 import { useCMS } from '../../../contexts/CMSContext';
@@ -22,10 +17,8 @@ const SAMPLE_PRODUCTS = [
 ];
 
 const ProductCarousel = () => {
-  // Lógica Infinita: Produtos * 3 (Buffer Esquerdo, Original, Buffer Direito)
+  // Lógica Infinita
   const [products, setProducts] = useState([...SAMPLE_PRODUCTS, ...SAMPLE_PRODUCTS, ...SAMPLE_PRODUCTS]);
-  
-  // Começamos no meio (no primeiro item do conjunto original)
   const [currentIndex, setCurrentIndex] = useState(SAMPLE_PRODUCTS.length);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [itemsToShow, setItemsToShow] = useState(4);
@@ -39,46 +32,42 @@ const ProductCarousel = () => {
   const addToCartFunc = context.addToCart || context.addItem;
   const carouselSettings = getCarouselSettings();
 
-  // Responsividade: define quantos itens aparecem
+  // --- ALTERAÇÃO AQUI: Lógica de Breakpoints Ajustada ---
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1024) setItemsToShow(4);
-      else if (window.innerWidth > 768) setItemsToShow(3);
-      else if (window.innerWidth > 480) setItemsToShow(2);
-      else setItemsToShow(1);
+      const width = window.innerWidth;
+      if (width > 1024) {
+        setItemsToShow(4);
+      } else if (width > 768) {
+        setItemsToShow(3);
+      } else {
+        // Agora mostra 2 itens em qualquer tela menor que 768px (Mobile)
+        setItemsToShow(2);
+      }
     };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Função para mover
   const moveSlide = useCallback((direction) => {
     if (!isTransitioning) setIsTransitioning(true);
     setCurrentIndex(prev => prev + direction);
   }, [isTransitioning]);
 
-  // Efeito Infinito (Reset Mágico)
   const handleTransitionEnd = () => {
     const originalLength = SAMPLE_PRODUCTS.length;
-    
-    // Se foi muito para a direita (fim do buffer direito)
     if (currentIndex >= originalLength * 2) {
-      setIsTransitioning(false); // Desliga animação
-      setCurrentIndex(originalLength); // Pula para o inicio do set original
-    } 
-    // Se foi muito para a esquerda (inicio do buffer esquerdo)
-    else if (currentIndex <= 0) {
-      setIsTransitioning(false); // Desliga animação
-      setCurrentIndex(originalLength); // Pula para o set original
+      setIsTransitioning(false);
+      setCurrentIndex(originalLength);
+    } else if (currentIndex <= 0) {
+      setIsTransitioning(false);
+      setCurrentIndex(originalLength);
     }
   };
 
-  // Reativar transição se ela foi desligada pelo reset
   useEffect(() => {
     if (!isTransitioning) {
-      // Pequeno timeout para permitir que o navegador renderize a mudança de posição "sem animação"
-      // antes de ligar a animação novamente para o próximo clique
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsTransitioning(true);
@@ -87,7 +76,6 @@ const ProductCarousel = () => {
     }
   }, [isTransitioning]);
 
-  // Auto Play
   useEffect(() => {
     if (carouselSettings.autoPlay) {
       autoPlayRef.current = setInterval(() => {
@@ -100,7 +88,6 @@ const ProductCarousel = () => {
   const handleAddToCart = (e, product) => {
     e.preventDefault();
     e.stopPropagation();
-    
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -110,10 +97,8 @@ const ProductCarousel = () => {
       selectedColor: product.colors?.[0] || 'Padrão',
       quantity: 1
     };
-    
     if (typeof addToCartFunc === 'function') {
       addToCartFunc(cartItem);
-      // Feedback visual
       const btn = e.currentTarget;
       btn.classList.add(styles.adding);
       setTimeout(() => btn.classList.remove(styles.adding), 300);
@@ -140,6 +125,7 @@ const ProductCarousel = () => {
         </div>
 
         <div className={styles.carouselWrapper}>
+          {/* Setas aparecem mesmo no mobile se configurado, ou o autoplay cuida disso */}
           {carouselSettings.showArrows && (
             <>
               <button className={`${styles.navButton} ${styles.prevButton}`} onClick={() => moveSlide(-1)}>
@@ -164,17 +150,14 @@ const ProductCarousel = () => {
               <div 
                 key={`${product.id}-${index}`} 
                 className={styles.productCard}
-                style={{ flex: `0 0 ${100 / itemsToShow}%` }} // Largura dinâmica baseada na tela
+                style={{ flex: `0 0 ${100 / itemsToShow}%` }} 
                 onClick={() => navigate(`/produto/${product.id}`)}
               >
                 <div className={styles.productCardInner}>
                   <div className={styles.productImageWrapper}>
                     <img src={product.image} alt={product.name} className={styles.productImage} />
-                    
                     {product.isPromo && <div className={styles.discountBadge}>-{product.discount}%</div>}
                     {product.isNew && <div className={styles.newBadge}>Novo</div>}
-
-                    {/* ACTIONS - ÍCONES FORÇADOS NO CSS */}
                     <div className={styles.productActions}>
                       <button className={styles.actionButton} onClick={(e) => { e.stopPropagation(); }}>
                         <FaHeart />
@@ -187,22 +170,17 @@ const ProductCarousel = () => {
 
                   <div className={styles.productInfo}>
                     <h3 className={styles.productName}>{product.name}</h3>
-                    
                     <div className={styles.productRating}>
                       <div className={styles.stars}>{renderStars(product.rating)}</div>
                       <span className={styles.reviewCount}>({product.reviews})</span>
                     </div>
-                    
                     <div className={styles.productPricing}>
                       {product.isPromo ? (
                         <div className={styles.promoPrice}>
                           <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>
                           <div className={styles.currentPriceWrapper}>
                             <span className={styles.currentPrice}>{formatPrice(product.price)}</span>
-                            <button 
-                              className={styles.addToCartIcon}
-                              onClick={(e) => handleAddToCart(e, product)}
-                            >
+                            <button className={styles.addToCartIcon} onClick={(e) => handleAddToCart(e, product)}>
                               <FaShoppingCart />
                             </button>
                           </div>
@@ -210,10 +188,7 @@ const ProductCarousel = () => {
                       ) : (
                         <div className={styles.regularPriceWrapper}>
                           <span className={styles.regularPrice}>{formatPrice(product.price)}</span>
-                          <button 
-                            className={styles.addToCartIcon}
-                            onClick={(e) => handleAddToCart(e, product)}
-                          >
+                          <button className={styles.addToCartIcon} onClick={(e) => handleAddToCart(e, product)}>
                             <FaShoppingCart />
                           </button>
                         </div>

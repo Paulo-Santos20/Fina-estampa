@@ -31,7 +31,6 @@
 
 .carouselWrapper {
   position: relative;
-  /* Importante: permite que os botões de navegação fiquem visíveis */
   z-index: 1; 
 }
 
@@ -44,7 +43,7 @@
 .productCard {
   padding: 0 10px;
   box-sizing: border-box;
-  flex-shrink: 0; /* Impede que o card encolha */
+  flex-shrink: 0;
 }
 
 .productCardInner {
@@ -67,7 +66,7 @@
 /* === IMAGEM === */
 .productImageWrapper {
   position: relative;
-  padding-top: 125%; /* Aspect Ratio 4:5 */
+  padding-top: 125%; /* 4:5 */
   background-color: #f5f5f5;
   overflow: hidden;
   z-index: 1;
@@ -75,12 +74,8 @@
 
 .productImage {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   object-fit: cover;
-  display: block;
   transition: transform 0.5s ease;
 }
 
@@ -91,47 +86,44 @@
 /* === BADGES === */
 .discountBadge, .newBadge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 4px 10px;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   border-radius: 4px;
-  z-index: 10; /* Z-Index alto para aparecer sobre a imagem */
+  z-index: 10;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .discountBadge { background-color: #b91c1c; }
-.newBadge { background-color: #D4AF37; color: #000; left: auto; right: 10px; }
+.newBadge { background-color: #D4AF37; color: #000; left: auto; right: 8px; }
 
-/* === AÇÕES (Coração/Olho) - CORREÇÃO === */
+/* === AÇÕES === */
 .productActions {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  z-index: 20; /* Z-Index MUITO alto */
-  
-  /* Desktop: invisível até hover */
+  gap: 6px;
+  z-index: 20;
   opacity: 0;
   transform: translateY(-5px);
   transition: all 0.3s ease;
 }
 
-/* No hover do card, mostra os ícones */
 .productCardInner:hover .productActions {
   opacity: 1;
   transform: translateY(0);
 }
 
 .actionButton {
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
   background: white;
   border: 1px solid #eee;
@@ -141,15 +133,10 @@
   color: #722F37;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s;
 }
 
-/* FORÇAR TAMANHO DO ÍCONE SVG */
-.actionButton svg {
-  width: 16px;
-  height: 16px;
-  display: block;
-}
+.actionButton svg { width: 14px; height: 14px; }
 
 .actionButton:hover {
   background: #722F37;
@@ -164,7 +151,7 @@
   flex-direction: column;
   flex-grow: 1;
   background: #fff;
-  z-index: 2; /* Acima de qualquer background */
+  z-index: 2;
 }
 
 .productName {
@@ -180,28 +167,20 @@
 .productRating {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 0.8rem;
 }
 
-.stars { 
-  color: #D4AF37; 
-  font-size: 0.85rem; 
-  display: flex; /* Garante alinhamento das estrelas */
-}
+.stars { color: #D4AF37; font-size: 0.8rem; display: flex; }
+.reviewCount { font-size: 0.7rem; color: #888; }
 
-.reviewCount { 
-  font-size: 0.75rem; 
-  color: #888; 
-}
-
-/* === PREÇOS E BOTÃO CARRINHO === */
+/* === PREÇOS === */
 .productPricing { margin-top: auto; }
 
 .originalPrice {
   text-decoration: line-through;
   color: #999;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   display: block;
 }
 
@@ -210,16 +189,15 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 4px;
-  height: 40px; /* Altura fixa para alinhar botão */
+  height: 36px;
 }
 
 .currentPrice, .regularPrice {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #722F37;
 }
 
-/* CORREÇÃO BOTÃO CARRINHO */
 .addToCartIcon {
   width: 60px;
   height: 60px;
@@ -232,35 +210,21 @@
   color: white;
   cursor: pointer;
   transition: background-color 0.2s;
-  flex-shrink: 0; /* Impede que seja esmagado */
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* FORÇAR TAMANHO DO SVG DO CARRINHO */
-.addToCartIcon svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-  color: white; /* Garante cor branca */
-}
-
-.addToCartIcon:hover {
-  background-color: #5a252c;
-}
-
-/* Classe para feedback visual de clique */
-.addToCartIcon.adding {
-  background-color: #43a047;
-  transform: scale(1.1);
-}
+.addToCartIcon svg { width: 16px; height: 16px; display: block; }
+.addToCartIcon:hover { background-color: #5a252c; }
+.addToCartIcon.adding { background-color: #43a047; transform: scale(1.1); }
 
 /* === NAVEGAÇÃO === */
 .navButton {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: white;
   border: 1px solid #eee;
@@ -269,29 +233,43 @@
   justify-content: center;
   color: #333;
   cursor: pointer;
-  z-index: 50; /* Z-Index máximo */
+  z-index: 50;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   font-size: 1rem;
 }
 
-.navButton:hover {
-  background-color: #722F37;
-  color: white;
-}
+.navButton:hover { background-color: #722F37; color: white; }
+.prevButton { left: 0; }
+.nextButton { right: 0; }
 
-.prevButton { left: 10px; }
-.nextButton { right: 10px; }
-
-/* === RESPONSIVIDADE === */
+/* === RESPONSIVIDADE (Mobile com 2 Colunas) === */
 @media (max-width: 768px) {
-  .navButton { display: none; }
-  .productCard { padding: 0 6px; }
+  .container { padding: 0 10px; }
+  .sectionTitle { font-size: 1.8rem; }
   
-  /* NO MOBILE, MOSTRAR ÍCONES SEMPRE (sem hover) */
+  /* Diminui padding para caber melhor 2 cards */
+  .productCard { padding: 0 5px; }
+  
+  /* Ajusta fonte e espaçamento interno */
+  .productInfo { padding: 0.75rem; }
+  .productName { font-size: 0.9rem; }
+  
+  .currentPrice, .regularPrice { font-size: 1rem; }
+  .originalPrice { font-size: 0.75rem; }
+  
+  .addToCartIcon { width: 32px; height: 32px; }
+  .addToCartIcon svg { width: 14px; height: 14px; }
+
+  /* Mantém botões de navegação visíveis mas menores */
+  .navButton { width: 32px; height: 32px; font-size: 0.8rem; }
+  .prevButton { left: -5px; }
+  .nextButton { right: -5px; }
+
+  /* Mostra ícones de ação sempre no mobile */
   .productActions {
     opacity: 1;
     transform: translateY(0);
-    background: rgba(255,255,255,0.85); /* Fundo sutil para contraste */
+    background: rgba(255,255,255,0.9);
     border-radius: 20px;
     padding: 4px;
   }
